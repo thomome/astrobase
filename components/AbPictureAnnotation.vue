@@ -75,19 +75,21 @@ export default {
 		fill: transparentize($white, .86);
 		stroke-dasharray: 6px 6px;
 		stroke: theme('colors.gray.100');
-		stroke-width: 1;
+		stroke-width: .4;
 		transition: stroke .3s, fill .3s;
 	}
 
 	.picture-annotation__background {
 		fill: theme('colors.gray.900');
 		stroke: theme('colors.gray.100');
+		stroke-width: .5;
 		transition: stroke .15s;
 	}
 
 	.picture-annotation__text {
 		fill: theme('colors.gray.400');
 		transition: fill .15s;
+		font-weight: 300;
 	}
 
 	.picture-annotation:hover {

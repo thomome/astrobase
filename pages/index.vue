@@ -49,9 +49,9 @@ export default {
 		})
 
 		return {
-			title: page.title,
-			description: page.description,
-			action: page.action,
+			title: page.result.title,
+			description: page.result.description,
+			action: page.result.action,
 			picture: pictures.results[0],
 			pictures: pictures.results
 		}
