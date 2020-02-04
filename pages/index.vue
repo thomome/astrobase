@@ -12,7 +12,7 @@
 			/>
 		</ab-hero>
 		<div class="picture-list container mt-24">
-			<h2 class="text-4xl text-white mb-4">
+			<h2 class="text-2xl text-white mb-4">
 				Most Recent Pictures
 			</h2>
 			<ab-post-picture
@@ -52,7 +52,7 @@ export default {
 			title: page.result.title,
 			description: page.result.description,
 			action: page.result.action,
-			picture: pictures.results[0],
+			picture: page.result.picture,
 			pictures: pictures.results
 		}
 	}

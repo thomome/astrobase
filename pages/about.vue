@@ -8,6 +8,24 @@
 				class="w-full h-full object-cover"
 			/>
 		</ab-hero>
+		<div class="equipment container mt-24">
+			<h2 class="text-2xl text-white mb-4">
+				Equipment
+			</h2>
+			<div class="devices flex flex-wrap">
+				<ab-card
+					v-for="device in devices"
+					:key="device.id"
+					:title="device.title"
+				>
+					<ab-image
+						v-if="!Array.isArray(device.image)"
+						:image="device.image"
+						class="w-full h-full object-contain"
+					/>
+				</ab-card>
+			</div>
+		</div>
 		<client-only>
 			<ab-map
 				:locations="locations"
@@ -21,16 +39,18 @@ import { getPage } from '~/api/api.js'
 
 import AbHero from '~/components/AbHero.vue'
 import AbImage from '~/components/AbImage.vue'
+import AbCard from '~/components/AbCard.vue'
 import AbMap from '~/components/AbMap.vue'
 
 export default {
-	components: { AbHero, AbImage, AbMap },
+	components: { AbHero, AbImage, AbCard, AbMap },
 	async asyncData ({ params }) {
 		const page = await getPage('about')
 
 		return {
 			title: page.result.title,
 			picture: page.result.hero_image,
+			devices: page.result.current_equipment,
 			locations: page.result.current_locations
 		}
 	}
