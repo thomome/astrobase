@@ -1,12 +1,26 @@
 <template>
 	<div ref="picture" class="astro-picture relative w-full h-full overflow-hidden">
+		<div
+			v-if="controls"
+			class="astro-picture__controls opacity-0 absolute bottom-0 right-0 z-10"
+		>
+			<button
+				@click="showAnnotations = !showAnnotations"
+				class="bg-yellow-400 text-gray-900 p-1 m-2 rounded-lg "
+			>
+				<ab-icon
+					:name="showAnnotations ? 'annotations-on' : 'annotations-off'"
+					class="text-2xl"
+				/>
+			</button>
+		</div>
 		<ab-image
 			:image="image"
 			min-size="medium_large"
 			class="astro-picture__img block w-full h-full object-cover"
 		/>
 		<svg
-			v-if="annotated"
+			v-show="showAnnotations"
 			class="astro-picture__annotations absolute left-0 top-0 w-full h-full"
 		>
 			<g
@@ -27,18 +41,20 @@
 </template>
 
 <script>
+import AbIcon from '~/components/AbIcon.vue'
 import AbImage from '~/components/AbImage.vue'
 import AbPictureAnnotation from '~/components/AbPictureAnnotation.vue'
 
 export default {
-	components: { AbPictureAnnotation, AbImage },
+	components: { AbPictureAnnotation, AbImage, AbIcon },
 	props: {
 		annotations: { type: Array, default: () => [] },
 		image: { type: Object, required: true },
-		annotated: { type: Boolean, default: false }
+		controls: { type: Boolean, default: false }
 	},
 	data () {
 		return {
+			showAnnotations: true,
 			minRadius: 30,
 			labelPadding: {
 				x: 8,
@@ -98,6 +114,14 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
+	.astro-picture__controls {
+		transition: opacity .3s;
+	}
 
+	.astro-picture:hover {
+		.astro-picture__controls {
+			@apply opacity-100;
+		}
+	}
 </style>
