@@ -9,24 +9,25 @@
 			:interactive="false"
 			class="map"
 		>
-			<MglMarker
+			<AbMarker
 				v-for="location in preparedLocations"
 				:key="location.id"
-				:coordinates="location.coords"
-			>
-				<div slot="marker" class="map-marker" />
-			</MglMarker>
+				:location="location"
+			/>
 		</MglMap>
 	</client-only>
 </template>
 
 <script>
+import AbMarker from '~/components/AbMarker.vue'
+
 let mapboxgl
 if (process.client) {
 	mapboxgl = require('mapbox-gl')
 }
 
 export default {
+	components: { AbMarker },
 	props: {
 		locations: { type: Array, default: () => [] }
 	},
@@ -67,13 +68,8 @@ export default {
 
 <style src="mapbox-gl/dist/mapbox-gl.css"></style>
 
-<style>
+<style lang="scss">
 	.map {
-		min-height: 500px;
-	}
-
-	.map-marker {
-		@apply w-12 h-12 rounded-full border-dashed border border-white;
-		background: rgba(0, 0, 0, 0.2);
+		min-height: 600px;
 	}
 </style>
