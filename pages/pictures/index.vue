@@ -1,15 +1,17 @@
 <template>
 	<main class="main-content">
 		<div class="picture-list container mt-48">
-			<div class="filters flex pb-8">
+			<div class="sort">
 				<ab-select
 					:on-change="updateParams"
 					:value="params.orderby"
 					:options="sortOptions"
 					label="Sort"
 					params-key="orderby"
-					class="w-full max-w-xs mr-6"
+					class="w-full max-w-xs mr-6 mb-4"
 				/>
+			</div>
+			<div class="filters flex flex-wrap pb-4">
 				<ab-select
 					:on-change="updateParams"
 					:values="params.objects"
@@ -19,7 +21,7 @@
 					label="Objects"
 					params-key="objects"
 					label-key="name"
-					class="w-full max-w-sm mr-6"
+					class="w-full max-w-sm mr-6 mb-4"
 				/>
 				<ab-select
 					:on-change="updateParams"
@@ -30,7 +32,18 @@
 					label="Devices"
 					params-key="devices"
 					label-key="title"
-					class="w-full max-w-sm mr-6"
+					class="w-full max-w-sm mr-6 mb-4"
+				/>
+				<ab-select
+					:on-change="updateParams"
+					:values="params.locations"
+					:get-items="getLocations"
+					:get-item="getLocation"
+					async
+					label="Locations"
+					params-key="locations"
+					label-key="title"
+					class="w-full max-w-sm mr-6 mb-4"
 				/>
 			</div>
 			<ab-post-picture
@@ -47,7 +60,7 @@
 </template>
 
 <script>
-import { getPictures, getObjects, getObject, getDevices, getDevice } from '~/api/api.js'
+import { getPictures, getObjects, getObject, getDevices, getDevice, getLocations, getLocation } from '~/api/api.js'
 
 import AbSelect from '~/components/AbSelect.vue'
 import AbPostPicture from '~/components/AbPostPicture.vue'
@@ -59,7 +72,7 @@ const config = {
 
 export default {
 	components: { AbPostPicture, AbSelect, AbLoading },
-	watchQuery: ['objects', 'devices', 'orderby'],
+	watchQuery: ['objects', 'devices', 'locations', 'orderby'],
 	data () {
 		return {
 			sortOptions: [
@@ -129,7 +142,9 @@ export default {
 		getObjects,
 		getObject,
 		getDevices,
-		getDevice
+		getDevice,
+		getLocations,
+		getLocation
 	}
 }
 </script>
