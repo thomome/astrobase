@@ -84,12 +84,12 @@ export default {
 			this.isLoading = false
 		},
 		setCache (results) {
-			const cache = sessionStorage.getItem(`${this.queryKey}-results`)
+			const cache = sessionStorage.getItem(`${this.paramsKey}-results`)
 			const items = cache ? JSON.parse(cache) : {}
 			results.forEach((r) => {
 				items[r.id] = r
 			})
-			sessionStorage.setItem(`${this.queryKey}-results`, JSON.stringify(items))
+			sessionStorage.setItem(`${this.paramsKey}-results`, JSON.stringify(items))
 		},
 		fillMissing () {
 			if (this.async) {
@@ -115,7 +115,7 @@ export default {
 			}
 		},
 		async getItemFromCache (id) {
-			const cache = sessionStorage.getItem(`${this.queryKey}-results`)
+			const cache = sessionStorage.getItem(`${this.paramsKey}-results`)
 			const items = cache ? JSON.parse(cache) : {}
 			if (items[id]) {
 				return items[id]
