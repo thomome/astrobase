@@ -1,28 +1,34 @@
 <template>
-	<nuxt-link
-		:to="`/pictures/${picture.id}`"
-		tag="a"
-		class="picture relative flex mb-12"
-	>
+	<div class="picture relative mb-12 block lg:flex">
 		<div class="picture__image-container">
-			<ab-image
-				:image="picture.image"
-				class="picture__image block w-full min-h-full object-cover"
-			/>
+			<nuxt-link
+				:to="`/pictures/${picture.id}`"
+				tag="a"
+			>
+				<ab-image
+					:image="picture.image"
+					class="picture__image block w-full min-h-full object-cover"
+				/>
+			</nuxt-link>
 		</div>
-		<div class="picture__details flex-shrink-0 ml-8 w-1/4">
-			<h2 class="picture__title text-xl text-white">
-				{{ picture.title }}
+		<div class="picture__details flex-shrink-0 xl:w-1/4 lg:w-1/3 lg:ml-8">
+			<h2 class="picture__title text-xl text-white mt-4 lg:mt-0">
+				<nuxt-link
+					:to="`/pictures/${picture.id}`"
+					tag="a"
+				>
+					{{ picture.title }}
+				</nuxt-link>
 			</h2>
 
 			<div class="picture__date-location text-gray-700 text-sm">
 				{{ picture.date }} - {{ picture.location[0].title }}
 			</div>
 
-			<p class="picture__description max-w-6xl font-light leading-snug my-4">
+			<p class="picture__description max-w-md lg:max-w-6xl font-light leading-snug my-4">
 				{{ picture.description }}
 			</p>
-			<div class="picture__tags max-w-6xl font-light text-sm">
+			<div class="picture__tags max-w-sm lg:max-w-6xl font-light text-sm">
 				<nuxt-link
 					v-for="tag in picture.tags"
 					:key="tag.id"
@@ -33,10 +39,10 @@
 				</nuxt-link>
 			</div>
 
-			<div class="picture__column-container">
+			<div class="picture__column-container flex flex-wrap lg:block">
 				<div
 					v-if="picture.exposures.length"
-					class="picture__column picture__exposures"
+					class="picture__column picture__exposures mr-16 lg:mr-0"
 				>
 					<h3 class="picture__details-title text-gray-700 text-sm uppercase font-medium mt-6 mb-2">
 						Exposure Time
@@ -62,7 +68,7 @@
 
 				<div
 					v-if="picture.equipment.length"
-					class="picture__column picture__equipment"
+					class="picture__column picture__equipment mr-16 lg:mr-0"
 				>
 					<h3 class="picture__details-title text-gray-700 text-sm uppercase font-medium mt-6 mb-2">
 						Equipment
@@ -79,7 +85,7 @@
 
 				<div
 					v-if="picture.process.length"
-					class="picture__column picture__process"
+					class="picture__column picture__process mr-16 lg:mr-0"
 				>
 					<h3 class="picture__details-title text-gray-700 text-sm uppercase font-medium mt-6 mb-2">
 						Process
@@ -95,7 +101,7 @@
 				</div>
 			</div>
 		</div>
-	</nuxt-link>
+	</div>
 </template>
 
 <script>
