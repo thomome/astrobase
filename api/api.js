@@ -58,6 +58,23 @@ const getDevice = async (id) => {
 	return q.data
 }
 
+// Devices
+const getLocations = async (query) => {
+	const endpoint = 'locations'
+	const q = await axios.get(`${url}/${endpoint}`, {
+		params: {
+			query: query || ''
+		}
+	})
+	return q.data
+}
+
+const getLocation = async (id) => {
+	const endpoint = 'location'
+	const q = await axios.get(`${url}/${endpoint}/${id}`)
+	return q.data
+}
+
 export {
 	getPage,
 	getPictures,
@@ -65,5 +82,7 @@ export {
 	getObjects,
 	getObject,
 	getDevices,
-	getDevice
+	getDevice,
+	getLocations,
+	getLocation
 }
