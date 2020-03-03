@@ -5,7 +5,7 @@
 			:key="link.id"
 			:to="link.route"
 			:exact="link.exact"
-			class="block border border-transparent px-4 py-2 mr-8 text-gray-400 leading-tight"
+			class="block border border-transparent px-4 py-2 mr-8 text-gray-400 leading-tight pointer-events-all"
 		>
 			{{ link.title }}
 		</nuxt-link>

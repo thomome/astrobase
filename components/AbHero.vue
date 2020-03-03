@@ -10,9 +10,13 @@
 			<p class="text-gray-400 font-light mb-4">
 				{{ description }}
 			</p>
-			<a class="button button--outline" target="" href="http://astrobase.site/pictures">
-				<span>Explore the Pictures</span>
-			</a>
+			<nuxt-link
+				v-if="action.title"
+				:to="action.url"
+				class="button button--outline"
+			>
+				{{ action.title }}
+			</nuxt-link>
 		</div>
 	</div>
 </template>
