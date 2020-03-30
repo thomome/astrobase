@@ -1,9 +1,9 @@
 <template>
 	<div
 		ref="container"
-		@mousemove="updateTranslate"
-		@wheel="updateScale"
-		class="astro-picture relative w-full h-full overflow-hidden"
+		@wheel="onWheel"
+		@mousedown="onMouseDown"
+		class="astro-picture relative w-full h-full overflow-hidden select-none"
 	>
 		<div
 			v-if="controls"
@@ -22,15 +22,17 @@
 		<div
 			ref="picture"
 			class="astro-picture__container relative w-full h-full"
-			:style="transform"
 		>
 			<ab-image
 				:image="image"
+				:style="transform"
 				min-size="medium_large"
 				class="astro-picture__img block w-full h-full object-cover"
 			/>
 			<svg
 				v-show="showAnnotations"
+				:style="transform"
+				:viewBox="viewBox"
 				class="astro-picture__annotations absolute left-0 top-0 w-full h-full"
 			>
 				<g
@@ -65,8 +67,12 @@ export default {
 	},
 	data () {
 		return {
-			size: [0, 0],
-			translate: [0, 0],
+			zoom: 1,
+			maxZoom: 5,
+			offset: [0, 0],
+			isDragged: false,
+			draggStart: [0, 0],
+			offsetStart: [0, 0],
 			showAnnotations: true,
 			minRadius: 30,
 			labelPadding: {
@@ -81,14 +87,14 @@ export default {
 	},
 	computed: {
 		ratio () {
-			const { image, container } = this
-			return image.width / image.height < container.width / container.height ? container.width / image.width : container.height / image.height
+			const { image, container, zoom } = this
+			return image.width / image.height < container.width / container.height ? container.width / image.width * zoom : container.height / image.height * zoom
 		},
 		group () {
-			const { image, container, ratio } = this
+			const { image, size, ratio } = this
 			return {
-				x: (image.width * ratio - container.width) * -0.5,
-				y: (image.height * ratio - container.height) * -0.5
+				x: (image.width * ratio - size[0]) * -0.5,
+				y: (image.height * ratio - size[1]) * -0.5
 			}
 		},
 		preparedAnnotations () {
@@ -111,13 +117,19 @@ export default {
 				return bR - aR
 			})
 		},
+		size () {
+			const { container, zoom } = this
+			return [container.width * zoom, container.height * zoom]
+		},
 		transform () {
+			const { offset, zoom } = this
 			return {
-				left: `${this.translate[0]}px`,
-				top: `${this.translate[1]}px)`,
-				width: `${this.size[0]}px`,
-				height: `${this.size[1]}px`
+				transform: `translate(${offset[0]}px, ${offset[1]}px) scale(${zoom}) `
 			}
+		},
+		viewBox () {
+			const { size } = this
+			return `0 0 ${size[0]} ${size[1]}`
 		}
 	},
 	mounted () {
@@ -128,58 +140,98 @@ export default {
 			}
 		})
 		this.resizeObserver.observe(this.$refs.container)
+
+		window.addEventListener('mousemove', this.onMouseMove)
+		window.addEventListener('mouseup', this.onMouseUp)
 	},
 	destroyed () {
 		this.resizeObserver.disconnect()
+
+		window.removeEventListener('mousemove', this.onMouseMove)
+		window.removeEventListener('mouseup', this.onMouseUp)
 	},
 	methods: {
-		updateScale (e) {
-			const box = this.$refs.container.getBoundingClientRect()
-			const add = e.deltaY / Math.abs(e.deltaY) * -0.2
-			let scale = this.scale * (1 + add)
-
-			if (scale < 1) {
-				scale = 1
-			} else if (scale > 4) {
-				scale = 4
+		onWheel (e) {
+			if (!this.controls) {
+				return false
 			}
 
-			const { x: cX, y: cY } = this.getPos(this.$refs.container, e)
-			const { x: pX, y: pY } = this.getPos(this.$refs.picture, e)
+			const { zoom, offset, maxZoom } = this
 
-			const width = box.width * this.scale
-			const height = box.height * this.scale
+			e.preventDefault()
 
-			const left = (width * pX - box.width * cX)
-			const top = (height * pY - box.height * cY)
+			const rect = this.$refs.container.getBoundingClientRect()
+			const offsetX = e.clientX - rect.left
+			const offsetY = e.clientY - rect.top
 
-			this.scale = scale
+			let newZoom = zoom
 
-			this.translate = [
-				left,
-				top
+			if (e.deltaY < 0) {
+				newZoom *= 1.1
+			} else {
+				newZoom *= (1 / 1.1)
+			}
+
+			if (newZoom > maxZoom) {
+				newZoom = maxZoom
+			} else if (newZoom < 1) {
+				newZoom = 1
+			}
+
+			const newOffset = [
+				((offset[0] - offsetX) / zoom * newZoom) + offsetX,
+				((offset[1] - offsetY) / zoom * newZoom) + offsetY
 			]
+
+			this.zoom = newZoom
+			this.updateOffset(newOffset)
 		},
-		getPos (el, e) {
-			const w = el.clientWidth
-			const h = el.clientHeight
+		onMouseDown (e) {
+			if (!this.controls) {
+				return false
+			}
 
-			const r = el.getBoundingClientRect()
-			const x = e.clientX - r.left
-			const y = e.clientY - r.top
+			this.isDragged = true
+			this.draggStart = [e.clientX, e.clientY]
+			this.offsetStart = this.offset
+		},
+		onMouseUp (e) {
+			if (!this.controls) {
+				return false
+			}
 
-			return {
-				x: x / w,
-				y: y / h
+			this.isDragged = false
+		},
+		onMouseMove (e) {
+			if (!this.controls) {
+				return false
+			}
+
+			const { isDragged, offsetStart, draggStart } = this
+			if (isDragged) {
+				const newOffset = [
+					offsetStart[0] - (draggStart[0] - e.clientX),
+					offsetStart[1] - (draggStart[1] - e.clientY)
+				]
+				this.updateOffset(newOffset)
 			}
 		},
-		updateTranslate (e) {
-			/* const box = this.$refs.picture.getBoundingClientRect()
+		updateOffset (offset) {
+			const { size, container } = this
 
-			const left = ((e.pageX - box.left) / box.width)
-			const top = ((e.pageY - box.top) / box.height)
+			if (offset[0] > 0) {
+				offset[0] = 0
+			} else if (offset[0] < container.width - size[0]) {
+				offset[0] = container.width - size[0]
+			}
 
-			this.translate = [left * (1 / this.scale), top * (1 / this.scale)] */
+			if (offset[1] > 0) {
+				offset[1] = 0
+			} else if (offset[1] < container.height - size[1]) {
+				offset[1] = container.height - size[1]
+			}
+
+			this.offset = offset
 		}
 	}
 }
@@ -194,5 +246,13 @@ export default {
 		.astro-picture__controls {
 			@apply opacity-100;
 		}
+	}
+
+	.astro-picture__img,
+	.astro-picture__annotations {
+		transform-origin: 0 0 0;
+		user-select: none;
+		user-drag: none;
+		-webkit-user-drag: none;
 	}
 </style>

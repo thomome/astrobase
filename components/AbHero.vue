@@ -11,7 +11,7 @@
 				{{ description }}
 			</p>
 			<nuxt-link
-				v-if="action.title"
+				v-if="typeof action === 'object'"
 				:to="action.url"
 				class="button button--outline"
 			>
