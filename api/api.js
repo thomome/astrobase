@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const url = 'http://astrobase.site/wp-json/astrobase'
+const url = 'http://apache2/wp-json/astrobase'
 
 // Page
 const getPage = async (path) => {
