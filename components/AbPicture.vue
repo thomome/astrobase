@@ -6,7 +6,7 @@
 		class="astro-picture relative w-full h-full overflow-hidden select-none"
 	>
 		<div
-			v-if="controls"
+			v-if="annotations && controls"
 			class="astro-picture__controls opacity-0 absolute bottom-0 right-0 z-10"
 		>
 			<button
@@ -30,6 +30,7 @@
 				class="astro-picture__img block w-full h-full object-cover"
 			/>
 			<svg
+				v-if="annotations"
 				v-show="showAnnotations"
 				:style="transform"
 				:viewBox="viewBox"
