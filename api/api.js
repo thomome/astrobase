@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const url = process.env.API_ENDPOINT ? process.env.API_ENDPOINT : `http://astrobase.site/wp-json/astrobase`
+const url = process.env.API_ENDPOINT ? process.env.API_ENDPOINT : `https://api.astrobase.ch/wp-json/astrobase`
 
 // Page
 const getPage = async (path) => {
