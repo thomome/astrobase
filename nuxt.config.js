@@ -2,7 +2,7 @@
 export default {
 	server: {
 		port: 8080, // default: 3000
-		host: '0.0.0.0' // default: localhost
+		host: process.env.HOST ? process.env.HOST : '0.0.0.0' // default: localhost
 	},
 	mode: 'universal',
 	/*

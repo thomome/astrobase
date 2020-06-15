@@ -7,7 +7,7 @@
 				:image="picture.image"
 			/>
 			<div class="picture__details mt-4">
-				<div class="picture__column-container flex">
+				<div class="picture__column-container flex flex-wrap">
 					<div class="picture__column picture__general max-w-xl">
 						<h2 class="picture__title text-xl text-white">
 							{{ picture.title }}
@@ -31,64 +31,66 @@
 							</nuxt-link>
 						</div>
 					</div>
-					<div
-						v-if="picture.exposures.length"
-						class="picture__column picture__exposures ml-auto mr-16"
-					>
-						<h3 class="picture__details-title text-gray-700 text-sm uppercase font-medium mt-6 mb-2">
-							Exposure Time
-						</h3>
-						<ul class="picture__details-list border-l border-yellow-400 pl-4 my-2 ml-1">
-							<li
-								v-for="exposure in picture.exposures"
-								:key="exposure.exposure_time + exposure.mode"
-							>
-								{{ exposure.amount }} x {{ exposure.exposure_time }}&#8239;<small>s</small>
-								<ab-tag
-									:label="exposure.mode.label"
-									:type="exposure.mode.value"
-									class="sm"
-								/>
-							</li>
-						</ul>
-						<div class="-ml-px">
-							<span class="text-yellow-400 mr-2">∑</span>
-							<span v-html="totalExposureTime" class="font-medium" />
+					<div class="picture__meta flex ml-auto">
+						<div
+							v-if="picture.exposures.length"
+							class="picture__column picture__exposures mr-16"
+						>
+							<h3 class="picture__details-title text-gray-700 text-sm uppercase font-medium mt-6 mb-2">
+								Exposure Time
+							</h3>
+							<ul class="picture__details-list border-l border-yellow-400 pl-4 my-2 ml-1">
+								<li
+									v-for="exposure in picture.exposures"
+									:key="exposure.exposure_time + exposure.mode"
+								>
+									{{ exposure.amount }} x {{ exposure.exposure_time }}&#8239;<small>s</small>
+									<ab-tag
+										:label="exposure.mode.label"
+										:type="exposure.mode.value"
+										class="sm"
+									/>
+								</li>
+							</ul>
+							<div class="-ml-px">
+								<span class="text-yellow-400 mr-2">∑</span>
+								<span v-html="totalExposureTime" class="font-medium" />
+							</div>
 						</div>
-					</div>
 
-					<div
-						v-if="picture.equipment.length"
-						class="picture__column picture__equipment mr-16"
-					>
-						<h3 class="picture__details-title text-gray-700 text-sm uppercase font-medium mt-6 mb-2">
-							Equipment
-						</h3>
-						<ul class="picture__details-list border-l border-yellow-400 pl-4 my-2 ml-1">
-							<li
-								v-for="device in picture.equipment"
-								:key="device.id"
-							>
-								{{ device.title }}
-							</li>
-						</ul>
-					</div>
+						<div
+							v-if="picture.equipment.length"
+							class="picture__column picture__equipment mr-16"
+						>
+							<h3 class="picture__details-title text-gray-700 text-sm uppercase font-medium mt-6 mb-2">
+								Equipment
+							</h3>
+							<ul class="picture__details-list border-l border-yellow-400 pl-4 my-2 ml-1">
+								<li
+									v-for="device in picture.equipment"
+									:key="device.id"
+								>
+									{{ device.title }}
+								</li>
+							</ul>
+						</div>
 
-					<div
-						v-if="picture.process.length"
-						class="picture__column picture__process"
-					>
-						<h3 class="picture__details-title text-gray-700 text-sm uppercase font-medium mt-6 mb-2">
-							Process
-						</h3>
-						<ul class="picture__details-list border-l border-yellow-400 pl-4 my-2 ml-1">
-							<li
-								v-for="step in picture.process"
-								:key="step.sofware"
-							>
-								{{ step.software }}
-							</li>
-						</ul>
+						<div
+							v-if="picture.process.length"
+							class="picture__column picture__process"
+						>
+							<h3 class="picture__details-title text-gray-700 text-sm uppercase font-medium mt-6 mb-2">
+								Process
+							</h3>
+							<ul class="picture__details-list border-l border-yellow-400 pl-4 my-2 ml-1">
+								<li
+									v-for="step in picture.process"
+									:key="step.sofware"
+								>
+									{{ step.software }}
+								</li>
+							</ul>
+						</div>
 					</div>
 				</div>
 			</div>
