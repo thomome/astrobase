@@ -3,18 +3,28 @@
 		ref="container"
 		@wheel="onWheel"
 		@mousedown="onMouseDown"
-		class="astro-picture relative w-full h-full overflow-hidden select-none"
+		:class="'astro-picture bg-black overflow-hidden select-none ' + (isFullscreen ? 'fixed w-screen h-screen top-0 left-0 z-50' : 'relative w-full h-full')"
 	>
 		<div
-			v-if="annotations && controls"
+			v-if="controls"
 			class="astro-picture__controls opacity-0 absolute bottom-0 right-0 z-10"
 		>
 			<button
-				@click="showAnnotations = !showAnnotations"
+				v-if="annotations"
+				@click="toggleAnnotations"
 				class="bg-yellow-400 text-gray-900 p-1 m-2 rounded-lg "
 			>
 				<ab-icon
 					:name="showAnnotations ? 'annotations-on' : 'annotations-off'"
+					class="text-2xl"
+				/>
+			</button>
+			<button
+				@click="toggleFullscreen"
+				class="bg-yellow-400 text-gray-900 p-1 m-2 rounded-lg "
+			>
+				<ab-icon
+					:name="isFullscreen ? 'fullscreen-exit' : 'fullscreen'"
 					class="text-2xl"
 				/>
 			</button>
@@ -70,11 +80,13 @@ export default {
 		return {
 			zoom: 1,
 			maxZoom: 5,
+			minZoom: 1,
 			offset: [0, 0],
 			isDragged: false,
 			draggStart: [0, 0],
 			offsetStart: [0, 0],
 			showAnnotations: true,
+			isFullscreen: false,
 			minRadius: 30,
 			labelPadding: {
 				x: 8,
@@ -152,12 +164,18 @@ export default {
 		window.removeEventListener('mouseup', this.onMouseUp)
 	},
 	methods: {
+		toggleAnnotations () {
+			this.showAnnotations = !this.showAnnotations
+		},
+		toggleFullscreen () {
+			this.isFullscreen = !this.isFullscreen
+		},
 		onWheel (e) {
-			if (!this.controls) {
+			if (!this.controls || !this.isFullscreen) {
 				return false
 			}
 
-			const { zoom, offset, maxZoom } = this
+			const { zoom, offset, maxZoom, minZoom } = this
 
 			e.preventDefault()
 
@@ -175,8 +193,8 @@ export default {
 
 			if (newZoom > maxZoom) {
 				newZoom = maxZoom
-			} else if (newZoom < 1) {
-				newZoom = 1
+			} else if (newZoom < minZoom) {
+				newZoom = minZoom
 			}
 
 			const newOffset = [

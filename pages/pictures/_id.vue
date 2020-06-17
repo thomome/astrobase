@@ -1,6 +1,18 @@
 <template>
 	<main class="main-content">
 		<div class="container mt-32">
+			<nuxt-link
+				to="/pictures"
+				class="inline-block ml-n8 mb-6 pt-5 text-gray-300 hover:text-white"
+			>
+				<ab-icon
+					name="arrow-left"
+					class="text-2xl align-top"
+				/>
+				<span class="">Back to Pictures</span>
+			</nuxt-link>
+		</div>
+		<div class="container">
 			<ab-picture
 				:controls="true"
 				:annotations="picture.annotations"
@@ -24,7 +36,7 @@
 							<nuxt-link
 								v-for="tag in picture.tags"
 								:key="tag.id"
-								:to="{ path: 'pictures', query: { objects: [tag.id] } }"
+								:to="{ path: '/pictures', query: { objects: [tag.id] } }"
 								class="inline-block mr-2 border-b border-yellow-400 text-gray-300 hover:text-white"
 							>
 								{{ tag.name }}
@@ -105,9 +117,10 @@ import { getPicture } from '~/api/api.js'
 
 import AbPicture from '~/components/AbPicture.vue'
 import AbTag from '~/components/AbTag.vue'
+import AbIcon from '~/components/AbIcon.vue'
 
 export default {
-	components: { AbPicture, AbTag },
+	components: { AbPicture, AbTag, AbIcon },
 	computed: {
 		totalExposureTime () {
 			const secs = this.picture.exposures.reduce((p, v) => {
@@ -127,16 +140,22 @@ export default {
 			return durationString
 		}
 	},
-	async asyncData ({ params }) {
+	async asyncData ({ params, app }) {
 		const picture = await getPicture(params.id)
+		const meta = {
+			title: `${picture.result.title} - ${app.head.title}`
+		}
 
 		return {
+			meta,
 			picture: picture.result
 		}
+	},
+	head () {
+		return this.meta
 	}
 }
 </script>
 
-<style>
-
+<style lang="scss">
 </style>

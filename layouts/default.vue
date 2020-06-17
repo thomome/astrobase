@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<header class="fixed main-header top-0 w-full pt-12 pb-24 z-20">
+		<header class="fixed main-header top-0 w-full pt-12 pb-24 z-20 pointer-events-none">
 			<ab-main-navigation />
 		</header>
 		<nuxt />
@@ -25,7 +25,7 @@ export default {
 	}
 
 	.container {
-		@apply max-w-wide mx-auto px-8;
+		@apply max-w-narrow mx-auto px-8;
 	}
 
 	.button {

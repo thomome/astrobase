@@ -13,7 +13,11 @@ module.exports = {
 		},
 		extend: {
 			maxWidth: {
-				'wide': '100rem'
+				'wide': '100rem',
+				'narrow': '90rem'
+			},
+			spacing: {
+				n8: '-2rem',
 			},
 			colors: {
 				yellow: {

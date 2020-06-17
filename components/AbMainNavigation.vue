@@ -1,5 +1,5 @@
 <template>
-	<nav class="main-navigation flex max-w-wide mx-auto px-8">
+	<nav class="main-navigation flex max-w-wide mx-auto px-8 pointer-events-auto">
 		<nuxt-link
 			v-for="link in links"
 			:key="link.id"

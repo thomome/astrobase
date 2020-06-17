@@ -62,8 +62,10 @@ export default {
 	},
 	updated () {
 		const textBBox = this.$refs.text.getBBox()
-		this.labelW = textBBox.width + this.padding.x * 2
-		this.labelH = textBBox.height + this.padding.y * 2
+		if (textBBox.height !== 0) {
+			this.labelW = textBBox.width + this.padding.x * 2
+			this.labelH = textBBox.height + this.padding.y * 2
+		}
 	}
 }
 </script>

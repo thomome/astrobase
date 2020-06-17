@@ -55,6 +55,11 @@ export default {
 			picture: page.result.picture,
 			pictures: pictures.results
 		}
+	},
+	head () {
+		return {
+			title: this.title
+		}
 	}
 }
 </script>

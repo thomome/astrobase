@@ -44,15 +44,23 @@ import AbMap from '~/components/AbMap.vue'
 
 export default {
 	components: { AbHero, AbImage, AbCard, AbMap },
-	async asyncData ({ params }) {
+	async asyncData ({ params, app }) {
 		const page = await getPage('about')
 
+		const meta = {
+			title: `${page.result.title} - ${app.head.title}`
+		}
+
 		return {
+			meta,
 			title: page.result.title,
 			picture: page.result.hero_image,
 			devices: page.result.current_equipment,
 			locations: page.result.current_locations
 		}
+	},
+	head () {
+		return this.meta
 	}
 }
 </script>

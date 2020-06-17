@@ -83,7 +83,7 @@ export default {
 			isLoading: true
 		}
 	},
-	async asyncData ({ query }) {
+	async asyncData ({ query, app }) {
 		const params = {
 			objects: [],
 			devices: [],
@@ -101,12 +101,20 @@ export default {
 
 		const pictures = await getPictures(params)
 
+		const meta = {
+			title: `Pictures - ${app.head.title}`
+		}
+
 		return {
+			meta,
 			pictures: pictures.results,
 			total: pictures.total,
 			isLoading: false,
 			params
 		}
+	},
+	head () {
+		return this.meta
 	},
 	mounted () {
 		window.addEventListener('scroll', () => {
