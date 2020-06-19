@@ -1,15 +1,15 @@
 <template>
 	<main class="main-content">
-		<div class="container mt-32">
+		<div class="container container--wide mt-16 md:mt-32">
 			<nuxt-link
 				to="/pictures"
-				class="inline-block ml-n8 mb-6 pt-5 text-gray-300 hover:text-white"
+				class="inline-block mb-6 mt-5 text-gray-300 hover:text-white"
 			>
 				<ab-icon
 					name="arrow-left"
 					class="text-2xl align-top"
 				/>
-				<span class="">Back to Pictures</span>
+				<span>Back to Pictures</span>
 			</nuxt-link>
 		</div>
 		<div class="container">

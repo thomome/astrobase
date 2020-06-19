@@ -14,7 +14,8 @@ module.exports = {
 		extend: {
 			maxWidth: {
 				'wide': '100rem',
-				'narrow': '90rem'
+				'narrow': '90rem',
+				'narrow-plus': '94rem'
 			},
 			spacing: {
 				n8: '-2rem',

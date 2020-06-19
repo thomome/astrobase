@@ -1,17 +1,53 @@
 <template>
 	<div>
-		<header class="fixed main-header top-0 w-full pt-12 pb-24 z-20 pointer-events-none">
+		<header
+			:class="'fixed main-header top-0 w-full pt-4 lg:pt-12 pb-24 lg:pt-12 z-20 pointer-events-none' + (isScrolled ? ' main-header--scrolled' : '')"
+		>
 			<ab-main-navigation />
 		</header>
 		<nuxt />
+		<ab-main-footer />
 	</div>
 </template>
 
 <script>
 import AbMainNavigation from '~/components/AbMainNavigation.vue'
+import AbMainFooter from '~/components/AbMainFooter.vue'
 
 export default {
-	components: { AbMainNavigation }
+	components: { AbMainNavigation, AbMainFooter },
+	data () {
+		return {
+			isScrolled: false,
+			lastSize: [0, 0]
+		}
+	},
+	mounted () {
+		this.setVh()
+		window.addEventListener('scroll', this.onScroll)
+		window.addEventListener('resize', this.setVh)
+	},
+	destroyed () {
+		window.removeEventListener('scroll', this.onScroll)
+		window.removeEventListener('resize', this.setVh)
+	},
+	methods: {
+		setVh () {
+			const { lastSize } = this
+			if (Math.abs(window.innerHeight - lastSize[1]) > 80) {
+				const vh = window.innerHeight * 0.01
+				document.documentElement.style.setProperty('--vh', `${vh}px`)
+				this.lastSize = [window.innerWidth, window.innerHeight]
+			}
+		},
+		onScroll () {
+			if (pageYOffset > 40) {
+				this.isScrolled = true
+			} else {
+				this.isScrolled = false
+			}
+		}
+	}
 }
 </script>
 
@@ -25,7 +61,15 @@ export default {
 	}
 
 	.container {
-		@apply max-w-narrow mx-auto px-8;
+		@apply max-w-narrow mx-auto px-4;
+
+		&.container--wide {
+			@apply max-w-narrow-plus;
+		}
+
+		@media screen and (min-width: theme('screens.lg')) {
+			@apply px-8;
+		}
 	}
 
 	.button {

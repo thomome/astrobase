@@ -39,7 +39,7 @@
 				</nuxt-link>
 			</div>
 
-			<div class="picture__column-container flex flex-wrap lg:block">
+			<div class="picture__column-container hidden md:flex flex-wrap lg:block">
 				<div
 					v-if="picture.exposures.length"
 					class="picture__column picture__exposures mr-16 lg:mr-0"

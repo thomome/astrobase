@@ -3,6 +3,9 @@
 		ref="container"
 		@wheel="onWheel"
 		@mousedown="onMouseDown"
+		@touchstart="onTouchStart"
+		@touchend="onTouchEnd"
+		@touchmove="onTouchMove"
 		:class="'astro-picture bg-black overflow-hidden select-none ' + (isFullscreen ? 'fixed w-screen h-screen top-0 left-0 z-50' : 'relative w-full h-full')"
 	>
 		<div
@@ -36,8 +39,8 @@
 			<ab-image
 				:image="image"
 				:style="transform"
+				:class="'astro-picture__img block w-full h-full ' + (isFullscreen ? 'object-contain' : 'object-cover')"
 				min-size="medium_large"
-				class="astro-picture__img block w-full h-full object-cover"
 			/>
 			<svg
 				v-if="annotations"
@@ -57,6 +60,7 @@
 						:ratio="ratio"
 						:minRadius="minRadius"
 						:padding="labelPadding"
+						:linkDisabled="linksDisabled"
 					/>
 				</g>
 			</svg>
@@ -82,9 +86,18 @@ export default {
 			maxZoom: 5,
 			minZoom: 1,
 			offset: [0, 0],
+
 			isDragged: false,
-			draggStart: [0, 0],
-			offsetStart: [0, 0],
+			dragStart: [0, 0],
+			dragOffsetStart: [0, 0],
+
+			isZooming: false,
+			zoomStart: [0, 0],
+			zoomDistStart: 0,
+			zoomZoomStart: 1,
+
+			linksDisabled: false,
+
 			showAnnotations: true,
 			isFullscreen: false,
 			minRadius: 30,
@@ -100,8 +113,13 @@ export default {
 	},
 	computed: {
 		ratio () {
-			const { image, container, zoom } = this
-			return image.width / image.height < container.width / container.height ? container.width / image.width * zoom : container.height / image.height * zoom
+			const { isFullscreen, image, container, zoom } = this
+
+			if (isFullscreen) {
+				return image.width / image.height > container.width / container.height ? container.width / image.width * zoom : container.height / image.height * zoom
+			} else {
+				return image.width / image.height < container.width / container.height ? container.width / image.width * zoom : container.height / image.height * zoom
+			}
 		},
 		group () {
 			const { image, size, ratio } = this
@@ -128,11 +146,15 @@ export default {
 				const bR = b.radius || 0
 				const aR = a.radius || 0
 				return bR - aR
-			})
+			}).slice(0, this.maxAnnotations)
 		},
 		size () {
 			const { container, zoom } = this
 			return [container.width * zoom, container.height * zoom]
+		},
+		maxAnnotations () {
+			const { size } = this
+			return Math.ceil(size[0] * 0.01)
 		},
 		transform () {
 			const { offset, zoom } = this
@@ -156,19 +178,86 @@ export default {
 
 		window.addEventListener('mousemove', this.onMouseMove)
 		window.addEventListener('mouseup', this.onMouseUp)
+		window.addEventListener('keyup', this.onKeyUp)
 	},
 	destroyed () {
 		this.resizeObserver.disconnect()
 
 		window.removeEventListener('mousemove', this.onMouseMove)
 		window.removeEventListener('mouseup', this.onMouseUp)
+		window.removeEventListener('keyup', this.onKeyUp)
 	},
 	methods: {
 		toggleAnnotations () {
 			this.showAnnotations = !this.showAnnotations
 		},
 		toggleFullscreen () {
-			this.isFullscreen = !this.isFullscreen
+			if (!this.isFullscreen) {
+				this.$refs.container.requestFullscreen().then(() => {
+					this.isFullscreen = !this.isFullscreen
+				})
+			} else {
+				document.exitFullscreen()
+				this.isFullscreen = !this.isFullscreen
+				this.zoom = 1
+				this.offset = [0, 0]
+			}
+		},
+		onTouchStart (e) {
+			if (!this.isFullscreen || !this.controls) {
+				return false
+			}
+
+			const { zoom } = this
+
+			if (e.touches.length >= 2) {
+				this.zoomStart = [
+					e.touches[0].clientX + (e.touches[1].clientX - e.touches[0].clientX) / 2,
+					e.touches[0].clientY + (e.touches[1].clientY - e.touches[0].clientY) / 2
+				]
+				this.zoomDistStart = (e.touches[1].clientX - e.touches[0].clientX) ** 2 + (e.touches[1].clientY - e.touches[0].clientY) ** 2
+				this.zoomZoomStart = zoom
+				this.isZooming = true
+			} else if (e.touches.length === 1) {
+				this.onMouseDown(e.touches[0])
+			}
+		},
+		onTouchMove (e) {
+			if (!this.controls) {
+				return false
+			}
+
+			if (this.isZooming && e.touches.length >= 2) {
+				const { zoomDistStart, zoomZoomStart, zoomStart, offset, zoom, minZoom, maxZoom } = this
+
+				const currentDist = (e.touches[1].clientX - e.touches[0].clientX) ** 2 + (e.touches[1].clientY - e.touches[0].clientY) ** 2
+				let newZoom = zoomZoomStart * (currentDist / zoomDistStart / 2)
+
+				if (newZoom > maxZoom) {
+					newZoom = maxZoom
+				} else if (newZoom < minZoom) {
+					newZoom = minZoom
+				}
+
+				const newOffset = [
+					((offset[0] - zoomStart[0]) / zoom * newZoom) + zoomStart[0],
+					((offset[1] - zoomStart[1]) / zoom * newZoom) + zoomStart[1]
+				]
+
+				this.zoom = newZoom
+				this.updateOffset(newOffset)
+			} else if (this.isDragged && e.touches.length === 1) {
+				this.onMouseMove(e.touches[0])
+			}
+		},
+		onTouchEnd (e) {
+			if (!this.controls) {
+				return false
+			}
+
+			this.zoomStart = [0, 0]
+			this.isZooming = false
+			this.isDragged = false
 		},
 		onWheel (e) {
 			if (!this.controls || !this.isFullscreen) {
@@ -205,14 +294,20 @@ export default {
 			this.zoom = newZoom
 			this.updateOffset(newOffset)
 		},
+		onKeyUp (e) {
+			const { isFullscreen } = this
+			if (e.key === 'Escape' && isFullscreen) {
+				this.isFullscreen = false
+			}
+		},
 		onMouseDown (e) {
 			if (!this.controls) {
 				return false
 			}
 
 			this.isDragged = true
-			this.draggStart = [e.clientX, e.clientY]
-			this.offsetStart = this.offset
+			this.dragStart = [e.clientX, e.clientY]
+			this.dragOffsetStart = this.offset
 		},
 		onMouseUp (e) {
 			if (!this.controls) {
@@ -220,19 +315,25 @@ export default {
 			}
 
 			this.isDragged = false
+
+			requestAnimationFrame(() => {
+				this.linksDisabled = false
+			})
 		},
 		onMouseMove (e) {
 			if (!this.controls) {
 				return false
 			}
 
-			const { isDragged, offsetStart, draggStart } = this
+			const { isDragged, dragOffsetStart, dragStart } = this
+
 			if (isDragged) {
 				const newOffset = [
-					offsetStart[0] - (draggStart[0] - e.clientX),
-					offsetStart[1] - (draggStart[1] - e.clientY)
+					dragOffsetStart[0] - (dragStart[0] - e.clientX),
+					dragOffsetStart[1] - (dragStart[1] - e.clientY)
 				]
 				this.updateOffset(newOffset)
+				this.linksDisabled = true
 			}
 		},
 		updateOffset (offset) {

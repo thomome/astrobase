@@ -1,6 +1,6 @@
 <template>
 	<main class="main-content">
-		<div class="picture-list container mt-48">
+		<div class="picture-list container mt-24 md:mt-40">
 			<div class="sort">
 				<ab-select
 					:on-change="updateParams"
@@ -11,7 +11,7 @@
 					class="w-full max-w-xs mr-6 mb-4"
 				/>
 			</div>
-			<div class="filters flex flex-wrap pb-4">
+			<div class="filters grid sm:grid-cols-2 md:grid-cols-3 gap-4 mb-8">
 				<ab-select
 					:on-change="updateParams"
 					:values="params.objects"
@@ -21,7 +21,7 @@
 					label="Objects"
 					params-key="objects"
 					label-key="name"
-					class="w-full max-w-sm mr-6 mb-4"
+					class="w-full mb-1"
 				/>
 				<ab-select
 					:on-change="updateParams"
@@ -32,7 +32,7 @@
 					label="Devices"
 					params-key="devices"
 					label-key="title"
-					class="w-full max-w-sm mr-6 mb-4"
+					class="w-full mb-1"
 				/>
 				<ab-select
 					:on-change="updateParams"
@@ -43,7 +43,7 @@
 					label="Locations"
 					params-key="locations"
 					label-key="title"
-					class="w-full max-w-sm mr-6 mb-4"
+					class="w-full mb-1"
 				/>
 			</div>
 			<ab-post-picture
@@ -51,6 +51,20 @@
 				:key="picture.id"
 				:picture="picture"
 			/>
+			<div
+				v-if="pictures.length === 0 && !isLoading"
+				class="flex flex-col items-center mt-12 mb-24"
+			>
+				<p>
+					No pictures found for your filter settings.
+				</p>
+				<nuxt-link
+					to="/pictures"
+					class="button mt-6"
+				>
+					Reset Filters
+				</nuxt-link>
+			</div>
 			<ab-loading
 				v-if="isLoading"
 				class="mx-auto mt-12 mb-24"
@@ -87,6 +101,7 @@ export default {
 		const params = {
 			objects: [],
 			devices: [],
+			locations: [],
 			limit: config.perPage,
 			offset: 0,
 			orderby: 'latest'

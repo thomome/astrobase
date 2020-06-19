@@ -2,6 +2,7 @@
 	<nuxt-link
 		:to="link"
 		:transform="`translate(${x}, ${y})`"
+		:event="linkDisabled ? '' : 'click'"
 		class="picture-annotation"
 	>
 		<circle
@@ -34,6 +35,7 @@
 <script>
 export default {
 	props: {
+		linkDisabled: { type: Boolean, default: false },
 		annotation: { type: Object, required: true },
 		ratio: { type: Number, default: 1 },
 		minRadius: { type: Number, default: 30 },
@@ -60,7 +62,7 @@ export default {
 			}
 		}
 	},
-	updated () {
+	mounted () {
 		const textBBox = this.$refs.text.getBBox()
 		if (textBBox.height !== 0) {
 			this.labelW = textBBox.width + this.padding.x * 2
