@@ -6,7 +6,8 @@
 		@touchstart="onTouchStart"
 		@touchend="onTouchEnd"
 		@touchmove="onTouchMove"
-		:class="'astro-picture bg-black overflow-hidden select-none ' + (isFullscreen ? 'fixed w-screen h-screen top-0 left-0 z-50' : 'relative w-full h-full')"
+		@fullscreenchange="onFullscrenChange"
+		:class="'astro-picture relative w-full h-full bg-black overflow-hidden select-none'"
 	>
 		<div
 			v-if="controls"
@@ -193,11 +194,15 @@ export default {
 		},
 		toggleFullscreen () {
 			if (!this.isFullscreen) {
-				this.$refs.container.requestFullscreen().then(() => {
-					this.isFullscreen = !this.isFullscreen
-				})
+				this.$refs.container.requestFullscreen()
 			} else {
 				document.exitFullscreen()
+			}
+		},
+		onFullscrenChange () {
+			if (document.fullscreenElement) {
+				this.isFullscreen = !this.isFullscreen
+			} else {
 				this.isFullscreen = !this.isFullscreen
 				this.zoom = 1
 				this.offset = [0, 0]
@@ -231,7 +236,7 @@ export default {
 				const { zoomDistStart, zoomZoomStart, zoomStart, offset, zoom, minZoom, maxZoom } = this
 
 				const currentDist = (e.touches[1].clientX - e.touches[0].clientX) ** 2 + (e.touches[1].clientY - e.touches[0].clientY) ** 2
-				let newZoom = zoomZoomStart * (currentDist / zoomDistStart / 2)
+				let newZoom = zoomZoomStart * (currentDist / zoomDistStart)
 
 				if (newZoom > maxZoom) {
 					newZoom = maxZoom
