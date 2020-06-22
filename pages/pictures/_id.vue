@@ -12,97 +12,131 @@
 				<span>Back to Pictures</span>
 			</nuxt-link>
 		</div>
-		<div class="container">
-			<ab-picture
-				:controls="true"
-				:annotations="picture.annotations"
-				:image="picture.image"
-			/>
-			<div class="picture__details mt-4">
-				<div class="picture__column-container flex flex-wrap">
-					<div class="picture__column picture__general max-w-xl">
-						<h2 class="picture__title text-xl text-white">
-							{{ picture.title }}
-						</h2>
+		<div class="container mt-4">
+			<div class="picture__column picture__general max-w-xl mb-4">
+				<h1 class="picture__title text-2xl leading-tight text-white">
+					{{ picture.title }}
+				</h1>
 
-						<div class="picture__date-location text-gray-700 text-sm">
-							{{ picture.date }} - {{ picture.location[0].title }}
-						</div>
+				<div class="picture__date-location text-gray-700 text-sm">
+					{{ picture.date }} - {{ picture.location[0].title }}
+				</div>
+			</div>
+			<div class="picture__image">
+				<ab-picture
+					:controls="true"
+					:image="image"
+				/>
+			</div>
 
-						<p class="picture__description max-w-6xl font-light leading-snug my-4">
-							{{ picture.description }}
-						</p>
-						<div class="picture__tags max-w-6xl font-light text-sm">
-							<nuxt-link
-								v-for="tag in picture.tags"
-								:key="tag.id"
-								:to="{ path: '/pictures', query: { objects: [tag.id] } }"
-								class="inline-block mr-2 border-b border-yellow-400 text-gray-300 hover:text-white"
+			<div class="picture__details md:flex my-4">
+				<div class="picture__column max-w-2xl">
+					<div class="picture__image-description text-gray-700 text-sm leading-tight border-l border-yellow-400 pl-3">
+						{{ image.description }}
+					</div>
+				</div>
+				<div class="picture__column ml-auto">
+					<div
+						v-if="picture.image.length > 1"
+						class="picture__versions flex"
+					>
+						<button
+							v-for="(img, index) in picture.image"
+							:key="img.id"
+							@click="version = index"
+							:class="'picture__version-item ml-2 w-16 border border-solid ' + (index === version ? 'border-yellow-400' : 'border-transparent')"
+						>
+							<img
+								:src="img.sizes.thumbnail"
 							>
-								{{ tag.name }}
-							</nuxt-link>
+						</button>
+					</div>
+				</div>
+			</div>
+
+			<div class="picture__details md:grid md:grid-cols-3 md:gap-12">
+				<div class="picture__column md:col-span-2">
+					<div class="picture__general">
+						<p
+							v-html="picture.description"
+							class="picture__description max-w-6xl font-light leading-snug my-6"
+						/>
+					</div>
+				</div>
+
+				<div class="picture__column md:col-span-1">
+					<div
+						v-if="picture.exposures.length"
+						class="picture__column picture__exposures mr-16"
+					>
+						<h3 class="picture__details-title text-gray-700 text-sm uppercase font-medium mt-6 mb-2">
+							Exposure Time
+						</h3>
+						<ul class="picture__details-list border-l border-yellow-400 pl-4 my-2 ml-1">
+							<li
+								v-for="exposure in picture.exposures"
+								:key="exposure.exposure_time + exposure.mode"
+							>
+								{{ exposure.amount }} x {{ exposure.exposure_time }}&#8239;<small>s</small>
+								<ab-tag
+									:label="exposure.mode.label"
+									:type="exposure.mode.value"
+									class="sm"
+								/>
+							</li>
+						</ul>
+						<div class="-ml-px">
+							<span class="text-yellow-400 mr-2">∑</span>
+							<span v-html="totalExposureTime" class="font-medium" />
 						</div>
 					</div>
-					<div class="picture__meta flex ml-auto">
-						<div
-							v-if="picture.exposures.length"
-							class="picture__column picture__exposures mr-16"
-						>
-							<h3 class="picture__details-title text-gray-700 text-sm uppercase font-medium mt-6 mb-2">
-								Exposure Time
-							</h3>
-							<ul class="picture__details-list border-l border-yellow-400 pl-4 my-2 ml-1">
-								<li
-									v-for="exposure in picture.exposures"
-									:key="exposure.exposure_time + exposure.mode"
-								>
-									{{ exposure.amount }} x {{ exposure.exposure_time }}&#8239;<small>s</small>
-									<ab-tag
-										:label="exposure.mode.label"
-										:type="exposure.mode.value"
-										class="sm"
-									/>
-								</li>
-							</ul>
-							<div class="-ml-px">
-								<span class="text-yellow-400 mr-2">∑</span>
-								<span v-html="totalExposureTime" class="font-medium" />
-							</div>
-						</div>
 
-						<div
-							v-if="picture.equipment.length"
-							class="picture__column picture__equipment mr-16"
+					<div class="picture__tags max-w-6xl font-light text-sm">
+						<h3 class="picture__details-title text-gray-700 text-sm uppercase font-medium mt-6 mb-2">
+							Objects in picture
+						</h3>
+						<nuxt-link
+							v-for="tag in picture.tags"
+							:key="tag.id"
+							:to="{ path: '/pictures', query: { objects: [tag.id] } }"
+							class="inline-block mr-2 border-b border-yellow-400 text-gray-300 hover:text-white"
 						>
-							<h3 class="picture__details-title text-gray-700 text-sm uppercase font-medium mt-6 mb-2">
-								Equipment
-							</h3>
-							<ul class="picture__details-list border-l border-yellow-400 pl-4 my-2 ml-1">
-								<li
-									v-for="device in picture.equipment"
-									:key="device.id"
-								>
-									{{ device.title }}
-								</li>
-							</ul>
-						</div>
+							{{ tag.name }}
+						</nuxt-link>
+					</div>
 
-						<div
-							v-if="picture.process.length"
-							class="picture__column picture__process"
-						>
-							<h3 class="picture__details-title text-gray-700 text-sm uppercase font-medium mt-6 mb-2">
-								Process
-							</h3>
-							<ul class="picture__details-list border-l border-yellow-400 pl-4 my-2 ml-1">
-								<li
-									v-for="step in picture.process"
-									:key="step.sofware"
-								>
-									{{ step.software }}
-								</li>
-							</ul>
-						</div>
+					<div
+						v-if="picture.equipment.length"
+						class="picture__column picture__equipment mr-16"
+					>
+						<h3 class="picture__details-title text-gray-700 text-sm uppercase font-medium mt-6 mb-2">
+							Equipment
+						</h3>
+						<ul class="picture__details-list border-l border-yellow-400 pl-4 my-2 ml-1">
+							<li
+								v-for="device in picture.equipment"
+								:key="device.id"
+							>
+								{{ device.title }}
+							</li>
+						</ul>
+					</div>
+
+					<div
+						v-if="picture.process.length"
+						class="picture__column picture__process"
+					>
+						<h3 class="picture__details-title text-gray-700 text-sm uppercase font-medium mt-6 mb-2">
+							Software
+						</h3>
+						<ul class="picture__details-list border-l border-yellow-400 pl-4 my-2 ml-1">
+							<li
+								v-for="step in picture.process"
+								:key="step.sofware"
+							>
+								{{ step.software }}
+							</li>
+						</ul>
 					</div>
 				</div>
 			</div>
@@ -121,7 +155,16 @@ import AbIcon from '~/components/AbIcon.vue'
 
 export default {
 	components: { AbPicture, AbTag, AbIcon },
+	data () {
+		return {
+			version: 0
+		}
+	},
 	computed: {
+		image () {
+			const { picture, version } = this
+			return picture.image[version]
+		},
 		totalExposureTime () {
 			const secs = this.picture.exposures.reduce((p, v) => {
 				return p + v.exposure_time * v.amount

@@ -7,7 +7,7 @@
 		>
 			<ab-picture
 				:annotations="picture.annotations"
-				:image="picture.image"
+				:image="picture.image[0]"
 				:annotated="true"
 			/>
 		</ab-hero>

@@ -73,6 +73,14 @@ export default {
 	}
 
 	.button {
-		@apply inline-block border border-gray-400 px-4 py-2 text-gray-400 font-light;
+		@apply inline-block border border-gray-400 px-4 py-2 text-gray-400 font-light outline-none;
+	}
+
+	button {
+		@apply outline-none;
+
+		&:focus {
+			@apply outline-none;
+		}
 	}
 </style>

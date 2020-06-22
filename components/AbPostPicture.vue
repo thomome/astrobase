@@ -6,7 +6,7 @@
 				tag="a"
 			>
 				<ab-image
-					:image="picture.image"
+					:image="image"
 					class="picture__image block w-full min-h-full object-cover"
 				/>
 			</nuxt-link>
@@ -65,40 +65,6 @@
 						<span v-html="totalExposureTime" class="font-medium" />
 					</div>
 				</div>
-
-				<div
-					v-if="picture.equipment.length"
-					class="picture__column picture__equipment mr-16 lg:mr-0"
-				>
-					<h3 class="picture__details-title text-gray-700 text-sm uppercase font-medium mt-6 mb-2">
-						Equipment
-					</h3>
-					<ul class="picture__details-list border-l border-yellow-400 pl-4 my-2 ml-1">
-						<li
-							v-for="device in picture.equipment"
-							:key="device.id"
-						>
-							{{ device.title }}
-						</li>
-					</ul>
-				</div>
-
-				<div
-					v-if="picture.process.length"
-					class="picture__column picture__process mr-16 lg:mr-0"
-				>
-					<h3 class="picture__details-title text-gray-700 text-sm uppercase font-medium mt-6 mb-2">
-						Process
-					</h3>
-					<ul class="picture__details-list border-l border-yellow-400 pl-4 my-2 ml-1">
-						<li
-							v-for="step in picture.process"
-							:key="step.sofware"
-						>
-							{{ step.software }}
-						</li>
-					</ul>
-				</div>
 			</div>
 		</div>
 	</div>
@@ -116,6 +82,9 @@ export default {
 		picture: { type: Object, required: true }
 	},
 	computed: {
+		image () {
+			return this.picture.image[0]
+		},
 		totalExposureTime () {
 			const secs = this.picture.exposures.reduce((p, v) => {
 				return p + v.exposure_time * v.amount

@@ -11,10 +11,10 @@
 	>
 		<div
 			v-if="controls"
-			class="astro-picture__controls opacity-0 absolute bottom-0 right-0 z-10"
+			class="astro-picture__controls absolute bottom-0 right-0 z-10"
 		>
 			<button
-				v-if="annotations"
+				v-if="preparedAnnotations"
 				@click="toggleAnnotations"
 				class="bg-yellow-400 text-gray-900 p-1 m-2 rounded-lg "
 			>
@@ -44,7 +44,7 @@
 				min-size="medium_large"
 			/>
 			<svg
-				v-if="annotations"
+				v-if="preparedAnnotations"
 				v-show="showAnnotations"
 				:style="transform"
 				:viewBox="viewBox"
@@ -77,7 +77,6 @@ import AbPictureAnnotation from '~/components/AbPictureAnnotation.vue'
 export default {
 	components: { AbPictureAnnotation, AbImage, AbIcon },
 	props: {
-		annotations: { type: Array, default: () => [] },
 		image: { type: Object, required: true },
 		controls: { type: Boolean, default: false }
 	},
@@ -116,21 +115,31 @@ export default {
 		ratio () {
 			const { isFullscreen, image, container, zoom } = this
 
+			const width = image.sizes['large-width']
+			const height = image.sizes['large-height']
+
 			if (isFullscreen) {
-				return image.width / image.height > container.width / container.height ? container.width / image.width * zoom : container.height / image.height * zoom
+				return width / height > container.width / container.height ? container.width / width * zoom : container.height / height * zoom
 			} else {
-				return image.width / image.height < container.width / container.height ? container.width / image.width * zoom : container.height / image.height * zoom
+				return width / height < container.width / container.height ? container.width / width * zoom : container.height / height * zoom
 			}
 		},
 		group () {
 			const { image, size, ratio } = this
+
+			const width = image.sizes['large-width']
+			const height = image.sizes['large-height']
+
 			return {
-				x: (image.width * ratio - size[0]) * -0.5,
-				y: (image.height * ratio - size[1]) * -0.5
+				x: (width * ratio - size[0]) * -0.5,
+				y: (height * ratio - size[1]) * -0.5
 			}
 		},
 		preparedAnnotations () {
-			const { annotations } = this
+			const { annotations } = this.image
+			if (!annotations) {
+				return false
+			}
 			const annotationIndex = {}
 
 			const filteredAnnotations = annotations.filter((a) => {
@@ -364,7 +373,12 @@ export default {
 
 <style lang="scss">
 	.astro-picture__controls {
-		transition: opacity .3s;
+		@apply opacity-100;
+
+		@media screen and (min-width: theme('screens.md')) {
+			@apply opacity-0;
+			transition: opacity .3s;
+		}
 	}
 
 	.astro-picture:hover {
