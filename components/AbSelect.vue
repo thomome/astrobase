@@ -11,6 +11,7 @@
 			:multiple="true"
 			:loading="isLoading"
 			:searchable="true"
+			:internal-search="false"
 			:showLabels="false"
 			:hideSelected="true"
 			:label="labelKey"

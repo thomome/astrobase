@@ -20,7 +20,7 @@
 					async
 					label="Objects"
 					params-key="objects"
-					label-key="name"
+					label-key="long_name"
 					class="w-full mb-1"
 				/>
 				<ab-select

@@ -58,7 +58,7 @@ export default {
 		link () {
 			return {
 				path: '/pictures',
-				query: { objects: [this.annotation.tag_id] }
+				query: { objects: [this.annotation.object_id] }
 			}
 		}
 	},

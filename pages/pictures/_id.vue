@@ -31,7 +31,7 @@
 
 			<div class="picture__details md:flex my-4">
 				<div class="picture__column max-w-2xl">
-					<div class="picture__image-description text-gray-700 text-sm leading-tight border-l border-yellow-400 pl-3">
+					<div class="picture__image-description text-gray-700 text-sm leading-tight border-l border-yellow-400 pl-3 mb-4">
 						{{ image.description }}
 					</div>
 				</div>
@@ -57,7 +57,7 @@
 			<div class="picture__details md:grid md:grid-cols-3 md:gap-12">
 				<div class="picture__column md:col-span-2">
 					<div class="picture__general">
-						<p
+						<div
 							v-html="picture.description"
 							class="picture__description max-w-6xl font-light leading-snug my-6"
 						/>
@@ -96,12 +96,12 @@
 							Objects in picture
 						</h3>
 						<nuxt-link
-							v-for="tag in picture.tags"
-							:key="tag.id"
-							:to="{ path: '/pictures', query: { objects: [tag.id] } }"
+							v-for="obj in picture.objects"
+							:key="obj.id"
+							:to="{ path: '/pictures', query: { objects: [obj.id] } }"
 							class="inline-block mr-2 border-b border-yellow-400 text-gray-300 hover:text-white"
 						>
-							{{ tag.name }}
+							{{ obj.name }}
 						</nuxt-link>
 					</div>
 
@@ -201,4 +201,9 @@ export default {
 </script>
 
 <style lang="scss">
+	.picture__description {
+		p {
+			@apply my-6;
+		}
+	}
 </style>

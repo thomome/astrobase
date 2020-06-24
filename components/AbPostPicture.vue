@@ -3,7 +3,6 @@
 		<div class="picture__image-container">
 			<nuxt-link
 				:to="`/pictures/${picture.id}`"
-				tag="a"
 			>
 				<ab-image
 					:image="image"
@@ -15,7 +14,6 @@
 			<h2 class="picture__title text-xl text-white mt-4 lg:mt-0">
 				<nuxt-link
 					:to="`/pictures/${picture.id}`"
-					tag="a"
 				>
 					{{ picture.title }}
 				</nuxt-link>
@@ -25,17 +23,19 @@
 				{{ picture.date }} - {{ picture.location[0].title }}
 			</div>
 
-			<p class="picture__description max-w-md lg:max-w-6xl font-light leading-snug my-4">
-				{{ picture.description }}
-			</p>
-			<div class="picture__tags max-w-sm lg:max-w-6xl font-light text-sm">
+			<p
+				v-html="picture.excerpt"
+				class="picture__description max-w-md lg:max-w-6xl font-light leading-snug my-4"
+			/>
+
+			<div class="picture__objects max-w-sm lg:max-w-6xl font-light text-sm">
 				<nuxt-link
-					v-for="tag in picture.tags"
-					:key="tag.id"
-					:to="{ path: 'pictures', query: { objects: [tag.id] } }"
+					v-for="obj in picture.objects"
+					:key="obj.id"
+					:to="{ path: 'pictures', query: { objects: [obj.id] } }"
 					class="inline-block mr-2 border-b border-yellow-400 text-gray-300 hover:text-white"
 				>
-					{{ tag.name }}
+					{{ obj.name }}
 				</nuxt-link>
 			</div>
 
