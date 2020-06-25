@@ -143,7 +143,7 @@ export default {
 			const annotationIndex = {}
 
 			const filteredAnnotations = annotations.filter((a) => {
-				const name = a.names[0]
+				const name = a.name
 				if (annotationIndex[name]) {
 					return false
 				} else {

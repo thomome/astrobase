@@ -52,7 +52,7 @@ export default {
 		y () { return this.annotation.pixely * this.ratio },
 		radius () { return this.annotation.radius > this.minRadius ? this.annotation.radius * this.ratio : this.minRadius * this.ratio },
 		opacity () { return 1 - this.radius / 1000 },
-		label () { return this.annotation.name ? this.annotation.name : this.annotation.names.reduce((p, c) => p.length > c.length ? c : p) },
+		label () { return this.annotation.name },
 		labelX () { return Math.cos(Math.PI / 4) * this.radius - 10 },
 		labelY () { return Math.sin(Math.PI / 4) * this.radius - 10 },
 		link () {

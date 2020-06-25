@@ -83,4 +83,17 @@ export default {
 			@apply outline-none;
 		}
 	}
+
+	.video-container {
+		@apply relative h-0 w-full;
+		padding-bottom: 56.25%;
+
+		iframe {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+		}
+	}
 </style>
