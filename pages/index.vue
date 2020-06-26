@@ -6,8 +6,8 @@
 			:action="action"
 		>
 			<ab-picture
-				:annotations="picture.annotations"
-				:image="picture.image[0]"
+				:annotations="image.annotations"
+				:image="image"
 				:annotated="true"
 			/>
 		</ab-hero>
@@ -52,7 +52,7 @@ export default {
 			title: page.result.title,
 			description: page.result.description,
 			action: page.result.action,
-			picture: page.result.picture,
+			image: page.result.hero_image,
 			pictures: pictures.results
 		}
 	},

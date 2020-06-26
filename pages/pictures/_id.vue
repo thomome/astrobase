@@ -91,7 +91,10 @@
 						</div>
 					</div>
 
-					<div class="picture__tags max-w-6xl font-light text-sm">
+					<div
+						v-if="picture.objects.length"
+						class="picture__tags max-w-6xl font-light text-sm"
+					>
 						<h3 class="picture__details-title text-gray-700 text-sm uppercase font-medium mt-6 mb-2">
 							Objects in picture
 						</h3>
@@ -107,34 +110,34 @@
 
 					<div
 						v-if="picture.equipment.length"
-						class="picture__column picture__equipment mr-16"
+						class="picture__column picture__equipment mr-16 font-light text-sm"
 					>
 						<h3 class="picture__details-title text-gray-700 text-sm uppercase font-medium mt-6 mb-2">
 							Equipment
 						</h3>
-						<ul class="picture__details-list border-l border-yellow-400 pl-4 my-2 ml-1">
-							<li
-								v-for="device in picture.equipment"
-								:key="device.id"
-							>
-								{{ device.title }}
-							</li>
-						</ul>
+						<nuxt-link
+							v-for="device in picture.equipment"
+							:key="device.id"
+							:to="{ path: '/pictures', query: { devices: [device.id] } }"
+							class="inline-block mr-2 border-b border-yellow-400 text-gray-300 hover:text-white"
+						>
+							{{ device.title }}
+						</nuxt-link>
 					</div>
 
 					<div
-						v-if="picture.process.length"
-						class="picture__column picture__process"
+						v-if="picture.software.length"
+						class="picture__column picture__software"
 					>
 						<h3 class="picture__details-title text-gray-700 text-sm uppercase font-medium mt-6 mb-2">
 							Software
 						</h3>
 						<ul class="picture__details-list border-l border-yellow-400 pl-4 my-2 ml-1">
 							<li
-								v-for="step in picture.process"
-								:key="step.sofware"
+								v-for="software in picture.software"
+								:key="software.id"
 							>
-								{{ step.software }}
+								{{ software.title }}
 							</li>
 						</ul>
 					</div>
