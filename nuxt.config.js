@@ -34,6 +34,7 @@ export default {
 	*/
 	plugins: [
 		{ src: '~/plugins/mapbox', mode: 'client' },
+		{ src: '~/plugins/d3-celestial', mode: 'client' },
 	],
 	/*
 	** Nuxt.js dev-modules

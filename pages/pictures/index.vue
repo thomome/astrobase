@@ -133,7 +133,7 @@ export default {
 	},
 	mounted () {
 		window.addEventListener('scroll', () => {
-			if (this.params.offset + config.perPage < this.total && this.getScrollPosition() > 0.6) {
+			if (!this.isLoading && this.params.offset + config.perPage < this.total && this.getScrollPosition() > 0.6) {
 				this.params.offset += config.perPage
 				this.fetch()
 			}

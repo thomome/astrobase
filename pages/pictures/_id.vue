@@ -19,7 +19,7 @@
 				</h1>
 
 				<div class="picture__date-location text-gray-700 text-sm">
-					{{ picture.date }} - {{ picture.location[0].title }}
+					{{ picture.date }} - {{ location.title }}
 				</div>
 			</div>
 			<div class="picture__image">
@@ -91,6 +91,18 @@
 						</div>
 					</div>
 
+					<ab-skymap
+						v-if="image.calibration"
+						:ra="frame.ra"
+						:dec="frame.dec"
+						:lat="location.coords.lat"
+						:lon="location.coords.lng"
+						:width="frame.w"
+						:height="frame.h"
+						:orientation="frame.o"
+						class="mt-8"
+					/>
+
 					<div
 						v-if="picture.objects.length"
 						class="picture__tags max-w-6xl font-light text-sm"
@@ -149,15 +161,17 @@
 
 <script>
 import moment from 'moment'
+import { julian, moonillum, sunrise } from 'astronomia'
 
 import { getPicture } from '~/api/api.js'
 
 import AbPicture from '~/components/AbPicture.vue'
+import AbSkymap from '~/components/AbSkymap.vue'
 import AbTag from '~/components/AbTag.vue'
 import AbIcon from '~/components/AbIcon.vue'
 
 export default {
-	components: { AbPicture, AbTag, AbIcon },
+	components: { AbPicture, AbSkymap, AbTag, AbIcon },
 	data () {
 		return {
 			version: 0
@@ -167,6 +181,30 @@ export default {
 		image () {
 			const { picture, version } = this
 			return picture.image[version]
+		},
+		frame () {
+			const { sizes, calibration } = this.image
+
+			return {
+				ra: calibration.ra,
+				dec: calibration.dec,
+				w: sizes['large-width'] * calibration.pixscale / 3600,
+				h: sizes['large-height'] * calibration.pixscale / 3600,
+				o: calibration.parity === 1 ? calibration.orientation : 180 - calibration.orientation
+			}
+		},
+		location () {
+			return this.picture.location[0]
+		},
+		moonphase () {
+			const date = new Date(this.picture.timestamp)
+			const jd = new julian.Calendar().fromDate(date)
+			const sun = new sunrise.Sunrise(jd, this.location.coords.lat, this.location.coords.lng)
+			const jde = jd.toJDE()
+			return {
+				test: Math.round((1 - Math.abs(moonillum.phaseAngle3(jde) / Math.PI)) * 100) + '%',
+				test2: sun
+			}
 		},
 		totalExposureTime () {
 			const secs = this.picture.exposures.reduce((p, v) => {
