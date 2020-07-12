@@ -1,10 +1,15 @@
 <template>
-	<div ref="container" class="skymap__container">
-		<div id="skymap" class="skymap" />
+	<div class="skymap__container">
+		<canvas ref="container" class="skymap" />
 	</div>
 </template>
 
 <script>
+import StelWebEngine from 'assets/stellarium-web-engine'
+// import { julian, coord, sidereal } from 'astronomia'
+
+const client = process.client
+
 export default {
 	props: {
 		ra: { type: Number, default: 0 },
@@ -13,7 +18,13 @@ export default {
 		lon: { type: Number, default: 0 },
 		width: { type: Number, default: 0 },
 		height: { type: Number, default: 0 },
+		time: { type: Number, default: Date.now() },
 		orientation: { type: Number, default: 0 }
+	},
+	data () {
+		return {
+			stel: null
+		}
 	},
 	computed: {
 		fov () {
@@ -21,139 +32,106 @@ export default {
 		}
 	},
 	mounted () {
-		const { ra, dec, lat, lon, width, height, orientation } = this
-		const Celestial = this.$celestial
+		const { lat, lon, time } = this
 
-		const config = {
-			projection: 'airy',
-			center: [ra, dec],
-			geopos: [lat, lon],
-			zoomlevel: 100 - Math.sqrt(width ** 2 + height ** 2) / 6 * 100,
-			zoomextend: 100,
-			form: false,
-			interactive: false,
-			location: false,
-			controls: false,
-			container: 'skymap',
-			datapath: 'https://ofrohn.github.io/data/',
-			stars: {
-				names: false,
-				colors: false
-			},
-			dsos: {
-				show: true,
-				names: true,
-				colors: false,
-				data: 'dsos.14.json',
-				limit: 14
-			},
-			mw: {
-				show: false
-			},
-			lines: {
-				graticule: { show: true, stroke: '#cccccc', width: 0.6, opacity: 0.8, lon: { pos: [''], fill: '#eee', font: '10px Helvetica, Arial, sans-serif' }, lat: { pos: [''], fill: '#eee', font: '10px Helvetica, Arial, sans-serif' } },
-				equatorial: { show: false },
-				ecliptic: { show: false },
-				galactic: { show: false },
-				supergalactic: { show: false }
-			}
-		}
+		const gDate = new Date(time)
+		const BASE_URL = '/data/'
 
-		const lineStyle = {
-			stroke: 'rgba(255, 213, 0, 1)',
-			fill: 'rgba(255, 213, 0, 0.2)',
-			width: 1
-		}
-		const textStyle = {
-			fill: 'rgba(255, 213, 0, 1)',
-			font: '14px Helvetica, Arial, sans-serif',
-			align: 'left',
-			baseline: 'bottom'
-		}
+		if (client) {
+			const engine = StelWebEngine({
+				wasmFile: '/stellarium-web-engine.wasm',
+				canvas: this.$refs.container,
+				res: ['http://stelladata.noctua-software.com/surveys/stars/info.json'],
+				onReady: () => {
+					engine.then((stel) => {
+						stel.core.stars.addDataSource({ url: BASE_URL + 'skydata/stars' })
+						stel.core.skycultures.addDataSource({ url: BASE_URL + 'skydata/skycultures/western', key: 'western' })
+						stel.core.dsos.addDataSource({ url: BASE_URL + 'skydata/dso' })
+						stel.core.landscapes.addDataSource({ url: BASE_URL + 'skydata/landscapes/guereins', key: 'guereins' })
+						stel.core.milkyway.addDataSource({ url: BASE_URL + 'skydata/surveys/milkyway' })
+						stel.core.minor_planets.addDataSource({ url: BASE_URL + 'skydata/mpcorb.dat', key: 'mpc_asteroids' })
+						stel.core.planets.addDataSource({ url: BASE_URL + 'skydata/surveys/sso/moon', key: 'moon' })
+						stel.core.planets.addDataSource({ url: BASE_URL + 'skydata/surveys/sso/sun', key: 'sun' })
+						stel.core.planets.addDataSource({ url: BASE_URL + 'skydata/surveys/sso/moon', key: 'default' })
+						stel.core.comets.addDataSource({ url: BASE_URL + 'skydata/CometEls.txt', key: 'mpc_comets' })
+						stel.core.satellites.addDataSource({ url: BASE_URL + 'skydata/tle_satellite.jsonl.gz', key: 'jsonl/sat' })
 
-		const jsonLine = {
-			type: 'FeatureCollection',
-			features: [
-				{
-					type: 'Feature',
-					id: 'frame',
-					properties: {
-						n: `${Math.round(width * 10) / 10}° x ${Math.round(height * 10) / 10}°`,
-						loc: [ra, dec],
-						w: width,
-						h: height,
-						o: orientation
-					},
-					geometry: {
-						type: 'Point',
-						coordinates: [ra, dec]
-					}
+						stel.core.observer.refraction = false
+						stel.core.dss.visible = false
+						stel.core.observer.utc = stel.date2MJD(gDate)
+						stel.core.lines.equatorial.visible = true
+						stel.core.milkyway.visible = false
+						stel.core.landscapes.visible = false
+						stel.core.atmosphere.visible = false
+						stel.core.constellations.lines_visible = true
+						stel.core.constellations.lines_animation = false
+						stel.core.constellations.show_only_pointed = false
+						stel.core.observer.latitude = lat * stel.D2R
+						stel.core.observer.longitude = lon * stel.D2R
+						stel.core.observer.elevation = 500
+						stel.core.fov = Math.sqrt(this.width ** 2 + this.height ** 2) * 1.5 * stel.D2R
+
+						const center = stel.createObj('star', {
+							id: 'my star',
+							model_data: {
+								ra: this.ra,
+								de: this.dec,
+								vmag: 0
+							}
+						})
+
+						const dist = Math.sqrt(this.width ** 2 + this.height ** 2) / 2
+						const angle = Math.atan((this.height / 2) / (this.width / 2))
+						const orientation = (90 + this.orientation) * stel.D2R
+
+						const corners = [
+							this.rotateVector(this.ra, this.dec, dist, orientation + angle),
+							this.rotateVector(this.ra, this.dec, dist, orientation - angle),
+							this.rotateVector(this.ra, this.dec, dist, orientation + angle + Math.PI),
+							this.rotateVector(this.ra, this.dec, dist, orientation - angle + Math.PI),
+							this.rotateVector(this.ra, this.dec, dist, orientation + angle)
+						]
+
+						const frame = stel.createObj('geojson', {
+							data: {
+								type: 'FeatureCollection',
+								features: [{
+									type: 'Feature',
+									properties: {
+										fill: '#FFD500',
+										'fill-opacity': 0.2,
+										'stroke': '#FFD500'
+									},
+									'geometry': {
+										'type': 'Polygon',
+										'coordinates': [corners]
+									}
+								}]
+							}
+						})
+
+						const layer = stel.createLayer({ id: 'slayer', z: 50, visible: true })
+						layer.add(frame)
+						const azalt = stel.convertFrame(stel.observer, 'ICRF', 'OBSERVED', center.getInfo('radec'))
+						stel.lookAt(azalt, 0)
+					})
 				}
-			]
+			})
+		} else {
+			console.log(StelWebEngine)
 		}
-
-		Celestial.clear()
-
-		Celestial.add({
-			type: 'line',
-			callback: (error, json) => {
-				if (error) {
-					return false
-				}
-				const asterism = Celestial.getData(jsonLine, config.transform)
-				Celestial.container.selectAll('.asterisms')
-					.data(asterism.features)
-					.enter().append('path')
-					.attr('class', 'ast')
-				Celestial.redraw()
-			},
-			redraw: () => {
-				Celestial.container.selectAll('.ast').each((d) => {
-					Celestial.setStyle(lineStyle)
-					const pt = Celestial.mapProjection(d.geometry.coordinates)
-					const hcompare = Celestial.mapProjection([d.geometry.coordinates[0], d.geometry.coordinates[1] + d.properties.h])
-					const ratio = (pt[1] - hcompare[1]) / d.properties.h
-					const w = ratio * d.properties.w
-					const h = ratio * d.properties.h
-					const pts = [
-						this.rotateVector(pt, [-w / 2, -h / 2], d.properties.o),
-						this.rotateVector(pt, [w / 2, -h / 2], d.properties.o),
-						this.rotateVector(pt, [w / 2, h / 2], d.properties.o),
-						this.rotateVector(pt, [-w / 2, h / 2], d.properties.o)
-					]
-
-					const top = pts.reduce((a, c) => {
-						return a[1] > c[1] ? c : a
-					}, [Infinity, Infinity])
-
-					Celestial.context.beginPath()
-					Celestial.context.moveTo(pts[0][0], pts[0][1])
-					Celestial.context.lineTo(pts[1][0], pts[1][1])
-					Celestial.context.lineTo(pts[2][0], pts[2][1])
-					Celestial.context.lineTo(pts[3][0], pts[3][1])
-					Celestial.context.closePath()
-
-					Celestial.context.fill()
-					Celestial.context.stroke()
-					if (Celestial.clip(d.properties.loc)) {
-						Celestial.setTextStyle(textStyle)
-						Celestial.context.fillText(d.properties.n, top[0], top[1])
-					}
-				})
-			}
-		})
-
-		Celestial.display(config)
-		Celestial.resize(this.$refs.container.clientWidth)
 	},
 	methods: {
-		rotateVector (c, p, deg) {
-			const rad = deg * Math.PI / 180
-			const radSin = Math.sin(rad)
-			const radCos = Math.cos(rad)
+		rotateVector (ra, dec, dist, brng) {
+			const { sin, asin, cos, atan2, PI } = Math
+			ra = ra / 180 * PI
+			dec = dec / 180 * PI
+			dist = dist / 180 * PI
 
-			const point = [ c[0] + ((p[0] * radCos) - (p[1] * radSin)), c[1] + ((p[0] * radSin) + (p[1] * radCos)) ]
-			return point
+			const dec2 = asin(sin(dec) * cos(dist) + cos(dec) * sin(dist) * cos(brng))
+			const ra2 = ra + atan2(sin(brng) * sin(dist) * cos(dec), cos(dist) - sin(dec) * sin(dec2))
+
+			return [ra2 / PI * 180, dec2 / PI * 180]
 		}
 	}
 }

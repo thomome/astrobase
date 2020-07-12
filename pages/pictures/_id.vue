@@ -99,6 +99,7 @@
 						:lon="location.coords.lng"
 						:width="frame.w"
 						:height="frame.h"
+						:time="frame.t"
 						:orientation="frame.o"
 						class="mt-8"
 					/>
@@ -184,13 +185,15 @@ export default {
 		},
 		frame () {
 			const { sizes, calibration } = this.image
+			const { timestamp } = this.picture
 
 			return {
 				ra: calibration.ra,
 				dec: calibration.dec,
 				w: sizes['large-width'] * calibration.pixscale / 3600,
 				h: sizes['large-height'] * calibration.pixscale / 3600,
-				o: calibration.parity === 1 ? calibration.orientation : 180 - calibration.orientation
+				t: timestamp,
+				o: calibration.parity === 1 ? calibration.orientation : calibration.orientation + 180
 			}
 		},
 		location () {
