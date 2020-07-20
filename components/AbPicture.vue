@@ -120,7 +120,7 @@ export default {
 			const width = image.sizes['large-width']
 			const height = image.sizes['large-height']
 
-			if (isFullscreen) {
+			if (isFullscreen) { // to switch between cover and contain
 				return width / height > container.width / container.height ? container.width / width * zoom : container.height / height * zoom
 			} else {
 				return width / height < container.width / container.height ? container.width / width * zoom : container.height / height * zoom
@@ -132,6 +132,7 @@ export default {
 			const width = image.sizes['large-width']
 			const height = image.sizes['large-height']
 
+			// Keep the svg group in the center
 			return {
 				x: (width * aspectRatio - size[0]) * -0.5,
 				y: (height * aspectRatio - size[1]) * -0.5
@@ -144,6 +145,7 @@ export default {
 			}
 			const annotationIndex = {}
 
+			// remove dublicates from API
 			const filteredAnnotations = annotations.filter((a) => {
 				const name = a.name
 				if (annotationIndex[name]) {
@@ -154,6 +156,7 @@ export default {
 				}
 			})
 
+			// sort by radius so small are over large annotations
 			return filteredAnnotations.sort((a, b) => {
 				const bR = b.radius || 0
 				const aR = a.radius || 0
@@ -162,6 +165,7 @@ export default {
 		},
 		maxAnnotations () {
 			const { size } = this
+			// Limit annotations for mobile
 			return Math.ceil(size[0] * 0.01)
 		},
 		size () {
@@ -227,10 +231,12 @@ export default {
 			const { zoom } = this
 
 			if (e.touches.length >= 2) {
+				// get center of the two touch points
 				this.zoomStartPos = [
 					e.touches[0].clientX + (e.touches[1].clientX - e.touches[0].clientX) / 2,
 					e.touches[0].clientY + (e.touches[1].clientY - e.touches[0].clientY) / 2
 				]
+				// get distance between touch points
 				this.zoomDistStart = (e.touches[1].clientX - e.touches[0].clientX) ** 2 + (e.touches[1].clientY - e.touches[0].clientY) ** 2
 				this.zoomStart = zoom
 				this.isZooming = true
@@ -247,6 +253,7 @@ export default {
 				const { zoomDistStart, zoomStart, zoomStartPos, offset, zoom, minZoom, maxZoom } = this
 
 				const currentDist = (e.touches[1].clientX - e.touches[0].clientX) ** 2 + (e.touches[1].clientY - e.touches[0].clientY) ** 2
+				// get ratio between current and start distance between the two touch points
 				let newZoom = zoomStart * (currentDist / zoomDistStart)
 
 				if (newZoom > maxZoom) {
@@ -255,6 +262,7 @@ export default {
 					newZoom = minZoom
 				}
 
+				// calc new image offset top/left
 				const newOffset = [
 					((offset[0] - zoomStartPos[0]) / zoom * newZoom) + zoomStartPos[0],
 					((offset[1] - zoomStartPos[1]) / zoom * newZoom) + zoomStartPos[1]
