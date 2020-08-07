@@ -51,14 +51,14 @@
 				class="astro-picture__annotations absolute left-0 top-0 w-full h-full"
 			>
 				<g
-					:transform="`translate(${group.x}, ${group.y})`"
+					:transform="`translate(${svgOffset.x}, ${svgOffset.y})`"
 					class="annotations"
 				>
 					<ab-picture-annotation
 						v-for="annotation in preparedAnnotations"
 						:key="annotation.name"
 						:annotation="annotation"
-						:ratio="ratio"
+						:aspectRatio="aspectRatio"
 						:minRadius="minRadius"
 						:padding="labelPadding"
 						:linkDisabled="linksDisabled"
@@ -84,28 +84,30 @@ export default {
 	data () {
 		return {
 			isZooming: false,
-			zoom: 1,
-			maxZoom: 5,
-			minZoom: 1,
-			zoomStart: [0, 0],
-			zoomDistStart: 0,
-			zoomZoomStart: 1,
+			isDragging: false,
+			isFullscreen: false,
 
-			isDragged: false,
+			linksDisabled: false,
+			showAnnotations: true,
+
+			zoom: 1,
+			minZoom: 1,
+			maxZoom: 5,
+
 			dragStart: [0, 0],
 			dragOffsetStart: [0, 0],
-			linksDisabled: false,
 
-			isFullscreen: false,
-			showAnnotations: this.annotated,
-
-			offset: [0, 0],
+			zoomStartPos: [0, 0],
+			zoomDistStart: 0,
+			zoomStart: 1,
 
 			minRadius: 30,
 			labelPadding: {
 				x: 8,
 				y: 4
 			},
+
+			offset: [0, 0],
 			container: {
 				width: 0,
 				height: 0
@@ -113,27 +115,28 @@ export default {
 		}
 	},
 	computed: {
-		ratio () {
+		aspectRatio () {
 			const { isFullscreen, image, container, zoom } = this
 
 			const width = image.sizes['large-width']
 			const height = image.sizes['large-height']
 
-			if (isFullscreen) {
+			if (isFullscreen) { // to switch between cover and contain
 				return width / height > container.width / container.height ? container.width / width * zoom : container.height / height * zoom
 			} else {
 				return width / height < container.width / container.height ? container.width / width * zoom : container.height / height * zoom
 			}
 		},
-		group () {
-			const { image, size, ratio } = this
+		svgOffset () {
+			const { image, size, aspectRatio } = this
 
 			const width = image.sizes['large-width']
 			const height = image.sizes['large-height']
 
+			// Keep the svg group in the center
 			return {
-				x: (width * ratio - size[0]) * -0.5,
-				y: (height * ratio - size[1]) * -0.5
+				x: (width * aspectRatio - size[0]) * -0.5,
+				y: (height * aspectRatio - size[1]) * -0.5
 			}
 		},
 		preparedAnnotations () {
@@ -143,6 +146,7 @@ export default {
 			}
 			const annotationIndex = {}
 
+			// remove dublicates from API
 			const filteredAnnotations = annotations.filter((a) => {
 				const name = a.name
 				if (annotationIndex[name]) {
@@ -153,19 +157,21 @@ export default {
 				}
 			})
 
+			// sort by radius so small are over large annotations
 			return filteredAnnotations.sort((a, b) => {
 				const bR = b.radius || 0
 				const aR = a.radius || 0
 				return bR - aR
 			}).slice(0, this.maxAnnotations)
 		},
+		maxAnnotations () {
+			const { size } = this
+			// Limit annotations for mobile
+			return Math.ceil(size[0] * 0.01)
+		},
 		size () {
 			const { container, zoom } = this
 			return [container.width * zoom, container.height * zoom]
-		},
-		maxAnnotations () {
-			const { size } = this
-			return Math.ceil(size[0] * 0.01)
 		},
 		transform () {
 			const { offset, zoom } = this
@@ -226,12 +232,14 @@ export default {
 			const { zoom } = this
 
 			if (e.touches.length >= 2) {
-				this.zoomStart = [
+				// get center of the two touch points
+				this.zoomStartPos = [
 					e.touches[0].clientX + (e.touches[1].clientX - e.touches[0].clientX) / 2,
 					e.touches[0].clientY + (e.touches[1].clientY - e.touches[0].clientY) / 2
 				]
+				// get distance between touch points
 				this.zoomDistStart = (e.touches[1].clientX - e.touches[0].clientX) ** 2 + (e.touches[1].clientY - e.touches[0].clientY) ** 2
-				this.zoomZoomStart = zoom
+				this.zoomStart = zoom
 				this.isZooming = true
 			} else if (e.touches.length === 1) {
 				this.onMouseDown(e.touches[0])
@@ -243,10 +251,11 @@ export default {
 			}
 
 			if (this.isZooming && e.touches.length >= 2) {
-				const { zoomDistStart, zoomZoomStart, zoomStart, offset, zoom, minZoom, maxZoom } = this
+				const { zoomDistStart, zoomStart, zoomStartPos, offset, zoom, minZoom, maxZoom } = this
 
 				const currentDist = (e.touches[1].clientX - e.touches[0].clientX) ** 2 + (e.touches[1].clientY - e.touches[0].clientY) ** 2
-				let newZoom = zoomZoomStart * (currentDist / zoomDistStart)
+				// get ratio between current and start distance between the two touch points
+				let newZoom = zoomStart * (currentDist / zoomDistStart)
 
 				if (newZoom > maxZoom) {
 					newZoom = maxZoom
@@ -254,14 +263,15 @@ export default {
 					newZoom = minZoom
 				}
 
+				// calc new image offset top/left
 				const newOffset = [
-					((offset[0] - zoomStart[0]) / zoom * newZoom) + zoomStart[0],
-					((offset[1] - zoomStart[1]) / zoom * newZoom) + zoomStart[1]
+					((offset[0] - zoomStartPos[0]) / zoom * newZoom) + zoomStartPos[0],
+					((offset[1] - zoomStartPos[1]) / zoom * newZoom) + zoomStartPos[1]
 				]
 
 				this.zoom = newZoom
 				this.updateOffset(newOffset)
-			} else if (this.isDragged && e.touches.length === 1) {
+			} else if (this.isDragging && e.touches.length === 1) {
 				this.onMouseMove(e.touches[0])
 			}
 		},
@@ -270,9 +280,9 @@ export default {
 				return false
 			}
 
-			this.zoomStart = [0, 0]
+			this.zoomStartPos = [0, 0]
 			this.isZooming = false
-			this.isDragged = false
+			this.isDragging = false
 		},
 		onWheel (e) {
 			if (!this.controls || !this.isFullscreen) {
@@ -320,7 +330,7 @@ export default {
 				return false
 			}
 
-			this.isDragged = true
+			this.isDragging = true
 			this.dragStart = [e.clientX, e.clientY]
 			this.dragOffsetStart = this.offset
 		},
@@ -329,7 +339,7 @@ export default {
 				return false
 			}
 
-			this.isDragged = false
+			this.isDragging = false
 
 			requestAnimationFrame(() => {
 				this.linksDisabled = false
@@ -340,9 +350,9 @@ export default {
 				return false
 			}
 
-			const { isDragged, dragOffsetStart, dragStart } = this
+			const { isDragging, dragOffsetStart, dragStart } = this
 
-			if (isDragged) {
+			if (isDragging) {
 				const newOffset = [
 					dragOffsetStart[0] - (dragStart[0] - e.clientX),
 					dragOffsetStart[1] - (dragStart[1] - e.clientY)

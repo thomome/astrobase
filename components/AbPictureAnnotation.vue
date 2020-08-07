@@ -31,14 +31,14 @@ export default {
 	props: {
 		linkDisabled: { type: Boolean, default: false },
 		annotation: { type: Object, required: true },
-		ratio: { type: Number, default: 1 },
+		aspectRatio: { type: Number, default: 1 },
 		minRadius: { type: Number, default: 30 },
 		padding: { type: Object, default: () => { return { x: 0, y: 0 } } }
 	},
 	computed: {
-		x () { return this.annotation.pixelx * this.ratio },
-		y () { return this.annotation.pixely * this.ratio },
-		radius () { return this.annotation.radius > this.minRadius ? this.annotation.radius * this.ratio : this.minRadius * this.ratio },
+		x () { return this.annotation.pixelx * this.aspectRatio },
+		y () { return this.annotation.pixely * this.aspectRatio },
+		radius () { return this.annotation.radius > this.minRadius ? this.annotation.radius * this.aspectRatio : this.minRadius * this.aspectRatio },
 		opacity () { return 1 - this.radius / 1000 },
 		label () { return this.annotation.long_name },
 		labelX () { return Math.cos(Math.PI / 4) * this.radius },
