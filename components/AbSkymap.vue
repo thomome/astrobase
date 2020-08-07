@@ -1,16 +1,22 @@
 <template>
-	<div class="skymap__container">
-		<canvas ref="container" class="skymap" />
+	<div
+		@click="toggleFullscreen"
+		class="skymap__container"
+	>
+		<canvas ref="container" class="skymap pointer-events-none" />
+		<button class="skymap__fullscreen-button absolute w-full h-full bg-gray-900 bg-opacity-75 opacity-0 hover:opacity-100 transition ease-in-out duration-300">
+			<ab-icon name="fullscreen" class="text-yellow-400 text-4xl" />
+		</button>
 	</div>
 </template>
 
 <script>
 import StelWebEngine from 'assets/stellarium-web-engine'
-// import { julian, coord, sidereal } from 'astronomia'
-
+import AbIcon from '~/components/AbIcon'
 const client = process.client
 
 export default {
+	components: { AbIcon },
 	props: {
 		ra: { type: Number, default: 0 },
 		dec: { type: Number, default: 0 },
@@ -23,7 +29,8 @@ export default {
 	},
 	data () {
 		return {
-			stel: null
+			stel: null,
+			isFullscreen: false
 		}
 	},
 	computed: {
@@ -60,8 +67,9 @@ export default {
 						stel.core.dss.visible = false
 						stel.core.observer.utc = stel.date2MJD(gDate)
 						stel.core.lines.equatorial.visible = true
-						stel.core.milkyway.visible = false
+						stel.core.milkyway.visible = true
 						stel.core.landscapes.visible = false
+						stel.core.landscapes.fog_visible = false
 						stel.core.atmosphere.visible = false
 						stel.core.constellations.lines_visible = true
 						stel.core.constellations.lines_animation = false
@@ -117,8 +125,6 @@ export default {
 					})
 				}
 			})
-		} else {
-			console.log(StelWebEngine)
 		}
 	},
 	methods: {
@@ -132,6 +138,22 @@ export default {
 			const ra2 = ra + atan2(sin(brng) * sin(dist) * cos(dec), cos(dist) - sin(dec) * sin(dec2))
 
 			return [ra2 / PI * 180, dec2 / PI * 180]
+		},
+		toggleFullscreen () {
+			if (!this.isFullscreen) {
+				this.$refs.container.requestFullscreen()
+			} else {
+				document.exitFullscreen()
+			}
+		},
+		onFullscrenChange () {
+			if (document.fullscreenElement) {
+				this.isFullscreen = !this.isFullscreen
+			} else {
+				this.isFullscreen = !this.isFullscreen
+				this.zoom = 1
+				this.offset = [0, 0]
+			}
 		}
 	}
 }

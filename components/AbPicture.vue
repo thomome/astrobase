@@ -78,28 +78,29 @@ export default {
 	components: { AbPictureAnnotation, AbImage, AbIcon },
 	props: {
 		image: { type: Object, required: true },
-		controls: { type: Boolean, default: false }
+		controls: { type: Boolean, default: false },
+		annotated: { type: Boolean, default: false }
 	},
 	data () {
 		return {
+			isZooming: false,
 			zoom: 1,
 			maxZoom: 5,
 			minZoom: 1,
-			offset: [0, 0],
-
-			isDragged: false,
-			dragStart: [0, 0],
-			dragOffsetStart: [0, 0],
-
-			isZooming: false,
 			zoomStart: [0, 0],
 			zoomDistStart: 0,
 			zoomZoomStart: 1,
 
+			isDragged: false,
+			dragStart: [0, 0],
+			dragOffsetStart: [0, 0],
 			linksDisabled: false,
 
-			showAnnotations: true,
 			isFullscreen: false,
+			showAnnotations: this.annotated,
+
+			offset: [0, 0],
+
 			minRadius: 30,
 			labelPadding: {
 				x: 8,

@@ -96,4 +96,19 @@ export default {
 			height: 100%;
 		}
 	}
+
+	.html-content {
+		a {
+			background-image: linear-gradient(120deg, theme('colors.yellow.400') 0%, theme('colors.yellow.400') 100%);
+			background-repeat: no-repeat;
+			background-size: 100% 1px;
+			background-position: 0 95%;
+			transition: all 0.1s ease-in;
+
+			&:hover {
+				background-size: 100% 88%;
+				@apply text-black;
+			}
+		}
+	}
 </style>

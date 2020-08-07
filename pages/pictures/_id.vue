@@ -29,6 +29,45 @@
 				/>
 			</div>
 
+			<div v-if="picture.stats">
+				<ab-chart
+					:data="statisticalData"
+					data-key="fwhm"
+					title="FWHM (pixels)"
+					group="imageData"
+				/>
+				<ab-chart
+					:data="statisticalData"
+					data-key="snr"
+					title="SNR (decibel)"
+					group="imageData"
+				/>
+				<ab-chart
+					:data="statisticalData"
+					data-key="excentricity"
+					title="Excentricity"
+					group="imageData"
+				/>
+				<ab-chart
+					:data="statisticalData"
+					data-key="background_mean"
+					title="Background Mean"
+					group="imageData"
+				/>
+				<ab-chart
+					:data="statisticalData"
+					data-key="obj_altitude"
+					title="Object Altitude (degrees)"
+					group="imageData"
+				/>
+				<ab-chart
+					:data="statisticalData"
+					data-key="focuspos"
+					title="Focus position"
+					group="imageData"
+				/>
+			</div>
+
 			<div class="picture__details md:flex my-4">
 				<div class="picture__column max-w-2xl">
 					<div class="picture__image-description text-gray-700 text-sm leading-tight border-l border-yellow-400 pl-3 mb-4">
@@ -59,7 +98,7 @@
 					<div class="picture__general">
 						<div
 							v-html="picture.description"
-							class="picture__description max-w-6xl font-light leading-snug my-6"
+							class="picture__description html-content max-w-6xl font-light leading-snug my-6"
 						/>
 					</div>
 				</div>
@@ -77,7 +116,7 @@
 								v-for="exposure in picture.exposures"
 								:key="exposure.exposure_time + exposure.mode"
 							>
-								{{ exposure.amount }} x {{ exposure.exposure_time }}&#8239;<small>s</small>
+								{{ exposure.amount }} × {{ exposure.exposure_time }}&#8239;<small>s</small>
 								<ab-tag
 									:label="exposure.mode.label"
 									:type="exposure.mode.value"
@@ -103,6 +142,37 @@
 						:orientation="frame.o"
 						class="mt-8"
 					/>
+					<table
+						v-if="image.calibration"
+						class="text-xs mt-2"
+					>
+						<tbody>
+							<tr>
+								<td class="pr-4 font-medium">
+									Center (RA, DEC)
+								</td>
+								<td>
+									{{ frame.ra.toFixed(4) }}, {{ frame.dec.toFixed(4) }}
+								</td>
+							</tr>
+							<tr>
+								<td class="pr-4 font-medium">
+									Size
+								</td>
+								<td>
+									{{ frame.w.toFixed(3) }} × {{ frame.h.toFixed(3) }} deg
+								</td>
+							</tr>
+							<tr>
+								<td class="pr-4 font-medium">
+									Radius
+								</td>
+								<td>
+									{{ image.calibration.radius.toFixed(3) }} deg
+								</td>
+							</tr>
+						</tbody>
+					</table>
 
 					<div
 						v-if="picture.objects.length"
@@ -162,6 +232,7 @@
 
 <script>
 import moment from 'moment'
+import Papa from 'papaparse'
 import { julian, moonillum, sunrise } from 'astronomia'
 
 import { getPicture } from '~/api/api.js'
@@ -170,12 +241,14 @@ import AbPicture from '~/components/AbPicture.vue'
 import AbSkymap from '~/components/AbSkymap.vue'
 import AbTag from '~/components/AbTag.vue'
 import AbIcon from '~/components/AbIcon.vue'
+import AbChart from '~/components/AbChart.vue'
 
 export default {
-	components: { AbPicture, AbSkymap, AbTag, AbIcon },
+	components: { AbPicture, AbSkymap, AbTag, AbIcon, AbChart },
 	data () {
 		return {
-			version: 0
+			version: 0,
+			statisticalData: []
 		}
 	},
 	computed: {
@@ -240,6 +313,17 @@ export default {
 	},
 	head () {
 		return this.meta
+	},
+	mounted () {
+		if (this.picture.stats) {
+			Papa.parse(this.picture.stats, {
+				download: true,
+				header: true,
+				complete: (result, file) => {
+					this.statisticalData = result.data
+				}
+			})
+		}
 	}
 }
 </script>
