@@ -88,7 +88,7 @@ export default {
 			isFullscreen: false,
 
 			linksDisabled: false,
-			showAnnotations: true,
+			showAnnotations: this.annotated,
 
 			zoom: 1,
 			minZoom: 1,
