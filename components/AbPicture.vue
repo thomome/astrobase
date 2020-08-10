@@ -39,6 +39,7 @@
 		>
 			<ab-image
 				:image="image"
+				:full="isFullscreen"
 				:style="transform"
 				:class="'astro-picture__img block w-full h-full ' + (isFullscreen ? 'object-contain' : 'object-cover')"
 				min-size="medium_large"

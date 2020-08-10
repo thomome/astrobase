@@ -33,25 +33,37 @@
 				<ab-chart
 					:data="statisticalData"
 					data-key="fwhm"
-					title="FWHM (pixels)"
+					title="FWHM (px)"
 					group="imageData"
 				/>
 				<ab-chart
 					:data="statisticalData"
 					data-key="snr"
-					title="SNR (decibel)"
+					title="SNR (dB)"
 					group="imageData"
 				/>
 				<ab-chart
 					:data="statisticalData"
-					data-key="excentricity"
+					data-key="ecc"
 					title="Excentricity"
 					group="imageData"
 				/>
 				<ab-chart
 					:data="statisticalData"
-					data-key="background_mean"
-					title="Background Mean"
+					data-key="weight"
+					title="Weight (%)"
+					group="imageData"
+				/>
+				<ab-chart
+					:data="statisticalData"
+					data-key="stars"
+					title="Stars"
+					group="imageData"
+				/>
+				<ab-chart
+					:data="statisticalData"
+					data-key="median"
+					title="Median"
 					group="imageData"
 				/>
 				<ab-chart

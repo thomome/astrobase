@@ -1,6 +1,6 @@
 <template>
 	<img
-		:src="image.url"
+		:src="url"
 		:srcset="srcset"
 		:sizes="sizes"
 		:alt="alt"
@@ -12,7 +12,8 @@ export default {
 	props: {
 		alt: { type: String, default: '' },
 		image: { type: Object, required: true },
-		minSize: { type: String, default: 'small' }
+		minSize: { type: String, default: 'small' },
+		full: { type: Boolean, default: false }
 	},
 	data () {
 		return {
@@ -20,15 +21,19 @@ export default {
 		}
 	},
 	computed: {
+		url () {
+			const { image, full } = this
+			return full ? image.original : image.url
+		},
 		srcset () {
-			const { image, defaultSizes } = this
+			const { image, defaultSizes, full } = this
 			const srcsetArray = defaultSizes.map(size => `${image.sizes[size]} ${image.sizes[`${size}-width`]}w`)
-			return srcsetArray.join(', ')
+			return full ? '' : srcsetArray.join(', ')
 		},
 		sizes () {
-			const { image, defaultSizes, minSize } = this
+			const { image, defaultSizes, minSize, full } = this
 			const size = defaultSizes.includes(minSize) ? minSize : defaultSizes[0]
-			return `(max-width: ${image.sizes[`${size}-width`]}px) ${image.sizes[`${size}-width`]}px`
+			return full ? '' : `(max-width: ${image.sizes[`${size}-width`]}px) ${image.sizes[`${size}-width`]}px`
 		}
 	}
 }
