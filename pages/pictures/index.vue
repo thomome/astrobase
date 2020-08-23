@@ -6,6 +6,7 @@
 					:on-change="updateParams"
 					:value="params.orderby"
 					:options="sortOptions"
+					:allowEmpty="false"
 					label="Sort"
 					params-key="orderby"
 					class="w-full max-w-xs mr-6 mb-4"
@@ -17,6 +18,7 @@
 					:values="params.objects"
 					:get-items="getObjects"
 					:get-item="getObject"
+					:multiple="true"
 					async
 					label="Objects"
 					params-key="objects"
@@ -28,6 +30,7 @@
 					:values="params.devices"
 					:get-items="getDevices"
 					:get-item="getDevice"
+					:multiple="true"
 					async
 					label="Devices"
 					params-key="devices"
@@ -39,6 +42,7 @@
 					:values="params.locations"
 					:get-items="getLocations"
 					:get-item="getLocation"
+					:multiple="true"
 					async
 					label="Locations"
 					params-key="locations"

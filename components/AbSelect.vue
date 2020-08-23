@@ -8,12 +8,13 @@
 			v-if="async"
 			v-model="preparedValue"
 			:options="preparedOptions"
-			:multiple="true"
+			:multiple="multiple"
 			:loading="isLoading"
 			:searchable="true"
 			:internal-search="false"
 			:showLabels="false"
 			:hideSelected="true"
+			:allowEmpty="allowEmpty"
 			:label="labelKey"
 			:id="`filter-${paramsKey}`"
 			@search-change="fetch"
@@ -27,7 +28,8 @@
 			:options="options"
 			:showLabels="false"
 			:label="labelKey"
-			:allowEmpty="false"
+			:allowEmpty="allowEmpty"
+			:multiple="multiple"
 			:id="`filter-${paramsKey}`"
 			@input="onInput"
 			track-by="id"
@@ -50,7 +52,9 @@ export default {
 		getItems: { type: Function, default: () => {} },
 		getItem: { type: Function, default: () => {} },
 		onChange: { type: Function, default: () => {} },
-		options: { type: Array, default: () => [] }
+		options: { type: Array, default: () => [] },
+		multiple: { type: Boolean, default: false },
+		allowEmpty: { type: Boolean, default: true }
 	},
 	data () {
 		return {
@@ -105,6 +109,16 @@ export default {
 						this.$set(this.preparedValue, i, item)
 					}
 				})
+			} else if (this.multiple) {
+				const keys = this.options.map(opt => opt.id)
+				const values = this.values.map((id) => {
+					const index = keys.indexOf(id)
+					return {
+						id,
+						name: this.options[index].name
+					}
+				})
+				this.preparedValue = values
 			} else {
 				const value = { id: this.value }
 				this.options.forEach((opt) => {

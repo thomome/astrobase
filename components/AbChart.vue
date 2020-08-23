@@ -4,7 +4,7 @@
 			:options="chartOptions"
 			:series="series"
 			type="line"
-			height="250"
+			height="120"
 		/>
 	</client-only>
 </template>
@@ -39,7 +39,8 @@ export default {
 						enabled: false
 					},
 					toolbar: {
-						show: false
+						show: false,
+						autoSelected: 'pan'
 					}
 				},
 				grid: {
@@ -106,4 +107,13 @@ export default {
 </script>
 
 <style lang="scss">
+	.apexcharts-canvas {
+		.apexcharts-tooltip {
+			transition: all 0s;
+
+			&.apexcharts-active {
+				transition: all 0s;
+			}
+		}
+	}
 </style>

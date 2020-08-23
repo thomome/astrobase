@@ -29,57 +29,6 @@
 				/>
 			</div>
 
-			<div v-if="picture.stats">
-				<ab-chart
-					:data="statisticalData"
-					data-key="fwhm"
-					title="FWHM (px)"
-					group="imageData"
-				/>
-				<ab-chart
-					:data="statisticalData"
-					data-key="snr"
-					title="SNR (dB)"
-					group="imageData"
-				/>
-				<ab-chart
-					:data="statisticalData"
-					data-key="ecc"
-					title="Excentricity"
-					group="imageData"
-				/>
-				<ab-chart
-					:data="statisticalData"
-					data-key="weight"
-					title="Weight (%)"
-					group="imageData"
-				/>
-				<ab-chart
-					:data="statisticalData"
-					data-key="stars"
-					title="Stars"
-					group="imageData"
-				/>
-				<ab-chart
-					:data="statisticalData"
-					data-key="median"
-					title="Median"
-					group="imageData"
-				/>
-				<ab-chart
-					:data="statisticalData"
-					data-key="obj_altitude"
-					title="Object Altitude (degrees)"
-					group="imageData"
-				/>
-				<ab-chart
-					:data="statisticalData"
-					data-key="focuspos"
-					title="Focus position"
-					group="imageData"
-				/>
-			</div>
-
 			<div class="picture__details md:flex my-4">
 				<div class="picture__column max-w-2xl">
 					<div class="picture__image-description text-gray-700 text-sm leading-tight border-l border-yellow-400 pl-3 mb-4">
@@ -112,6 +61,11 @@
 							v-html="picture.description"
 							class="picture__description html-content max-w-6xl font-light leading-snug my-6"
 						/>
+						<div v-if="picture.stats">
+							<ab-chart-comparison
+								:statisticalData="statisticalData"
+							/>
+						</div>
 					</div>
 				</div>
 
@@ -253,10 +207,10 @@ import AbPicture from '~/components/AbPicture.vue'
 import AbSkymap from '~/components/AbSkymap.vue'
 import AbTag from '~/components/AbTag.vue'
 import AbIcon from '~/components/AbIcon.vue'
-import AbChart from '~/components/AbChart.vue'
+import AbChartComparison from '~/components/AbChartComparison.vue'
 
 export default {
-	components: { AbPicture, AbSkymap, AbTag, AbIcon, AbChart },
+	components: { AbPicture, AbSkymap, AbTag, AbIcon, AbChartComparison },
 	data () {
 		return {
 			version: 0,
