@@ -53,7 +53,12 @@ export default {
 		'@nuxtjs/axios'
 	],
 	purgeCSS: {
-		whitelistPatterns: [/^ct/]
+		whitelistPatterns: [
+			/^ct/,
+			/multiselect/,
+			/mapboxgl/,
+			/mgl/
+		]
 	},
 	/*
 	** Axios module configuration
@@ -68,6 +73,7 @@ export default {
 		/*
 		** You can extend webpack config here
 		*/
+		extractCSS: true,
 	
 		extend (config, ctx) {
 			config.node = {
