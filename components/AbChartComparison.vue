@@ -17,62 +17,26 @@
 				:data="statisticalData"
 				:data-key="plot.id"
 				:title="plot.name"
-				group="statisticalPlots"
+				:activeIndex="activeIndex"
+				:range="{ min: null, max: null }"
+				:onActive="(i) => { activeIndex = i }"
 			/>
 		</div>
-		<client-only>
-			<VueApexCharts
-				:options="brushOptions"
-				:series="brushSeries"
-				type="line"
-				height="100"
-			/>
-		</client-only>
-		<ab-chart2
-			:data="statisticalData"
-			data-key="snr"
-			title="SNR (dB)"
-			group="statisticalPlots"
-			:range="{ min: 1582583732, max: 1582586627 }"
-		/>
-		<ab-chart2
-			:data="statisticalData"
-			data-key="median"
-			title="Median"
-			group="statisticalPlots"
-		/>
-		<ab-chart2
-			:data="statisticalData"
-			data-key="fwhm"
-			title="FWHM (arcsec)"
-			group="statisticalPlots"
-		/>
-		<ab-chart2
-			:data="statisticalData"
-			data-key="stars"
-			title="Stars"
-			group="statisticalPlots"
-		/>
 	</div>
 </template>
 
 <script>
 import AbSelect from './AbSelect.vue'
 import AbChart from './AbChart.vue'
-import AbChart2 from './AbChart2.vue'
-
-let apexcharts
-if (process.client) {
-	apexcharts = require('apexcharts')
-}
 
 export default {
-	components: { AbSelect, AbChart, VueApexCharts: () => import('vue-apexcharts'), AbChart2 },
+	components: { AbSelect, AbChart },
 	props: {
 		statisticalData: { type: Array, required: true }
 	},
 	data () {
 		return {
+			activeIndex: null,
 			values: [],
 			plotTypes: [
 				{
@@ -93,112 +57,45 @@ export default {
 				}, {
 					id: 'ecc',
 					name: 'Eccentricity'
+				},
+				{
+					id: 'seeing',
+					name: 'Seeing FHMW (arcsec)'
+				},
+				{
+					id: 'wind',
+					name: 'Wind (m/s)'
+				},
+				{
+					id: 'obj_altitude',
+					name: 'Altitude (degree)'
+				},
+				{
+					id: 'cloudcover',
+					name: 'Cloud Cover (%)'
+				},
+				{
+					id: 'humidity',
+					name: 'Humidity (%)'
+				},
+				{
+					id: 'gust',
+					name: 'Gust (m/s)'
+				},
+				{
+					id: 'ambient_temp',
+					name: 'Temperatur (°C)'
+				},
+				{
+					id: 'focuspos',
+					name: 'Focus position'
+				},
+				{
+					id: 'exposure',
+					name: 'Exposure (s)'
 				}
 			],
-			selectedPlots: [],
-			brushOptions: {
-				chart: {
-					id: 'summary',
-					foreColor: '#ababab',
-					toolbar: {
-						show: false,
-						autoSelected: 'selection'
-					},
-					animations: {
-						enabled: false
-					},
-					selection: {
-						enabled: true,
-						fill: {
-							color: '#FFD500',
-							opacity: 0.1
-						},
-						stroke: {
-							width: 1,
-							dashArray: 3,
-							color: '#FFD500',
-							opacity: 0.4
-						},
-						xaxis: {
-							min: null,
-							max: null
-						}
-					},
-					events: {
-						selection: (ctx, { xaxis, yaxis }) => {
-							this.selectedPlots.forEach((plot) => {
-								requestAnimationFrame(() => {
-									apexcharts.default.exec(plot.id, 'zoomX', xaxis.min, xaxis.max)
-								})
-							})
-						}
-					}
-				},
-				dataLabels: {
-					enabled: false
-				},
-				stroke: {
-					width: 1
-				},
-				fill: {
-					opacity: 1,
-					type: 'solid'
-				},
-				legend: {
-					show: false
-				},
-				grid: {
-					borderColor: '#90A4AE33'
-				},
-				xaxis: {
-					type: 'datetime'
-				},
-				yaxis: {
-					labels: {
-						formatter: v => '',
-						minWidth: 50,
-						maxWidth: 50
-					}
-				},
-				tooltip: {
-					enabled: false
-				}
-			}
-		}
-	},
-	computed: {
-		brushSeries () {
-			const series = []
-
-			this.selectedPlots.forEach((plot) => {
-				const data = []
-				const max = this.statisticalData.reduce((a, b) => {
-					return Math.max(a, b[plot.id])
-				}, 0)
-				this.statisticalData.forEach((row) => {
-					data.push([
-						new Date(row.time * 1000),
-						row[plot.id] / max
-					])
-				})
-
-				series.push({
-					data,
-					name: plot.name
-				})
-			})
-
-			return series
-		}
-	},
-	methods: {
-		updateSelected (key, newValues) {
-			this.selectedPlots = newValues
-			localStorage.setItem('selectedPlots', JSON.stringify(this.selectedPlots))
-			this.selectedPlots.forEach((plot) => {
-				apexcharts.default.exec(plot.id, 'resetSeries')
-			})
-			apexcharts.default.exec('summary', 'resetSeries')
+			selectedPlots: []
 		}
 	},
 	mounted () {
@@ -219,6 +116,12 @@ export default {
 
 		this.values = values
 		this.selectedPlots = selectedPlots
+	},
+	methods: {
+		updateSelected (key, newValues) {
+			this.selectedPlots = newValues
+			localStorage.setItem('selectedPlots', JSON.stringify(this.selectedPlots))
+		}
 	}
 }
 </script>
