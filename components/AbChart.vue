@@ -83,9 +83,9 @@
 				</g>
 				<g
 					ref="plot"
-					@mousemove="(e) => { updateTooltip(e.clientX) }"
-					@mouseleave="(e) => { updateTooltip(e.clientX, true) }"
 					:transform="`translate(${plotDim.x} 0)`"
+					@mousemove="(e) => { setActive(e.clientX) }"
+					@mouseleave="(e) => { setActive(0, true) }"
 					class="ab-chart__plot"
 				>
 					<rect
@@ -95,28 +95,15 @@
 						y="0"
 						class="ab-chart__plot-background"
 					/>
-					<g class="ab-chart__serie">
-						<line
-							:x2="plotDim.width"
-							:transform="`translate(0 ${(1 - median.normalized) * plotDim.height})`"
-							x1="0"
-							y1="0"
-							y2="0"
-							class="ab-chart__plot-median"
-						/>
-						<path
-							:d="path"
-							class="ab-chart__plot-path"
-						/>
-						<circle
-							v-for="(point, index) in seriesNormalized"
-							:key="point.x"
-							:cx="point.x * plotDim.width"
-							:cy="point.y * plotDim.height"
-							:r="index === tooltipIndex || index === activeIndex ? 4 : 2"
-							class="ab-chart__plot-dot"
-						/>
-					</g>
+					<ab-chart-path
+						v-for="(serie, index) in seriesNormalized"
+						:key="index"
+						:serie="serie"
+						:width="plotDim.width"
+						:height="plotDim.height"
+						:color="colors[index]"
+						:activeIndex="activeIndex"
+					/>
 					<line
 						v-if="tooltip.active"
 						:y2="plotDim.height"
@@ -137,24 +124,30 @@
 			<div class="ab-chart__tooltip-title">
 				{{ tooltip.date }}
 			</div>
-			<div v-html="tooltip.value" class="ab-chart__tooltip-value" />
+			<div
+				v-for="col in tooltip.values"
+				:key="col.title"
+				:class="`ab-chart__tooltip-value ${col.id === dataKey ? 'active' : ''}`"
+			>
+				<span>{{ col.title }}:</span> <strong>{{ col.value }}</strong>
+			</div>
 		</div>
 	</div>
 </template>
 
 <script>
 import moment from 'moment'
+import AbChartPath from './AbChartPath.vue'
+import { clamp } from '~/helpers/helpers.js'
 
 export default {
-	components: {},
+	components: { AbChartPath },
 	props: {
 		title: { type: String, default: '' },
 		dataKey: { type: String, required: true },
 		data: { type: Array, required: true },
-		group: { type: String, default: '' },
 		range: { type: Object, default: () => { return { min: false, max: false } } },
-		activeIndex: { type: Number, default: null },
-		onActive: { type: Function, default: () => {} }
+		selectedPlots: { type: Array, default: () => [] }
 	},
 	data () {
 		return {
@@ -163,38 +156,11 @@ export default {
 			yAxisWidth: 60,
 			xAxisHeight: 30,
 			padding: 5,
-			tooltipIndex: null
+			activeIndex: null,
+			colors: ['#ddb310', '#00beff', '#b51d14', '#4053d3 ', '#fb49b0', '#00b25d', '#cacaca']
 		}
 	},
 	computed: {
-		tooltip () {
-			const { tooltipIndex, activeIndex } = this
-			const index = tooltipIndex || activeIndex
-
-			if (index !== null) {
-				const { series, seriesNormalized, plotDim, title, yAxisWidth, padding } = this
-				const { width, height } = plotDim
-
-				const itemNormalized = seriesNormalized[index]
-				const item = series[itemNormalized.i]
-
-				const x = itemNormalized.x * width + padding + yAxisWidth
-				const y = itemNormalized.y * height + padding
-
-				const right = index > seriesNormalized.length / 2
-
-				return {
-					active: true,
-					x: right ? `calc(${x}px - 100% - 10px)` : `calc(${x}px + 10px)`,
-					indicator: itemNormalized.x * width,
-					y: `${y}px`,
-					date: moment.unix(item.x).format('D. MMMM YYYY, HH:mm:ss'),
-					value: `${title}: <strong>${item.y}</strong>`
-				}
-			} else {
-				return { active: false }
-			}
-		},
 		plotDim () {
 			const { width, height, padding, xAxisHeight, yAxisWidth } = this
 			return {
@@ -202,6 +168,154 @@ export default {
 				height: height - padding * 2 - xAxisHeight,
 				x: yAxisWidth,
 				y: xAxisHeight
+			}
+		},
+		series () {
+			const { data, dataKey } = this
+
+			let index = 0
+			let sessionStart = 0
+			let lastTime = 0
+			const series = []
+
+			data.forEach((o, i) => {
+				const time = parseInt(o.time)
+				if (lastTime + 8 * 60 * 60 < time) {
+					sessionStart = moment.unix(time).startOf('day').unix()
+					if (lastTime !== 0) {
+						index++
+					}
+				}
+				if (!series[index]) {
+					series[index] = []
+				}
+				series[index].push({
+					index: i,
+					timestamp: time,
+					time: time - sessionStart,
+					value: parseFloat(o[dataKey])
+				})
+				lastTime = time
+			})
+
+			return series
+		},
+		limits () {
+			const { series, range } = this
+
+			let ymin = Infinity
+			let ymax = -Infinity
+
+			let xmin = range.min || Infinity
+			let xmax = range.max || -Infinity
+
+			if (series.length > 0) {
+				series.forEach((serie) => {
+					serie.forEach((o) => {
+						if (o.value < ymin) {
+							ymin = o.value
+						}
+						if (o.value > ymax) {
+							ymax = o.value
+						}
+					})
+
+					if (serie[0].time < xmin) {
+						xmin = serie[0].time
+					}
+					if (serie[serie.length - 1].time > xmax) {
+						xmax = serie[serie.length - 1].time
+					}
+				})
+
+				const yOffset = (ymax - ymin) / 10
+
+				if (ymin === ymax) {
+					ymin -= 1
+					ymax += 1
+				}
+
+				return {
+					x: { min: xmin, max: xmax },
+					y: { min: ymin - yOffset, max: ymax + yOffset }
+				}
+			} else {
+				return {
+					x: { min: 0, max: 1 },
+					y: { min: 0, max: 1 }
+				}
+			}
+		},
+		seriesNormalized () {
+			const { series, limits } = this
+
+			const xRange = limits.x.max - limits.x.min
+			const yRange = limits.y.max - limits.y.min
+
+			const seriesNormalized = series.map((serie) => {
+				const serieNormalized = []
+				serie.forEach((o) => {
+					const no = { ...o }
+					no.x = (no.time - limits.x.min) / xRange
+					no.y = 1 - (no.value - limits.y.min) / yRange
+					if (no.x >= 0 && no.x <= 1) {
+						serieNormalized.push(no)
+					}
+				})
+				return serieNormalized
+			})
+
+			return seriesNormalized
+		},
+		seriesFlat () {
+			const { seriesNormalized } = this
+			const allSeries = []
+			seriesNormalized.forEach((s) => {
+				s.forEach((o) => {
+					allSeries[o.index] = o
+				})
+			})
+			return allSeries
+		},
+		seriesFlatSortedByX () {
+			const { seriesFlat } = this
+			return [...seriesFlat].sort((a, b) => {
+				return a.x === b.x ? 0 : a.x - b.x
+			})
+		},
+		tooltip () {
+			const { activeIndex } = this
+
+			if (activeIndex !== null) {
+				const { data, seriesFlat, plotDim, yAxisWidth, padding, selectedPlots } = this
+				const { width, height } = plotDim
+
+				const o = seriesFlat[activeIndex]
+				const col = data[activeIndex]
+
+				const x = o.x * width + padding + yAxisWidth
+				const y = o.y * height + padding
+
+				const right = o.x > 0.5
+
+				const values = selectedPlots.map((plot) => {
+					return {
+						id: plot.id,
+						title: plot.name,
+						value: col[plot.id]
+					}
+				})
+
+				return {
+					active: true,
+					x: right ? `calc(${x}px - 100% - 10px)` : `calc(${x}px + 10px)`,
+					indicator: o.x * width,
+					y: `${y}px`,
+					date: moment.unix(o.timestamp).format('D. MMMM YYYY, HH:mm:ss'),
+					values
+				}
+			} else {
+				return { active: false }
 			}
 		},
 		xTics () {
@@ -219,7 +333,7 @@ export default {
 					tics.push({
 						x: (i - limits.x.min) / range * width,
 						timestamp: i,
-						label: moment.unix(i).format('HH:mm')
+						label: moment().startOf('day').add(i, 'seconds').format('HH:mm')
 					})
 				}
 			}
@@ -231,125 +345,41 @@ export default {
 
 			const tics = []
 			if (series.length > 0) {
-				const roundingTo = [1, 2, 4, 5, 8]
+				const roundingTo = [1.0, 2.0, 4.0, 5.0, 8.0]
 
 				const num = Math.floor(height / 30)
 				const range = limits.y.max - limits.y.min
 
-				let step = 0
-				let roundingIndex = 0
+				let step = 0.0
+				let roundingIndex = 0.0
 				let roundingPow = 0.0001
-				let rounder = 0
+				let rounder = 0.0
+
 				while (step === step * 2 && Math.abs(step * num) < 2) {
 					rounder = roundingTo[roundingIndex] * roundingPow
 					roundingIndex++
 					if (roundingIndex >= roundingTo.length) {
-						roundingIndex = 0
-						roundingPow *= 10
+						roundingIndex = 0.0
+						roundingPow *= 10.0
 					}
+
 					step = Math.floor(range / num * rounder) / rounder
 				}
 
 				const start = Math.ceil(limits.y.min * rounder) / rounder
 				const kAbb = Math.round(limits.y.max).toString().length >= 4
 
-				for (let i = start; i < limits.y.max; i += step) {
+				const relNum = (limits.y.max - start) / step
+
+				for (let i = 0; i < relNum; i++) {
+					const y = i * step + start
 					tics.push({
-						y: height - (i - limits.y.min) / range * height,
-						label: kAbb ? `${i / 1000}k` : i
+						y: height - (y - limits.y.min) / range * height,
+						label: kAbb ? `${y / 1000.0}k` : y
 					})
 				}
 			}
 			return tics
-		},
-		limits () {
-			const { series, range } = this
-
-			if (series.length > 0) {
-				let ymax = -Infinity
-				let ymin = Infinity
-
-				series.forEach((e) => {
-					if (e.y > ymax) {
-						ymax = e.y
-					}
-					if (e.y < ymin) {
-						ymin = e.y
-					}
-				})
-
-				const yOffset = (ymax - ymin) / 10
-
-				const xmin = range.min ? range.min : series[0].x
-				const xmax = range.max ? range.max : series[series.length - 1].x
-
-				return {
-					x: { min: xmin, max: xmax },
-					y: { min: ymin - yOffset, max: ymax + yOffset }
-				}
-			} else {
-				return {
-					x: { min: 0, max: 1 },
-					y: { min: 0, max: 1 }
-				}
-			}
-		},
-		median () {
-			const { series, limits } = this
-			if (series.length === 0) {
-				return 0
-			}
-
-			const cloneSeries = [...series]
-
-			cloneSeries.sort((a, b) => {
-				return a.y - b.y
-			})
-
-			const half = Math.floor(cloneSeries.length / 2)
-			const median = cloneSeries.length % 2 ? cloneSeries[half].y : (cloneSeries[half - 1].y + cloneSeries[half].y) / 2.0
-
-			return {
-				num: median,
-				normalized: (median - limits.y.min) / (limits.y.max - limits.y.min)
-			}
-		},
-		series () {
-			const { data } = this
-			return data.map((o) => {
-				return {
-					x: parseInt(o.time),
-					y: parseFloat(o[this.dataKey])
-				}
-			})
-		},
-		seriesNormalized () {
-			const { series, limits } = this
-
-			const xRange = limits.x.max - limits.x.min
-			const yRange = limits.y.max - limits.y.min
-
-			const normalized = series.map((o, i) => {
-				return {
-					x: (o.x - limits.x.min) / xRange,
-					y: 1 - (o.y - limits.y.min) / yRange,
-					i
-				}
-			})
-			const filtered = normalized.filter(o => o.x >= 0 && o.x <= 1)
-
-			return filtered
-		},
-		path () {
-			const { seriesNormalized, plotDim } = this
-			const { width, height } = plotDim
-
-			let pathString = ''
-			seriesNormalized.forEach((o, i) => {
-				pathString += i === 0 ? 'M ' : 'L '
-				pathString += `${o.x * width} ${o.y * height} `
-			})
-			return pathString
 		}
 	},
 	mounted () {
@@ -360,34 +390,28 @@ export default {
 		window.removeEventListener('resize', this.onResize)
 	},
 	methods: {
-		updateTooltip (x, leave = false) {
+		setActive (x, leave) {
 			if (leave) {
-				this.tooltipIndex = null
-				this.onActive(null)
+				this.activeIndex = null
 			} else {
-				const { seriesNormalized, plotDim, $refs } = this
+				const { seriesFlatSortedByX, plotDim, $refs } = this
 				const { width } = plotDim
 				const { plot } = $refs
 
 				const rect = plot.getBoundingClientRect()
-				let xNormalized = (x - rect.x) / width
-				if (xNormalized > 1) {
-					xNormalized = 1
-				} else if (xNormalized < 0) {
-					xNormalized = 0
-				}
+				const xNormalized = clamp((x - rect.x) / width)
 
 				let closestIndex = 0
 
-				let i = Math.floor((seriesNormalized.length - 1) * xNormalized)
+				let i = Math.floor((seriesFlatSortedByX.length - 1) * xNormalized)
 				let dir = 1
 				let dist = Infinity
 				let tries = 0
 				while (tries < 50) {
-					const o = seriesNormalized[i] || { x: Infinity }
+					const o = seriesFlatSortedByX[i] || { x: Infinity }
 					const d = Math.abs(xNormalized - o.x)
 					if (d < dist) {
-						closestIndex = i
+						closestIndex = o.index
 						dist = d
 					} else if (dir > 0) {
 						dir *= -1
@@ -400,9 +424,8 @@ export default {
 					tries++
 				}
 
-				if (this.tooltipIndex !== closestIndex) {
-					this.tooltipIndex = closestIndex
-					this.onActive(closestIndex)
+				if (this.activeIndex !== closestIndex) {
+					this.activeIndex = closestIndex
 				}
 			}
 		},
@@ -422,7 +445,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 	.ab-chart {
 		position: relative;
 	}
@@ -497,6 +520,7 @@ export default {
 
 	.ab-chart__tooltip {
 		position: absolute;
+		z-index: 10;
 		left: 0;
 		top: 0;
 		background: theme('colors.black');
@@ -510,7 +534,27 @@ export default {
 	}
 
 	.ab-chart__tooltip-value {
+		position: relative;
+		display: flex;
+		justify-content: space-between;
 		font-size: 0.75rem;
 		color: theme('colors.white');
+
+		span {
+			margin-right: 1em;
+		}
+
+		&.active {
+			&::before {
+				position: absolute;
+				display: block;
+				content: '';
+				left: -10px;
+				top: 0;
+				height: 100%;
+				width: 2px;
+				background: theme('colors.yellow.400');
+			}
+		}
 	}
 </style>

@@ -3,7 +3,7 @@
 		<ab-select
 			:on-change="updateSelected"
 			:values="values"
-			:options="plotTypes"
+			:options="possiblePlots"
 			:multiple="true"
 			label="Plots"
 			params-key="objects"
@@ -12,14 +12,13 @@
 		/>
 		<div>
 			<ab-chart
-				v-for="plot in selectedPlots"
+				v-for="plot in renderedPlots"
 				:key="plot.id"
 				:data="statisticalData"
 				:data-key="plot.id"
 				:title="plot.name"
-				:activeIndex="activeIndex"
 				:range="{ min: null, max: null }"
-				:onActive="(i) => { activeIndex = i }"
+				:selectedPlots="renderedPlots"
 			/>
 		</div>
 	</div>
@@ -37,7 +36,6 @@ export default {
 	data () {
 		return {
 			activeIndex: null,
-			values: [],
 			plotTypes: [
 				{
 					id: 'snr',
@@ -98,23 +96,32 @@ export default {
 			selectedPlots: []
 		}
 	},
+	computed: {
+		possiblePlots () {
+			const { plotTypes, statisticalData } = this
+			return plotTypes.filter(plot => statisticalData[0] && statisticalData[0][plot.id])
+		},
+		renderedPlots () {
+			const { possiblePlots, selectedPlots } = this
+			const possiblePlotsMap = {}
+			possiblePlots.forEach((plot) => {
+				possiblePlotsMap[plot.id] = plot
+			})
+			return selectedPlots.filter(plot => possiblePlotsMap[plot.id])
+		},
+		values () {
+			const { renderedPlots } = this
+			return renderedPlots.map(plot => plot.id)
+		}
+	},
 	mounted () {
 		const selectedPlotsString = localStorage.getItem('selectedPlots')
 
 		let selectedPlots = []
-		let values = []
-
 		if (selectedPlotsString) {
 			selectedPlots = JSON.parse(selectedPlotsString)
-			selectedPlots.forEach((plot) => {
-				values.push(plot.id)
-			})
-		} else {
-			selectedPlots = [this.plotTypes[0]]
-			values = [this.plotTypes[0].id]
 		}
 
-		this.values = values
 		this.selectedPlots = selectedPlots
 	},
 	methods: {
