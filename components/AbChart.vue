@@ -138,7 +138,7 @@
 <script>
 import moment from 'moment'
 import AbChartPath from './AbChartPath.vue'
-import { clamp } from '~/helpers/helpers.js'
+import { clamp, ceilMinutes, floorMinutes } from '~/helpers/helpers.js'
 
 export default {
 	components: { AbChartPath },
@@ -147,7 +147,7 @@ export default {
 		dataKey: { type: String, required: true },
 		data: { type: Array, required: true },
 		dataSeries: { type: Array, required: true },
-		range: { type: Object, default: () => { return { min: false, max: false } } },
+		range: { type: Object, default: () => {} },
 		selectedPlots: { type: Array, default: () => [] },
 		colors: { type: Array, default: () => [] }
 	},
@@ -188,8 +188,8 @@ export default {
 			let ymin = Infinity
 			let ymax = -Infinity
 
-			let xmin = range.min || Infinity
-			let xmax = range.max || -Infinity
+			let xmin = Infinity
+			let xmax = -Infinity
 
 			if (series.length > 0) {
 				series.forEach((serie) => {
@@ -209,6 +209,9 @@ export default {
 						xmax = serie[serie.length - 1].time
 					}
 				})
+
+				xmax = range.max || xmax
+				xmin = range.min || xmin
 
 				const yOffset = (ymax - ymin) / 10
 
@@ -303,15 +306,15 @@ export default {
 			}
 		},
 		xTics () {
-			const { series, limits, plotDim } = this
+			const { limits, plotDim } = this
 			const { width } = plotDim
 
 			const tics = []
-			if (series.length > 0) {
+			if (isFinite(limits.x.min) && isFinite(limits.x.max)) {
 				const num = Math.floor(width / 100)
 				const range = limits.x.max - limits.x.min
-				const step = this.floorMinutes(range / num)
-				const start = this.ceilMinutes(limits.x.min)
+				const step = clamp(floorMinutes(range / num), 300, Infinity)
+				const start = ceilMinutes(limits.x.min)
 
 				for (let i = start; i < limits.x.max; i += step) {
 					tics.push({
@@ -324,11 +327,11 @@ export default {
 			return tics
 		},
 		yTics () {
-			const { series, limits, plotDim } = this
+			const { limits, plotDim } = this
 			const { height } = plotDim
 
 			const tics = []
-			if (series.length > 0) {
+			if (isFinite(limits.y.min) && isFinite(limits.y.max)) {
 				const roundingTo = [1.0, 2.0, 4.0, 5.0, 8.0]
 
 				const num = Math.floor(height / 30)
@@ -412,12 +415,6 @@ export default {
 					this.activeIndex = closestIndex
 				}
 			}
-		},
-		floorMinutes (value, minutes = 5) {
-			return Math.floor(value / 60 / minutes) * 60 * minutes
-		},
-		ceilMinutes (value, minutes = 5) {
-			return Math.ceil(value / 60 / minutes) * 60 * minutes
 		},
 		onResize () {
 			const { container } = this.$refs

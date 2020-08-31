@@ -7,9 +7,14 @@
 			<br>
 			<a class="text-xs" target="_blank" rel="noopener" href="https://thomasguthruf.ch">© Thomas Guthruf</a>
 		</div>
-		<a target="_blank" rel="noopener" href="http://astrometry.net/">
-			<img src="/astrometry-net-logo.png" class="w-24">
-		</a>
+		<div class="flex">
+			<a target="_blank" rel="noopener" href="https://stellarium.org/" class="pl-4">
+				<img src="/stellarium-logo.png" class="h-8">
+			</a>
+			<a target="_blank" rel="noopener" href="http://astrometry.net/" class="pl-4">
+				<img src="/astrometry-net-logo.png" class="h-8">
+			</a>
+		</div>
 	</footer>
 </template>
 

@@ -35,9 +35,17 @@
 				:dataSeries="dataSeriesFiltered"
 				:data-key="plot.id"
 				:title="plot.name"
-				:range="{ min: null, max: null }"
+				:range="range"
 				:selectedPlots="renderedPlots"
 				:colors="usedColors"
+			/>
+		</div>
+		<div>
+			<ab-chart-range
+				v-if="renderedPlots.length > 0"
+				:series="dataSeriesFiltered"
+				:onChange="updateRange"
+				:range="range"
 			/>
 		</div>
 	</div>
@@ -48,11 +56,12 @@ import moment from 'moment'
 
 import AbSelect from './AbSelect.vue'
 import AbChart from './AbChart.vue'
+import AbChartRange from './AbChartRange.vue'
 
 import Orb from '~/assets/orb/package.js'
 
 export default {
-	components: { AbSelect, AbChart },
+	components: { AbSelect, AbChart, AbChartRange },
 	props: {
 		statisticalData: { type: Array, required: true },
 		location: { type: Object, default: () => { return {} } },
@@ -63,6 +72,7 @@ export default {
 			activeIndex: null,
 			selectedPlots: [],
 			disabledSeries: [],
+			range: { min: null, max: null },
 			colors: ['#ddb310', '#00beff', '#b51d14', '#4053d3 ', '#fb49b0', '#00b25d', '#cacaca'],
 			plotTypes: [
 				{
@@ -258,6 +268,9 @@ export default {
 		this.selectedPlots = selectedPlots
 	},
 	methods: {
+		updateRange (min, max) {
+			this.range = { min, max }
+		},
 		updatePlots (key, newValues) {
 			this.selectedPlots = newValues
 			localStorage.setItem('selectedPlots', JSON.stringify(this.selectedPlots))
