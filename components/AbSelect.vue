@@ -115,7 +115,7 @@ export default {
 					const index = keys.indexOf(id)
 					return {
 						id,
-						name: this.options[index].name
+						[this.labelKey]: this.options[index][this.labelKey]
 					}
 				})
 				this.preparedValue = values
@@ -123,7 +123,7 @@ export default {
 				const value = { id: this.value }
 				this.options.forEach((opt) => {
 					if (opt.id === value.id) {
-						value.name = opt.name
+						value[this.labelKey] = opt[this.labelKey]
 					}
 				})
 				this.preparedValue = value

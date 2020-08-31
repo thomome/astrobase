@@ -64,6 +64,8 @@
 						<div v-if="picture.stats">
 							<ab-chart-comparison
 								:statisticalData="statisticalData"
+								:location="location"
+								:calibration="image.calibration"
 							/>
 						</div>
 					</div>
@@ -83,6 +85,11 @@
 								:key="exposure.exposure_time + exposure.mode"
 							>
 								{{ exposure.amount }} × {{ exposure.exposure_time }}&#8239;<small>s</small>
+								<ab-tag
+									v-if="exposure.gain"
+									:label="exposure.gain"
+									class="sm outline"
+								/>
 								<ab-tag
 									:label="exposure.mode.label"
 									:type="exposure.mode.value"
@@ -199,7 +206,6 @@
 <script>
 import moment from 'moment'
 import Papa from 'papaparse'
-import { julian, moonillum, sunrise } from 'astronomia'
 
 import { getPicture } from '~/api/api.js'
 
@@ -237,16 +243,6 @@ export default {
 		},
 		location () {
 			return this.picture.location[0]
-		},
-		moonphase () {
-			const date = new Date(this.picture.timestamp)
-			const jd = new julian.Calendar().fromDate(date)
-			const sun = new sunrise.Sunrise(jd, this.location.coords.lat, this.location.coords.lng)
-			const jde = jd.toJDE()
-			return {
-				test: Math.round((1 - Math.abs(moonillum.phaseAngle3(jde) / Math.PI)) * 100) + '%',
-				test2: sun
-			}
 		},
 		totalExposureTime () {
 			const secs = this.picture.exposures.reduce((p, v) => {

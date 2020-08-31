@@ -51,8 +51,16 @@
 						<li
 							v-for="exposure in picture.exposures"
 							:key="exposure.exposure_time + exposure.mode"
+							class="flex items-center"
 						>
-							{{ exposure.amount }} x {{ exposure.exposure_time }}&#8239;<small>s</small>
+							<span class="mr-1">
+								{{ exposure.amount }} x {{ exposure.exposure_time }}&#8239;<small>s</small>
+							</span>
+							<ab-tag
+								v-if="exposure.gain"
+								:label="exposure.gain"
+								class="sm outline"
+							/>
 							<ab-tag
 								:label="exposure.mode.label"
 								:type="exposure.mode.value"

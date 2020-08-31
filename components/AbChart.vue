@@ -146,8 +146,10 @@ export default {
 		title: { type: String, default: '' },
 		dataKey: { type: String, required: true },
 		data: { type: Array, required: true },
+		dataSeries: { type: Array, required: true },
 		range: { type: Object, default: () => { return { min: false, max: false } } },
-		selectedPlots: { type: Array, default: () => [] }
+		selectedPlots: { type: Array, default: () => [] },
+		colors: { type: Array, default: () => [] }
 	},
 	data () {
 		return {
@@ -156,8 +158,7 @@ export default {
 			yAxisWidth: 60,
 			xAxisHeight: 30,
 			padding: 5,
-			activeIndex: null,
-			colors: ['#ddb310', '#00beff', '#b51d14', '#4053d3 ', '#fb49b0', '#00b25d', '#cacaca']
+			activeIndex: null
 		}
 	},
 	computed: {
@@ -171,31 +172,12 @@ export default {
 			}
 		},
 		series () {
-			const { data, dataKey } = this
+			const { dataSeries, dataKey } = this
 
-			let index = 0
-			let sessionStart = 0
-			let lastTime = 0
-			const series = []
-
-			data.forEach((o, i) => {
-				const time = parseInt(o.time)
-				if (lastTime + 8 * 60 * 60 < time) {
-					sessionStart = moment.unix(time).startOf('day').unix()
-					if (lastTime !== 0) {
-						index++
-					}
-				}
-				if (!series[index]) {
-					series[index] = []
-				}
-				series[index].push({
-					index: i,
-					timestamp: time,
-					time: time - sessionStart,
-					value: parseFloat(o[dataKey])
+			const series = dataSeries.map((serie) => {
+				return serie.map((o) => {
+					return { ...o, value: o.values[dataKey] }
 				})
-				lastTime = time
 			})
 
 			return series
@@ -252,7 +234,7 @@ export default {
 			const xRange = limits.x.max - limits.x.min
 			const yRange = limits.y.max - limits.y.min
 
-			const seriesNormalized = series.map((serie) => {
+			const seriesNormalized = [ ...series ].map((serie) => {
 				const serieNormalized = []
 				serie.forEach((o) => {
 					const no = { ...o }
@@ -275,19 +257,21 @@ export default {
 					allSeries[o.index] = o
 				})
 			})
+
 			return allSeries
 		},
 		seriesFlatSortedByX () {
 			const { seriesFlat } = this
-			return [...seriesFlat].sort((a, b) => {
+			const series = seriesFlat.filter(o => o)
+			return [...series].sort((a, b) => {
 				return a.x === b.x ? 0 : a.x - b.x
 			})
 		},
 		tooltip () {
-			const { activeIndex } = this
+			const { activeIndex, seriesFlat } = this
 
-			if (activeIndex !== null) {
-				const { data, seriesFlat, plotDim, yAxisWidth, padding, selectedPlots } = this
+			if (activeIndex !== null && seriesFlat[activeIndex]) {
+				const { data, plotDim, yAxisWidth, padding, selectedPlots } = this
 				const { width, height } = plotDim
 
 				const o = seriesFlat[activeIndex]
@@ -302,7 +286,7 @@ export default {
 					return {
 						id: plot.id,
 						title: plot.name,
-						value: col[plot.id]
+						value: col.values[plot.id]
 					}
 				})
 

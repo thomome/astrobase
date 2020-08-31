@@ -1,7 +1,7 @@
 <template>
 	<span
-		:style="{ background: color }"
-		class="tag rounded-sm text-black align-text-top ml-1"
+		:style="style"
+		class="tag"
 	>
 		{{ label }}
 	</span>
@@ -10,7 +10,7 @@
 <script>
 export default {
 	props: {
-		type: { type: String, default: 'color' },
+		type: { type: String, default: '' },
 		label: { type: String, default: '' }
 	},
 	data () {
@@ -29,6 +29,10 @@ export default {
 		}
 	},
 	computed: {
+		style () {
+			const { type, color } = this
+			return type ? { background: color } : {}
+		},
 		color () {
 			return this.colors[this.type] || '#ffffff'
 		}
@@ -38,11 +42,17 @@ export default {
 
 <style lang="scss" scoped>
 	.tag {
+		@apply inline-block leading-none rounded-sm text-black ml-1;
 		padding: 2px 6px;
 	}
 
 	.sm {
 		@apply text-xs;
+		padding: 2px 4px;
+	}
+
+	.outline {
+		@apply border-solid border-gray-300 border text-gray-300;
 		padding: 1px 3px;
 	}
 </style>
