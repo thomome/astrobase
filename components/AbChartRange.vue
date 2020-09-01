@@ -4,8 +4,8 @@
 		class="ab-chart-range select-none"
 	>
 		<svg
-			class="w-full"
 			:height="height"
+			class="w-full"
 		>
 			<g :transform="`translate(${padding} ${padding})`">
 

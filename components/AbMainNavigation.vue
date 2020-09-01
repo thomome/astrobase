@@ -34,6 +34,7 @@
 		<button
 			@click="isOpen = !isOpen"
 			class="ml-auto md:hidden"
+			aria-label="Navigation"
 		>
 			<ab-hamburger
 				:active="isOpen"

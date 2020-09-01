@@ -61,7 +61,10 @@
 					>
 						<text
 							class="ab-chart__title"
-						>{{ title }}</text>
+						>
+							<tspan>{{ title }}</tspan>
+							<tspan v-if="unit" class="ab-chart__unit">[&ThinSpace;{{ unit }}&ThinSpace;]</tspan>
+						</text>
 					</g>
 					<line
 						:y2="plotDim.height"
@@ -129,7 +132,7 @@
 				:key="col.title"
 				:class="`ab-chart__tooltip-value ${col.id === dataKey ? 'active' : ''}`"
 			>
-				<span>{{ col.title }}:</span> <strong>{{ col.value }}</strong>
+				<span>{{ col.title }}:</span> <strong>{{ col.value }}&ThinSpace;{{ col.unit }}</strong>
 			</div>
 		</div>
 	</div>
@@ -144,6 +147,7 @@ export default {
 	components: { AbChartPath },
 	props: {
 		title: { type: String, default: '' },
+		unit: { type: String, default: '' },
 		dataKey: { type: String, required: true },
 		data: { type: Array, required: true },
 		dataSeries: { type: Array, required: true },
@@ -289,7 +293,8 @@ export default {
 					return {
 						id: plot.id,
 						title: plot.name,
-						value: col.values[plot.id]
+						value: col.values[plot.id],
+						unit: plot.unit || ''
 					}
 				})
 

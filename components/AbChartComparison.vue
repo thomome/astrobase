@@ -35,6 +35,7 @@
 				:dataSeries="dataSeriesFiltered"
 				:data-key="plot.id"
 				:title="plot.name"
+				:unit="plot.unit"
 				:range="range"
 				:selectedPlots="renderedPlots"
 				:colors="usedColors"
@@ -77,55 +78,72 @@ export default {
 			plotTypes: [
 				{
 					id: 'fwhm',
-					name: 'FWHM (pixels)'
+					name: 'FWHM',
+					unit: 'px'
+				}, {
+					id: 'fwhmarc',
+					name: 'FWHM',
+					unit: '″'
 				}, {
 					id: 'median',
-					name: 'Median'
+					name: 'Median ADU'
 				}, {
 					id: 'snr',
-					name: 'SNR (dB)'
+					name: 'SNR',
+					unit: 'dB'
 				}, {
 					id: 'ecc',
 					name: 'Eccentricity'
 				}, {
 					id: 'weight',
-					name: 'Weight (%)'
+					name: 'Weight',
+					unit: '%'
 				}, {
 					id: 'objalt',
-					name: 'Object Altitude (°)'
+					name: 'Object Altitude',
+					unit: 'deg'
 				}, {
 					id: 'moonalt',
-					name: 'Moon Altitude (°)'
+					name: 'Moon Altitude',
+					unit: 'deg'
 				}, {
 					id: 'stars',
 					name: 'Stars'
 				}, {
 					id: 'seeing',
-					name: 'Seeing FHMW (arcsec)'
+					name: 'Seeing FHMW',
+					unit: '″'
 				}, {
 					id: 'wind',
-					name: 'Wind (m/s)'
+					name: 'Wind',
+					unit: 'm/s'
 				}, {
 					id: 'obj_altitude',
-					name: 'Altitude (degree)'
+					name: 'Altitude',
+					unit: 'deg'
 				}, {
 					id: 'cloudcover',
-					name: 'Cloud Cover (%)'
+					name: 'Cloud Cover',
+					unit: '%'
 				}, {
 					id: 'humidity',
-					name: 'Humidity (%)'
+					name: 'Humidity',
+					unit: '%'
 				}, {
 					id: 'gust',
-					name: 'Gust (m/s)'
+					name: 'Gust',
+					unit: 'm/s'
 				}, {
 					id: 'ambient_temp',
-					name: 'Temperatur (°C)'
+					name: 'Temperatur',
+					unit: '°C'
 				}, {
 					id: 'focuspos',
 					name: 'Focus position'
 				}, {
 					id: 'exposure',
-					name: 'Exposure (s)'
+					name: 'Exposure Time',
+					unit: 's'
 				}
 			]
 		}
@@ -140,10 +158,10 @@ export default {
 				altitude: location.elevation
 			}
 			const luna = new Orb.Luna()
-			const obj = {
+			const obj = calibration ? {
 				ra: calibration.ra / 360 * 24,
 				dec: calibration.dec
-			}
+			} : false
 
 			const obs = new Orb.Observation({
 				observer: loc,
@@ -162,12 +180,18 @@ export default {
 
 				obs.target = luna.radec(date)
 				const moonPos = obs.azel(date)
-
-				obs.target = obj
-				const objPos = obs.azel(date)
-
 				newRow.moonalt = moonPos.elevation.toFixed(1)
-				newRow.objalt = objPos.elevation.toFixed(1)
+
+				if (obj) {
+					obs.target = obj
+					const objPos = obs.azel(date)
+					newRow.objalt = objPos.elevation.toFixed(1)
+				}
+
+				if (row.scale && row.fwhm) {
+					newRow.fwhmarc = (row.scale * row.fwhm).toFixed(2)
+					delete newRow.fwhm
+				}
 
 				delete newRow.time
 

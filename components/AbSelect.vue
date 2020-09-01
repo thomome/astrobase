@@ -113,10 +113,7 @@ export default {
 				const keys = this.options.map(opt => opt.id)
 				const values = this.values.map((id) => {
 					const index = keys.indexOf(id)
-					return {
-						id,
-						[this.labelKey]: this.options[index][this.labelKey]
-					}
+					return { ...this.options[index] }
 				})
 				this.preparedValue = values
 			} else {

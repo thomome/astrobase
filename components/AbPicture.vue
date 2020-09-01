@@ -7,7 +7,8 @@
 		@touchend="onTouchEnd"
 		@touchmove="onTouchMove"
 		@fullscreenchange="onFullscrenChange"
-		:class="'astro-picture relative w-full h-full bg-black overflow-hidden select-none'"
+		@click="onClick"
+		:class="'astro-picture relative w-full h-full bg-black overflow-hidden select-none ' + (isFullscreen && zoom !== 1 ? 'can-drag' : '') + ' ' + (isDragging && zoom !== 1 ? 'is-dragging' : '')"
 	>
 		<div
 			v-if="controls"
@@ -41,7 +42,7 @@
 				:image="image"
 				:full="isFullscreen"
 				:style="transform"
-				:class="'astro-picture__img block w-full h-full ' + (isFullscreen ? 'object-contain' : 'object-cover')"
+				:class="'astro-picture__img block w-full h-full ' + (isFullscreen ? 'object-contain pointer-events-none' : 'object-cover')"
 				min-size="medium_large"
 			/>
 			<svg
@@ -101,6 +102,7 @@ export default {
 			zoomStartPos: [0, 0],
 			zoomDistStart: 0,
 			zoomStart: 1,
+			lastClick: 0,
 
 			minRadius: 30,
 			labelPadding: {
@@ -207,9 +209,11 @@ export default {
 	},
 	methods: {
 		toggleAnnotations () {
+			this.lastClick = 0
 			this.showAnnotations = !this.showAnnotations
 		},
 		toggleFullscreen () {
+			this.lastClick = 0
 			if (!this.isFullscreen) {
 				this.$refs.container.requestFullscreen()
 			} else {
@@ -326,8 +330,35 @@ export default {
 				this.isFullscreen = false
 			}
 		},
+		onClick (e) {
+			if (!this.isFullscreen || !this.controls) {
+				return false
+			}
+
+			const { lastClick, zoom, minZoom, maxZoom, offset } = this
+			const now = Date.now()
+
+			if (lastClick + 500 > now) {
+				const rect = this.$refs.container.getBoundingClientRect()
+				const offsetX = e.clientX - rect.left
+				const offsetY = e.clientY - rect.top
+
+				const newZoom = zoom > minZoom + 0.5 ? minZoom : maxZoom * 0.75
+
+				const newOffset = [
+					((offset[0] - offsetX) / zoom * newZoom) + offsetX,
+					((offset[1] - offsetY) / zoom * newZoom) + offsetY
+				]
+
+				this.zoom = newZoom
+				this.updateOffset(newOffset)
+				this.lastClick = 0
+			} else {
+				this.lastClick = now
+			}
+		},
 		onMouseDown (e) {
-			if (!this.controls) {
+			if (!this.isFullscreen || !this.controls) {
 				return false
 			}
 
@@ -383,7 +414,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 	.astro-picture__controls {
 		@apply opacity-100;
 
@@ -391,6 +422,14 @@ export default {
 			@apply opacity-0;
 			transition: opacity .3s;
 		}
+	}
+
+	.can-drag {
+		cursor: grab;
+	}
+
+	.is-dragging {
+		cursor: grabbing;
 	}
 
 	.astro-picture:hover {

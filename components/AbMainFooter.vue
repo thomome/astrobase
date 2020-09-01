@@ -8,11 +8,11 @@
 			<a class="text-xs" target="_blank" rel="noopener" href="https://thomasguthruf.ch">© Thomas Guthruf</a>
 		</div>
 		<div class="flex">
-			<a target="_blank" rel="noopener" href="https://stellarium.org/" class="pl-4">
-				<img src="/stellarium-logo.png" class="h-8">
+			<a aria-label="Stellarium" target="_blank" rel="noopener" href="https://stellarium.org/" class="pl-4">
+				<img src="/stellarium-logo.png" alt="Stellarium Logo" class="h-8">
 			</a>
-			<a target="_blank" rel="noopener" href="http://astrometry.net/" class="pl-4">
-				<img src="/astrometry-net-logo.png" class="h-8">
+			<a aria-label="Astrometry.net" target="_blank" rel="noopener" href="http://astrometry.net/" class="pl-4">
+				<img src="/astrometry-net-logo.png" alt="Astrometry.net Logo" class="h-8">
 			</a>
 		</div>
 	</footer>

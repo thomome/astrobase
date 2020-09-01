@@ -3,6 +3,7 @@
 		<div class="picture__image-container w-full">
 			<nuxt-link
 				:to="`/pictures/${picture.id}`"
+				:aria-label="picture.title"
 			>
 				<ab-image
 					:image="image"
@@ -40,8 +41,8 @@
 
 				<span
 					v-if="picture.objects.length > shownObjects.length"
-					class="cursor-pointer py-2"
 					@click="showAll"
+					class="cursor-pointer py-2"
 				>
 					...
 				</span>
