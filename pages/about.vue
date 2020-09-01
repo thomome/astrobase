@@ -12,7 +12,7 @@
 			<h2 class="text-2xl text-white mb-4">
 				Equipment
 			</h2>
-			<div class="devices flex flex-wrap">
+			<div class="devices grid xl:grid-cols-4 md:grid-cols-3 sm:grid-cols-2">
 				<ab-card
 					v-for="device in devices"
 					:key="device.id"

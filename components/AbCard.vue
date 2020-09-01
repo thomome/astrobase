@@ -1,5 +1,5 @@
 <template>
-	<div class="card relative w-1/4 p-8">
+	<div class="card relative p-8">
 		<div class="card__image flex items-center h-48">
 			<slot />
 		</div>
@@ -25,7 +25,6 @@ export default {
 
 <style lang="scss">
 	.card__image {
-		opacity: 0.5;
-		filter: saturate(0.5);
+		opacity: 0.8;
 	}
 </style>

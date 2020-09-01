@@ -1,9 +1,10 @@
 <template>
 	<img
-		:src="url"
-		:srcset="srcset"
-		:sizes="sizes"
+		:src="loaded ? url : image.sizes.small"
+		:srcset="loaded ? srcset : ''"
+		:sizes="loaded ? sizes : ''"
 		:alt="alt"
+		class="block w-full"
 	>
 </template>
 
@@ -17,7 +18,8 @@ export default {
 	},
 	data () {
 		return {
-			defaultSizes: ['small', 'medium', 'medium_large', 'large', 'extra_large']
+			defaultSizes: ['small', 'medium', 'medium_large', 'large', 'extra_large'],
+			loaded: false
 		}
 	},
 	computed: {
@@ -35,6 +37,16 @@ export default {
 			const size = defaultSizes.includes(minSize) ? minSize : defaultSizes[0]
 			return full ? '' : `(max-width: ${image.sizes[`${size}-width`]}px) ${image.sizes[`${size}-width`]}px`
 		}
+	},
+	mounted () {
+		const img = document.createElement('img')
+		img.addEventListener('load', () => {
+			this.loaded = true
+		})
+		img.sizes = this.sizes
+		img.alt = this.alt
+		img.src = this.url
+		img.srcset = this.srcset
 	}
 }
 </script>

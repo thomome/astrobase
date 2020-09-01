@@ -1,12 +1,12 @@
 <template>
 	<div class="picture relative mb-12 block lg:flex">
-		<div class="picture__image-container">
+		<div class="picture__image-container w-full">
 			<nuxt-link
 				:to="`/pictures/${picture.id}`"
 			>
 				<ab-image
 					:image="image"
-					class="picture__image block w-full min-h-full object-cover"
+					class="picture__image w-full"
 				/>
 			</nuxt-link>
 		</div>
@@ -30,13 +30,21 @@
 
 			<div class="picture__objects max-w-sm lg:max-w-6xl font-light text-sm">
 				<nuxt-link
-					v-for="obj in picture.objects"
+					v-for="obj in shownObjects"
 					:key="obj.id"
 					:to="{ path: 'pictures', query: { objects: [obj.id] } }"
 					class="inline-block mr-2 border-b border-yellow-400 text-gray-300 hover:text-white"
 				>
 					{{ obj.name }}
 				</nuxt-link>
+
+				<span
+					v-if="picture.objects.length > shownObjects.length"
+					class="cursor-pointer py-2"
+					@click="showAll"
+				>
+					...
+				</span>
 			</div>
 
 			<div class="picture__column-container hidden md:flex flex-wrap lg:block">
@@ -89,7 +97,19 @@ export default {
 	props: {
 		picture: { type: Object, required: true }
 	},
+	data () {
+		return {
+			shwoAllObjects: false
+		}
+	},
 	computed: {
+		shownObjects () {
+			const { shwoAllObjects } = this
+			const { objects } = this.picture
+
+			const limit = shwoAllObjects ? Infinity : 6
+			return objects.filter((obj, i) => i < limit)
+		},
 		image () {
 			return this.picture.image[0]
 		},
@@ -109,6 +129,11 @@ export default {
 			if (seconds) { durationString += `${seconds}&#8239;<small>s</small>` }
 
 			return durationString
+		}
+	},
+	methods: {
+		showAll () {
+			this.shwoAllObjects = true
 		}
 	}
 }
