@@ -259,6 +259,9 @@ export default {
 				const { zoomDistStart, zoomStart, zoomStartPos, offset, zoom, minZoom, maxZoom } = this
 
 				const currentDist = (e.touches[1].clientX - e.touches[0].clientX) ** 2 + (e.touches[1].clientY - e.touches[0].clientY) ** 2
+				if (currentDist !== zoomDistStart) {
+					this.lastClick = 0
+				}
 				// get ratio between current and start distance between the two touch points
 				let newZoom = zoomStart * (currentDist / zoomDistStart)
 
@@ -297,6 +300,7 @@ export default {
 			const { zoom, offset, maxZoom, minZoom } = this
 
 			e.preventDefault()
+			this.lastClick = 0
 
 			const rect = this.$refs.container.getBoundingClientRect()
 			const offsetX = e.clientX - rect.left
@@ -343,7 +347,7 @@ export default {
 				const offsetX = e.clientX - rect.left
 				const offsetY = e.clientY - rect.top
 
-				const newZoom = zoom > minZoom + 0.5 ? minZoom : maxZoom * 0.75
+				const newZoom = zoom >= maxZoom * 0.75 ? minZoom : maxZoom * 0.75
 
 				const newOffset = [
 					((offset[0] - offsetX) / zoom * newZoom) + offsetX,
@@ -385,6 +389,10 @@ export default {
 			const { isDragging, dragOffsetStart, dragStart } = this
 
 			if (isDragging) {
+				if (dragStart[0] !== e.clientX || dragStart[1] !== e.clientY) {
+					this.lastClick = 0
+				}
+
 				const newOffset = [
 					dragOffsetStart[0] - (dragStart[0] - e.clientX),
 					dragOffsetStart[1] - (dragStart[1] - e.clientY)
