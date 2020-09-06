@@ -54,12 +54,11 @@
 
 <script>
 import moment from 'moment'
+import meeus from 'meeusjs'
 
 import AbSelect from './AbSelect.vue'
 import AbChart from './AbChart.vue'
 import AbChartRange from './AbChartRange.vue'
-
-import Orb from '~/assets/orb/package.js'
 
 export default {
 	components: { AbSelect, AbChart, AbChartRange },
@@ -118,10 +117,6 @@ export default {
 					name: 'Wind',
 					unit: 'm/s'
 				}, {
-					id: 'obj_altitude',
-					name: 'Altitude',
-					unit: 'deg'
-				}, {
 					id: 'cloudcover',
 					name: 'Cloud Cover',
 					unit: '%'
@@ -152,41 +147,38 @@ export default {
 		data () {
 			const { statisticalData, location, calibration } = this
 
-			const loc = {
-				latitude: location.coords.lat,
-				longitude: location.coords.lng,
-				altitude: location.elevation
-			}
-			const luna = new Orb.Luna()
-			const obj = calibration ? {
-				ra: calibration.ra / 360 * 24,
-				dec: calibration.dec
-			} : false
-
-			const obs = new Orb.Observation({
-				observer: loc,
-				target: {}
-			})
-
 			let data = [ ...statisticalData ]
 
 			data.sort((a, b) => {
 				return a.time === b.time ? 0 : a - b
 			})
 
+			const obs = meeus.EclCoord.fromWgs84(location.coords.lat, location.coords.lng, location.elevation)
+			let obj = null
+			if (calibration) {
+				obj = new meeus.EqCoord(calibration.ra / 180 * Math.PI, calibration.dec / 180 * Math.PI)
+			}
+
 			data = data.map((row, index) => {
 				const newRow = { ...row }
 				const date = new Date(row.time * 1000)
+				const jdo = new meeus.JulianDay(date)
 
-				obs.target = luna.radec(date)
-				const moonPos = obs.azel(date)
-				newRow.moonalt = moonPos.elevation.toFixed(1)
+				if (process.client) {
+					const moonPos = meeus.Moon.topocentricPosition(jdo, obs, true)
+					newRow.moonalt = (moonPos.hz.alt / Math.PI * 180).toFixed(2) * 1
+					if (obj) {
+						const sidereal = meeus.Sidereal.apparentInRa(jdo)
+						const objPos = meeus.Coord.eqToHz(obj, obs, sidereal)
+						newRow.objalt = (objPos.alt / Math.PI * 180).toFixed(2) * 1
+					}
+				}
 
-				if (obj) {
+				/* if (obj) {
 					obs.target = obj
 					const objPos = obs.azel(date)
 					newRow.objalt = objPos.elevation.toFixed(1)
-				}
+				} */
 
 				if (row.scale && row.fwhm) {
 					newRow.fwhmarc = (row.scale * row.fwhm).toFixed(2)
