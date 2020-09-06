@@ -55,6 +55,7 @@
 						:width="dim.width"
 						:height="dim.height"
 						@mousedown="startSelection"
+						@touchstart="startSelection"
 						class="ab-chart-range__background"
 						x="0"
 						y="0"
@@ -64,6 +65,7 @@
 						:height="dim.height"
 						:x="min * dim.width"
 						@mousedown="startDrag"
+						@touchstart="startDrag"
 						class="ab-chart-range__bar"
 						y="0"
 					/>
@@ -71,6 +73,7 @@
 						:height="dim.height"
 						:x="min * dim.width"
 						@mousedown="startResizeMin"
+						@touchstart="startResizeMin"
 						y="0"
 						width="30"
 						class="ab-chart-range__resize-min"
@@ -79,6 +82,7 @@
 						:height="dim.height"
 						:x="max * dim.width"
 						@mousedown="startResizeMax"
+						@touchstart="startResizeMax"
 						y="0"
 						width="30"
 						class="ab-chart-range__resize-max"
@@ -194,6 +198,8 @@ export default {
 
 		window.addEventListener('mouseup', this.endAction)
 		window.addEventListener('mousemove', this.moveAction)
+		window.addEventListener('touchend', this.endAction)
+		window.addEventListener('touchmove', this.moveAction)
 
 		this.min = range.min ? (range.min - limit.min) / (limit.max - limit.min) : 0
 		this.max = range.max ? (range.max - limit.min) / (limit.max - limit.min) : 1
@@ -202,6 +208,8 @@ export default {
 		window.removeEventListener('resize', this.onResize)
 		window.removeEventListener('mouseup', this.endAction)
 		window.removeEventListener('mousemove', this.moveAction)
+		window.removeEventListener('touchend', this.endAction)
+		window.removeEventListener('touchmove', this.moveAction)
 	},
 	methods: {
 		onResize () {
@@ -256,7 +264,7 @@ export default {
 		moveAction (e) {
 			const { mode, $refs, start, max, min, minWidth } = this
 			const { range } = $refs
-			const x = e.touches && e.touches[0] ? e.touches[0].clientX : e.clientX
+			const x = (e.touches && e.touches[0]) || (e.changedTouches && e.changedTouches[0]) ? (e.changedTouches ? e.changedTouches[0].clientX : e.touches[0].clientX) : e.clientX
 			const rect = range.getBoundingClientRect()
 			const w = minWidth / rect.width
 
