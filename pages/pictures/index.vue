@@ -1,7 +1,7 @@
 <template>
 	<main class="main-content">
 		<div class="picture-list container mt-24 md:mt-40">
-			<div class="sort">
+			<div class="sort flex items-end mb-4">
 				<ab-select
 					:on-change="updateParams"
 					:value="params.orderby"
@@ -9,10 +9,16 @@
 					:allowEmpty="false"
 					label="Sort"
 					params-key="orderby"
-					class="w-full max-w-xs mr-6 mb-4"
+					class="w-full md:max-w-xs mr-4"
 				/>
+				<button
+					@click="filtersOpen = !filtersOpen"
+					:class="`filter-toggle md:hidden mt-2 ml-auto border rounded-sm ${filtersOpen ? 'border-white text-white' : 'border-gray-700'}`"
+				>
+					<ab-icon name="tune" />
+				</button>
 			</div>
-			<div class="filters grid sm:grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+			<div :class="`filters md:grid sm:grid-cols-2 md:grid-cols-3 gap-4 mb-8 ${filtersOpen || params.objects.length > 0 || params.devices.length > 0 || params.locations.length > 0 ? 'grid': 'hidden'}`">
 				<ab-select
 					:on-change="updateParams"
 					:values="params.objects"
@@ -83,22 +89,25 @@ import { getPictures, getObjects, getObject, getDevices, getDevice, getLocations
 import AbSelect from '~/components/AbSelect.vue'
 import AbPostPicture from '~/components/AbPostPicture.vue'
 import AbLoading from '~/components/AbLoading.vue'
+import AbIcon from '~/components/AbIcon.vue'
 
 const config = {
 	perPage: 6
 }
 
 export default {
-	components: { AbPostPicture, AbSelect, AbLoading },
+	components: { AbPostPicture, AbSelect, AbLoading, AbIcon },
 	watchQuery: ['objects', 'devices', 'locations', 'orderby'],
 	data () {
 		return {
 			sortOptions: [
 				{ id: 'latest', name: 'Latest' },
 				{ id: 'oldest', name: 'Oldest' },
-				{ id: 'title', name: 'Title' }
+				{ id: 'title', name: 'Title' },
+				{ id: 'stats', name: 'Statistical Rating' }
 			],
-			isLoading: true
+			isLoading: true,
+			filtersOpen: false
 		}
 	},
 	async asyncData ({ query, app }) {
@@ -176,6 +185,9 @@ export default {
 }
 </script>
 
-<style>
-
+<style lang="scss" scoped>
+	.filter-toggle {
+		padding: 6px 12px;
+		font-size: 1.1rem;
+	}
 </style>

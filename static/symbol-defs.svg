@@ -1,5 +1,9 @@
 <svg aria-hidden="true" style="position: absolute; width: 0; height: 0; overflow: hidden;" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <defs>
+<symbol id="icon-tune" viewBox="0 0 24 24">
+<title>tune</title>
+<path d="M15 9v-6h2.016v2.016h3.984v1.969h-3.984v2.016h-2.016zM21 12.984h-9.984v-1.969h9.984v1.969zM6.984 9h2.016v6h-2.016v-2.016h-3.984v-1.969h3.984v-2.016zM12.984 21h-1.969v-6h1.969v2.016h8.016v1.969h-8.016v2.016zM3 5.016h9.984v1.969h-9.984v-1.969zM3 17.016h6v1.969h-6v-1.969z"></path>
+</symbol>
 <symbol id="icon-fullscreen-exit" viewBox="0 0 24 24">
 <title>fullscreen-exit</title>
 <path d="M15.343 8.657h2.517v1.652h-4.168v-4.168h1.652v2.517zM13.691 17.859v-4.168h4.168v1.652h-2.517v2.517h-1.652zM8.657 8.657v-2.517h1.652v4.168h-4.168v-1.652h2.517zM6.141 15.343v-1.652h4.168v4.168h-1.652v-2.517h-2.517z"></path>
