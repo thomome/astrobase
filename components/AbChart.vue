@@ -73,6 +73,15 @@
 						y1="0"
 						class="ab-chart__ytic-line"
 					/>
+					<line
+						v-if="zeroLine.visible"
+						:transform="`translate(0 ${zeroLine.y})`"
+						:x2="plotDim.width"
+						class="ab-chart__ytic-zero"
+						x1="0"
+						y1="0"
+						y2="0"
+					/>
 					<g
 						v-for="tic in yTics"
 						:key="tic.label"
@@ -98,6 +107,13 @@
 						y="0"
 						class="ab-chart__plot-background"
 					/>
+					<line
+						:y1="median.medianNormalized * plotDim.height"
+						:y2="median.medianNormalized * plotDim.height"
+						:x2="plotDim.width"
+						x1="0"
+						class="ab-chart__plot-median"
+					/>
 					<ab-chart-path
 						v-for="(serie, index) in seriesNormalized"
 						:key="index"
@@ -107,6 +123,13 @@
 						:color="colors[index]"
 						:activeIndex="activeIndex"
 					/>
+					<text
+						:x="plotDim.width"
+						:y="0"
+						class="ab-chart__plot-median-label"
+					>
+						Median = {{ median.median }}&ThinSpace;{{ unit }}
+					</text>
 					<line
 						v-if="tooltip.active"
 						:y2="plotDim.height"
@@ -233,6 +256,31 @@ export default {
 					x: { min: 0, max: 1 },
 					y: { min: 0, max: 1 }
 				}
+			}
+		},
+		median () {
+			const { series, limits } = this
+			const values = []
+			series.forEach((serie) => {
+				values.push(...serie)
+			})
+			let median = 0
+			if (values.length !== 0) {
+				values.sort((a, b) => {
+					return a.value - b.value
+				})
+				const half = Math.floor(values.length / 2)
+
+				if (values.length % 2) {
+					median = values[half].value
+				} else {
+					median = (values[half - 1].value + values[half].value) / 2.0
+				}
+			}
+
+			return {
+				median: median.toFixed(2) * 1,
+				medianNormalized: 1 - (median - limits.y.min) / (limits.y.max - limits.y.min)
 			}
 		},
 		seriesNormalized () {
@@ -372,6 +420,26 @@ export default {
 				}
 			}
 			return tics
+		},
+		zeroLine () {
+			const { limits, plotDim } = this
+			const { height } = plotDim
+			const range = limits.y.max - limits.y.min
+
+			let visible = false
+			let y = 0
+			if (
+				isFinite(limits.y.min) && isFinite(limits.y.max) &&
+				limits.y.min < 0 && limits.y.max > 0
+			) {
+				y = height - (0 - limits.y.min) / range * height
+				visible = true
+			}
+
+			return {
+				visible,
+				y
+			}
 		}
 	},
 	mounted () {
@@ -466,9 +534,16 @@ export default {
 	}
 
 	.ab-chart__plot-median {
-		stroke: theme('colors.gray.100');
+		stroke: theme('colors.gray.400');
 		stroke-dasharray: 4px 4px;
-		stroke-width: .5;
+	}
+
+	.ab-chart__plot-median-label {
+		transform-box: fill-box;
+		fill: theme('colors.gray.400');
+		text-anchor: end;
+		transform: translateY(50%);
+		@apply text-xs;
 	}
 
 	.ab-chart__xtic-text,
@@ -492,6 +567,10 @@ export default {
 	.ab-chart__xtic-line,
 	.ab-chart__ytic-line {
 		stroke: theme('colors.gray.400');
+	}
+
+	.ab-chart__ytic-zero {
+		stroke: theme('colors.gray.500');
 	}
 
 	.ab-chart__grid-line {
