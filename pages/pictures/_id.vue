@@ -76,7 +76,7 @@
 						v-if="picture.exposures.length"
 						class="picture__column picture__exposures mr-16"
 					>
-						<h3 class="picture__details-title text-gray-700 text-sm uppercase font-medium mt-6 mb-2">
+						<h3 class="picture__details-title section-title">
 							Exposure Time
 						</h3>
 						<ul class="picture__details-list border-l border-yellow-400 pl-4 my-2 ml-1">
@@ -151,41 +151,45 @@
 						v-if="picture.objects.length"
 						class="picture__tags max-w-6xl font-light text-sm"
 					>
-						<h3 class="picture__details-title text-gray-700 text-sm uppercase font-medium mt-6 mb-2">
+						<h3 class="picture__details-title section-title">
 							Objects in picture
 						</h3>
-						<nuxt-link
-							v-for="obj in picture.objects"
-							:key="obj.id"
-							:to="{ path: '/pictures', query: { objects: [obj.id] } }"
-							class="inline-block mr-2 border-b border-yellow-400 text-gray-300 hover:text-white"
-						>
-							{{ obj.name }}
-						</nuxt-link>
+						<div>
+							<nuxt-link
+								v-for="obj in picture.objects"
+								:key="obj.id"
+								:to="{ path: '/pictures', query: { objects: [obj.id] } }"
+								class="inline-block mr-2 border-b border-yellow-400 text-gray-300 hover:text-white"
+							>
+								{{ obj.name }}
+							</nuxt-link>
+						</div>
 					</div>
 
 					<div
 						v-if="picture.equipment.length"
 						class="picture__column picture__equipment mr-16 font-light text-sm"
 					>
-						<h3 class="picture__details-title text-gray-700 text-sm uppercase font-medium mt-6 mb-2">
+						<h3 class="picture__details-title section-title">
 							Equipment
 						</h3>
-						<nuxt-link
-							v-for="device in picture.equipment"
-							:key="device.id"
-							:to="{ path: '/pictures', query: { devices: [device.id] } }"
-							class="inline-block mr-2 border-b border-yellow-400 text-gray-300 hover:text-white"
-						>
-							{{ device.title }}
-						</nuxt-link>
+						<div>
+							<nuxt-link
+								v-for="device in picture.equipment"
+								:key="device.id"
+								:to="{ path: '/pictures', query: { devices: [device.id] } }"
+								class="inline-block mr-2 border-b border-yellow-400 text-gray-300 hover:text-white"
+							>
+								{{ device.title }}
+							</nuxt-link>
+						</div>
 					</div>
 
 					<div
 						v-if="picture.software.length"
 						class="picture__column picture__software"
 					>
-						<h3 class="picture__details-title text-gray-700 text-sm uppercase font-medium mt-6 mb-2">
+						<h3 class="picture__details-title section-title">
 							Software
 						</h3>
 						<ul class="picture__details-list border-l border-yellow-400 pl-4 my-2 ml-1">

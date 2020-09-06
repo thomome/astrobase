@@ -53,7 +53,7 @@
 					v-if="picture.exposures.length"
 					class="picture__column picture__exposures mr-16 lg:mr-0"
 				>
-					<h3 class="picture__details-title text-gray-700 text-sm uppercase font-medium mt-6 mb-2">
+					<h3 class="picture__details-title section-title">
 						Exposure Time
 					</h3>
 					<ul class="picture__details-list border-l border-yellow-400 pl-4 my-2 ml-1">

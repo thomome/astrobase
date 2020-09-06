@@ -111,4 +111,8 @@ export default {
 			}
 		}
 	}
+
+	.section-title {
+		@apply text-xs inline-block text-gray-600 tracking-widest uppercase font-medium mt-6 mb-1;
+	}
 </style>
