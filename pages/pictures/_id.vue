@@ -103,49 +103,68 @@
 						</div>
 					</div>
 
-					<ab-skymap
-						v-if="image.calibration"
-						:ra="frame.ra"
-						:dec="frame.dec"
-						:lat="location.coords.lat"
-						:lon="location.coords.lng"
-						:width="frame.w"
-						:height="frame.h"
-						:time="frame.t"
-						:orientation="frame.o"
-						class="mt-8"
-					/>
-					<table
-						v-if="image.calibration"
-						class="text-xs mt-2"
+					<div
+						class="picture__column picture__observation mr-16"
 					>
-						<tbody>
-							<tr>
-								<td class="pr-4 font-medium">
-									Center (RA, DEC)
-								</td>
-								<td>
-									{{ frame.ra.toFixed(4) }}, {{ frame.dec.toFixed(4) }}
-								</td>
-							</tr>
-							<tr>
-								<td class="pr-4 font-medium">
-									Size
-								</td>
-								<td>
-									{{ frame.w.toFixed(3) }} × {{ frame.h.toFixed(3) }} deg
-								</td>
-							</tr>
-							<tr>
-								<td class="pr-4 font-medium">
-									Radius
-								</td>
-								<td>
-									{{ image.calibration.radius.toFixed(3) }} deg
-								</td>
-							</tr>
-						</tbody>
-					</table>
+						<h3 class="picture__details-title section-title">
+							Observation
+						</h3>
+
+						<div class="flex my-2">
+							<ab-icon-moon
+								:illuminated="moon.illuminated"
+								:positionAngle="moon.positionAngle"
+								class="w-10 h-10"
+							/>
+							<div class="text-xs ml-4">
+								<div>Avg. Moon phase <br><strong>{{ (moon.illuminated * 100).toFixed(2) * 1 }}&#8239;%</strong></div>
+							</div>
+						</div>
+
+						<ab-skymap
+							v-if="image.calibration"
+							:ra="frame.ra"
+							:dec="frame.dec"
+							:lat="location.coords.lat"
+							:lon="location.coords.lng"
+							:width="frame.w"
+							:height="frame.h"
+							:time="frame.t"
+							:orientation="frame.o"
+							class="mt-8"
+						/>
+						<table
+							v-if="image.calibration"
+							class="text-xs mt-2"
+						>
+							<tbody>
+								<tr>
+									<td class="pr-4 font-medium">
+										Center (RA, DEC)
+									</td>
+									<td>
+										{{ frame.ra.toFixed(4) }}, {{ frame.dec.toFixed(4) }}
+									</td>
+								</tr>
+								<tr>
+									<td class="pr-4 font-medium">
+										Size
+									</td>
+									<td>
+										{{ frame.w.toFixed(3) }} × {{ frame.h.toFixed(3) }} deg
+									</td>
+								</tr>
+								<tr>
+									<td class="pr-4 font-medium">
+										Radius
+									</td>
+									<td>
+										{{ image.calibration.radius.toFixed(3) }} deg
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
 
 					<div
 						v-if="picture.objects.length"
@@ -210,17 +229,18 @@
 <script>
 import moment from 'moment'
 import Papa from 'papaparse'
-
 import { getPicture } from '~/api/api.js'
+import meeus from '~/assets/meeusjs/index.js'
 
 import AbPicture from '~/components/AbPicture.vue'
 import AbSkymap from '~/components/AbSkymap.vue'
 import AbTag from '~/components/AbTag.vue'
 import AbIcon from '~/components/AbIcon.vue'
 import AbChartComparison from '~/components/AbChartComparison.vue'
+import AbIconMoon from '~/components/AbIconMoon.vue'
 
 export default {
-	components: { AbPicture, AbSkymap, AbTag, AbIcon, AbChartComparison },
+	components: { AbPicture, AbSkymap, AbTag, AbIcon, AbChartComparison, AbIconMoon },
 	data () {
 		return {
 			version: 0,
@@ -228,6 +248,30 @@ export default {
 		}
 	},
 	computed: {
+		moon () {
+			const { location } = this
+			if (location) {
+				const { picture, location } = this
+				const { elevation } = location
+				const { lat, lng } = location.coords
+				const { timestamp } = picture
+
+				const jdo = new meeus.JulianDay(new Date(timestamp))
+				const obs = meeus.EclCoord.fromWgs84(lat, lng, elevation)
+				const sunPos = meeus.Solar.apparentTopocentric(jdo, obs)
+				const moonPos = meeus.Moon.apparentTopocentric(jdo, obs)
+
+				const phaseAngle = meeus.MoonIllum.phaseAngleEq2(moonPos.eq, sunPos)
+				const positionAngle = meeus.MoonIllum.positionAngle(moonPos.eq, sunPos)
+				const illuminated = meeus.MoonIllum.illuminated(phaseAngle)
+				return {
+					illuminated,
+					positionAngle
+				}
+			} else {
+				return {}
+			}
+		},
 		image () {
 			const { picture, version } = this
 			return picture.image[version]

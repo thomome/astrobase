@@ -54,11 +54,12 @@
 
 <script>
 import moment from 'moment'
-import meeus from 'meeusjs'
 
 import AbSelect from './AbSelect.vue'
 import AbChart from './AbChart.vue'
 import AbChartRange from './AbChartRange.vue'
+
+import meeus from '~/assets/meeusjs/index.js'
 
 export default {
 	components: { AbSelect, AbChart, AbChartRange },
@@ -164,21 +165,13 @@ export default {
 				const date = new Date(row.time * 1000)
 				const jdo = new meeus.JulianDay(date)
 
-				if (process.client) {
-					const moonPos = meeus.Moon.topocentricPosition(jdo, obs, true)
-					newRow.moonalt = (moonPos.hz.alt / Math.PI * 180).toFixed(2) * 1
-					if (obj) {
-						const sidereal = meeus.Sidereal.apparentInRa(jdo)
-						const objPos = meeus.Coord.eqToHz(obj, obs, sidereal)
-						newRow.objalt = (objPos.alt / Math.PI * 180).toFixed(2) * 1
-					}
+				const moonPos = meeus.Moon.topocentricPosition(jdo, obs, true)
+				newRow.moonalt = (moonPos.hz.alt / Math.PI * 180).toFixed(2) * 1
+				if (obj) {
+					const sidereal = meeus.Sidereal.apparentInRa(jdo)
+					const objPos = meeus.Coord.eqToHz(obj, obs, sidereal)
+					newRow.objalt = (objPos.alt / Math.PI * 180).toFixed(2) * 1
 				}
-
-				/* if (obj) {
-					obs.target = obj
-					const objPos = obs.azel(date)
-					newRow.objalt = objPos.elevation.toFixed(1)
-				} */
 
 				if (row.scale && row.fwhm) {
 					newRow.fwhmarc = (row.scale * row.fwhm).toFixed(2)
