@@ -59,14 +59,10 @@ import AbSelect from './AbSelect.vue'
 import AbChart from './AbChart.vue'
 import AbChartRange from './AbChartRange.vue'
 
-import meeus from '~/assets/meeusjs/index.js'
-
 export default {
 	components: { AbSelect, AbChart, AbChartRange },
 	props: {
-		statisticalData: { type: Array, required: true },
-		location: { type: Object, default: () => { return {} } },
-		calibration: { type: Object, default: () => { return {} } }
+		data: { type: Array, required: true }
 	},
 	data () {
 		return {
@@ -81,7 +77,7 @@ export default {
 					name: 'FWHM',
 					unit: 'px'
 				}, {
-					id: 'fwhmarc',
+					id: 'fwhmArc',
 					name: 'FWHM',
 					unit: '″'
 				}, {
@@ -99,11 +95,11 @@ export default {
 					name: 'Weight',
 					unit: '%'
 				}, {
-					id: 'objalt',
+					id: 'objAlt',
 					name: 'Object Altitude',
 					unit: 'deg'
 				}, {
-					id: 'moonalt',
+					id: 'moonAlt',
 					name: 'Moon Altitude',
 					unit: 'deg'
 				}, {
@@ -118,7 +114,7 @@ export default {
 					name: 'Wind',
 					unit: 'm/s'
 				}, {
-					id: 'cloudcover',
+					id: 'cloudCover',
 					name: 'Cloud Cover',
 					unit: '%'
 				}, {
@@ -130,11 +126,11 @@ export default {
 					name: 'Gust',
 					unit: 'm/s'
 				}, {
-					id: 'ambient_temp',
+					id: 'ambientTemp',
 					name: 'Temperatur',
 					unit: '°C'
 				}, {
-					id: 'focuspos',
+					id: 'focusPos',
 					name: 'Focus position'
 				}, {
 					id: 'exposure',
@@ -145,54 +141,6 @@ export default {
 		}
 	},
 	computed: {
-		data () {
-			const { statisticalData, location, calibration } = this
-
-			let data = [ ...statisticalData ]
-
-			data.sort((a, b) => {
-				return a.time === b.time ? 0 : a - b
-			})
-
-			const obs = meeus.EclCoord.fromWgs84(location.coords.lat, location.coords.lng, location.elevation)
-			let obj = null
-			if (calibration) {
-				obj = new meeus.EqCoord(calibration.ra / 180 * Math.PI, calibration.dec / 180 * Math.PI)
-			}
-
-			data = data.map((row, index) => {
-				const newRow = { ...row }
-				const date = new Date(row.time * 1000)
-				const jdo = new meeus.JulianDay(date)
-
-				const moonPos = meeus.Moon.topocentricPosition(jdo, obs, true)
-				newRow.moonalt = (moonPos.hz.alt / Math.PI * 180).toFixed(2) * 1
-				if (obj) {
-					const sidereal = meeus.Sidereal.apparentInRa(jdo)
-					const objPos = meeus.Coord.eqToHz(obj, obs, sidereal)
-					newRow.objalt = (objPos.alt / Math.PI * 180).toFixed(2) * 1
-				}
-
-				if (row.scale && row.fwhm) {
-					newRow.fwhmarc = (row.scale * row.fwhm).toFixed(2)
-					delete newRow.fwhm
-				}
-
-				delete newRow.time
-
-				for (const key in newRow) {
-					newRow[key] = parseFloat(newRow[key])
-				}
-
-				return {
-					index,
-					timestamp: parseInt(row.time),
-					values: newRow
-				}
-			})
-
-			return data
-		},
 		dataSeries () {
 			const { data } = this
 

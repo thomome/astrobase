@@ -162,7 +162,7 @@ export default {
 <style lang="scss" scoped>
 	.skymap__container {
 		@apply relative w-full h-0;
-		padding-bottom: 100%;
+		padding-bottom: 75%;
 	}
 
 	.skymap {
