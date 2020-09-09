@@ -130,7 +130,12 @@ export default {
 		const pictures = await getPictures(params)
 
 		const meta = {
-			title: `Pictures - ${app.head.title}`
+			title: `Pictures - ${app.head.title}`,
+			meta: [
+				{ property: 'og:type', content: 'website' },
+				{ property: 'og:title', content: 'Pictures' },
+				{ property: 'og:description', content: 'Astrophotography images sorted by latest capturing date.' }
+			]
 		}
 
 		return {

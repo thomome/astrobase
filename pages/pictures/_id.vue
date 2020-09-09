@@ -61,7 +61,7 @@
 							v-html="picture.description"
 							class="picture__description html-content max-w-6xl font-light leading-snug my-6"
 						/>
-						<div v-if="picture.stats">
+						<div v-if="picture.stats" class="mt-16">
 							<ab-chart-comparison
 								:statisticalData="statisticalData"
 								:location="location"
@@ -312,8 +312,18 @@ export default {
 	},
 	async asyncData ({ params, app }) {
 		const picture = await getPicture(params.id)
+		const { title, excerpt, image } = picture.result
+
 		const meta = {
-			title: `${picture.result.title} - ${app.head.title}`
+			title: `${title} - ${app.head.title}`,
+			meta: [
+				{ property: 'og:type', content: 'website' },
+				{ property: 'og:title', content: `${title}` },
+				{ property: 'og:description', content: `${excerpt}` },
+				{ property: 'og:image', content: `${image[0].sizes.small}` },
+				{ property: 'og:image:width', content: `${image[0].sizes['small-width']}` },
+				{ property: 'og:image:height', content: `${image[0].sizes['small-height']}` }
+			]
 		}
 
 		return {

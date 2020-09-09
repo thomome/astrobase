@@ -2,7 +2,7 @@
 	<div class="filter">
 		<label
 			:for="`filter-${paramsKey}`"
-			class="block text-gray-700 text-sm uppercase font-medium mb-1"
+			class="block section-title mb-1"
 		>{{ label }}</label>
 		<multiselect
 			v-if="async"

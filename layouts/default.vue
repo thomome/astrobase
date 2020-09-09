@@ -110,6 +110,16 @@ export default {
 				@apply text-black;
 			}
 		}
+
+		ul {
+			@apply ml-6;
+			list-style-type: circle;
+		}
+
+		ol {
+			@apply ml-6;
+			list-style-type: decimal;
+		}
 	}
 
 	.section-title {

@@ -47,16 +47,25 @@ export default {
 	async asyncData ({ params, app }) {
 		const page = await getPage('about')
 
+		const { title, hero_image: picture, current_equipment: devices, current_locations: locations } = page.result
+
 		const meta = {
-			title: `${page.result.title} - ${app.head.title}`
+			title: `${title} - ${app.head.title}`,
+			meta: [
+				{ property: 'og:type', content: 'website' },
+				{ property: 'og:title', content: `${title}` },
+				{ property: 'og:image', content: `${picture.sizes.small}` },
+				{ property: 'og:image:width', content: `${picture.sizes['small-width']}` },
+				{ property: 'og:image:height', content: `${picture.sizes['small-height']}` }
+			]
 		}
 
 		return {
 			meta,
-			title: page.result.title,
-			picture: page.result.hero_image,
-			devices: page.result.current_equipment,
-			locations: page.result.current_locations
+			title,
+			picture,
+			devices,
+			locations
 		}
 	},
 	head () {

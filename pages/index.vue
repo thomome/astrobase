@@ -48,18 +48,30 @@ export default {
 			limit: 3
 		})
 
+		const { title, description, hero_image: image, action } = page.result
+
+		const meta = {
+			title,
+			meta: [
+				{ property: 'og:type', content: 'website' },
+				{ property: 'og:title', content: `${title}` },
+				{ property: 'og:image', content: `${image.sizes.small}` },
+				{ property: 'og:image:width', content: `${image.sizes['small-width']}` },
+				{ property: 'og:image:height', content: `${image.sizes['small-height']}` }
+			]
+		}
+
 		return {
-			title: page.result.title,
-			description: page.result.description,
-			action: page.result.action,
-			image: page.result.hero_image,
+			meta,
+			title,
+			description,
+			action,
+			image,
 			pictures: pictures.results
 		}
 	},
 	head () {
-		return {
-			title: this.title
-		}
+		return this.meta
 	}
 }
 </script>
