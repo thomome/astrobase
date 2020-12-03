@@ -1,3 +1,4 @@
+import { getPictures } from "./api/api";
 
 export default {
 	server: {
@@ -53,8 +54,15 @@ export default {
 	*/
 	modules: [
 		// Doc: https://axios.nuxtjs.org/usage
-		'@nuxtjs/axios'
+		'@nuxtjs/axios',
+		'@nuxtjs/sitemap'
 	],
+	sitemap: async () => {
+		const pictures = await getPictures({ limit: 10 })
+		return {
+			routes: pictures ? pictures.results.map((picture) => `/pictures/${picture.id}`) : []
+		}
+	},
 	purgeCSS: {
 		whitelistPatterns: [
 			/^ct/,

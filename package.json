@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.12.2",
+    "@nuxtjs/sitemap": "^2.4.0",
     "fs": "0.0.1-security",
     "mapbox-gl": "^1.12.0",
     "mapbox-gl-vue": "^2.0.4",
