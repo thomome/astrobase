@@ -7,9 +7,9 @@
 module.exports = {
 	theme: {
 		fontFamily: {
-			sans: ['Roboto', 'sans-serif'],
-			display: ['Roboto', 'sans-serif'],
-			body: ['Roboto', 'sans-serif'],
+			sans: ['Heebo', 'sans-serif'],
+			display: ['Heebo', 'sans-serif'],
+			body: ['Heebo', 'sans-serif'],
 		},
 		extend: {
 			maxWidth: {
@@ -19,6 +19,9 @@ module.exports = {
 			},
 			spacing: {
 				n8: '-2rem',
+			},
+			fontWeight: {
+				'medium': 450,
 			},
 			colors: {
 				yellow: {
