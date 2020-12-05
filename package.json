@@ -1,7 +1,7 @@
 {
   "name": "astrobase",
   "version": "1.0.0",
-  "description": "Astrophotography Blog",
+  "description": "Astrobase is the blog of our amateur astrophotography based in Switzerland. Explore the progress and enjoy the pictures.",
   "author": "Thomas Guthruf",
   "private": true,
   "scripts": {
