@@ -43,16 +43,16 @@ export default {
 <style lang="scss" scoped>
 	.tag {
 		@apply inline-block leading-none rounded-sm text-black ml-1;
-		padding: 2px 6px;
+		padding: 3px 6px 2px;
 	}
 
 	.sm {
 		@apply text-xs;
-		padding: 2px 4px;
+		padding: 3px 4px 2px;
 	}
 
 	.outline {
 		@apply border-solid border-gray-300 border text-gray-300;
-		padding: 1px 3px;
+		padding: 2px 3px 1px;
 	}
 </style>

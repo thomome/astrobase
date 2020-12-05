@@ -12,7 +12,7 @@
 			/>
 		</ab-hero>
 		<div class="picture-list container mt-24">
-			<h2 class="text-2xl text-white mb-4">
+			<h2 class="text-2xl text-gray-200 tracking-wide font-normal mb-4">
 				Most Recent Pictures
 			</h2>
 			<ab-post-picture

@@ -12,7 +12,7 @@
 			</nuxt-link>
 		</div>
 		<div class="picture__details flex-shrink-0 xl:w-1/4 lg:w-1/3 lg:ml-8">
-			<h2 class="picture__title text-xl text-white mt-4 lg:mt-0">
+			<h2 class="picture__title text-xl leading-tight font-medium text-gray-200 mt-4 lg:mt-0">
 				<nuxt-link
 					:to="`/pictures/${picture.id}`"
 				>
@@ -24,117 +24,39 @@
 				{{ picture.date }} - {{ picture.location[0].title }}
 			</div>
 
-			<p
-				v-html="picture.excerpt"
-				class="picture__description max-w-md lg:max-w-6xl font-light leading-snug my-4"
-			/>
+			<nuxt-link
+				:to="`/pictures/${picture.id}`"
+			>
+				<p
+					v-html="picture.excerpt"
+					class="picture__description max-w-md lg:max-w-6xl font-light leading-snug my-4"
+				/>
+			</nuxt-link>
 
-			<div class="picture__objects max-w-sm lg:max-w-6xl font-light text-sm">
-				<nuxt-link
-					v-for="obj in shownObjects"
-					:key="obj.id"
-					:to="{ path: 'pictures', query: { objects: [obj.id] } }"
-					class="inline-block mr-2 border-b border-yellow-400 text-gray-300 hover:text-white"
-				>
-					{{ obj.name }}
-				</nuxt-link>
-
-				<span
-					v-if="picture.objects.length > shownObjects.length"
-					@click="showAll"
-					class="cursor-pointer py-2"
-				>
-					...
-				</span>
+			<div class="picture__column-container hidden md:flex flex-wrap lg:block">
+				<ab-object-list :objects="picture.objects" :showAll="false" title="Objects in Picture" />
 			</div>
 
 			<div class="picture__column-container hidden md:flex flex-wrap lg:block">
-				<div
-					v-if="picture.exposures.length"
-					class="picture__column picture__exposures mr-16 lg:mr-0"
-				>
-					<h3 class="picture__details-title section-title">
-						Exposure Time
-					</h3>
-					<ul class="picture__details-list border-l border-yellow-400 pl-4 my-2 ml-1">
-						<li
-							v-for="exposure in picture.exposures"
-							:key="exposure.exposure_time + exposure.mode"
-							class="flex items-center"
-						>
-							<span class="mr-1">
-								{{ exposure.amount }} x {{ exposure.exposure_time }}&#8239;<small>s</small>
-							</span>
-							<ab-tag
-								v-if="exposure.gain"
-								:label="exposure.gain"
-								class="sm outline"
-							/>
-							<ab-tag
-								:label="exposure.mode.label"
-								:type="exposure.mode.value"
-								class="sm"
-							/>
-						</li>
-					</ul>
-					<div class="-ml-px">
-						<span class="text-yellow-400 mr-2">∑</span>
-						<span v-html="totalExposureTime" class="font-medium" />
-					</div>
-				</div>
+				<ab-exposure-time :exposures="picture.exposures" title="Exposure Time" />
 			</div>
 		</div>
 	</div>
 </template>
 
 <script>
-import moment from 'moment'
-
+import AbObjectList from './ImageDetail/AbObjectList.vue'
+import AbExposureTime from './ImageDetail/AbExposureTime.vue'
 import AbImage from '~/components/AbImage.vue'
-import AbTag from '~/components/AbTag.vue'
 
 export default {
-	components: { AbImage, AbTag },
+	components: { AbImage, AbObjectList, AbExposureTime },
 	props: {
 		picture: { type: Object, required: true }
 	},
-	data () {
-		return {
-			shwoAllObjects: false
-		}
-	},
 	computed: {
-		shownObjects () {
-			const { shwoAllObjects } = this
-			const { objects } = this.picture
-
-			const limit = shwoAllObjects ? Infinity : 6
-			return objects.filter((obj, i) => i < limit)
-		},
 		image () {
 			return this.picture.image[0]
-		},
-		totalExposureTime () {
-			const secs = this.picture.exposures.reduce((p, v) => {
-				return p + v.exposure_time * v.amount
-			}, 0)
-
-			const duration = moment.duration(secs * 1000)
-			const hours = duration.hours()
-			const minutes = duration.minutes()
-			const seconds = duration.seconds()
-
-			let durationString = ''
-			if (hours) { durationString += `${hours}&#8239;<small>h</small> ` }
-			if (minutes) { durationString += `${minutes}&#8239;<small>min</small> ` }
-			if (seconds) { durationString += `${seconds}&#8239;<small>s</small>` }
-
-			return durationString
-		}
-	},
-	methods: {
-		showAll () {
-			this.shwoAllObjects = true
 		}
 	}
 }

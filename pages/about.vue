@@ -2,6 +2,7 @@
 	<main class="main-content">
 		<ab-hero
 			:title="title"
+			:description="description"
 		>
 			<ab-image
 				:image="picture"
@@ -9,8 +10,8 @@
 			/>
 		</ab-hero>
 		<div class="equipment container mt-24">
-			<h2 class="text-2xl text-white mb-4">
-				Equipment
+			<h2 class="text-2xl text-gray-200 tracking-wide font-normal mb-4">
+				Current Equipment
 			</h2>
 			<div class="devices grid xl:grid-cols-4 md:grid-cols-3 sm:grid-cols-2">
 				<ab-card
@@ -47,7 +48,7 @@ export default {
 	async asyncData ({ params, app }) {
 		const page = await getPage('about')
 
-		const { title, hero_image: picture, current_equipment: devices, current_locations: locations } = page.result
+		const { title, description, hero_image: picture, current_equipment: devices, current_locations: locations } = page.result
 
 		const meta = {
 			title: `${title} - ${app.head.title}`,
@@ -63,6 +64,7 @@ export default {
 		return {
 			meta,
 			title,
+			description,
 			picture,
 			devices,
 			locations

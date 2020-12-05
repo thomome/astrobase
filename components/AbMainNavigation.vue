@@ -5,7 +5,7 @@
 		<nuxt-link
 			:to="home.route"
 			:exact="home.exact"
-			class="block border border-gray-800 px-4 py-2 mr-8 text-gray-400 leading-tight pointer-events-all"
+			class="main-navigation__link block border-gray-800 pointer-events-all"
 		>
 			{{ home.title }}
 		</nuxt-link>
@@ -16,7 +16,7 @@
 				:to="home.route"
 				:exact="home.exact"
 				@click.native="isOpen = !isOpen"
-				class="block border border-transparent px-4 py-2 md:mr-8 text-gray-400 leading-tight pointer-events-all mb-4 md:hidden"
+				class="main-navigation__link block border-transparent pointer-events-all md:hidden"
 			>
 				{{ home.title }}
 			</nuxt-link>
@@ -26,7 +26,7 @@
 				:to="link.route"
 				:exact="link.exact"
 				@click.native="isOpen = !isOpen"
-				class="block border border-transparent px-4 py-2 md:mr-8 text-gray-400 leading-tight pointer-events-all mb-4 md:mb-0"
+				class="main-navigation__link block border-transparent pointer-events-all"
 			>
 				{{ link.title }}
 			</nuxt-link>
@@ -75,6 +75,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+	.main-navigation__link {
+		@apply border uppercase tracking-wider font-light leading-tight text-sm text-gray-400 px-4 py-2 mb-4;
+
+		@media screen and (min-width: theme('screens.md')) {
+			@apply mr-8;
+		}
+	}
+
 	.nuxt-link-active {
 		@apply border-yellow-400 text-yellow-400;
 	}

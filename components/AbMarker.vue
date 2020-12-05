@@ -11,7 +11,7 @@
 			:onlyText="false"
 		>
 			<div>
-				<div class="text-base font-medium text-white mb-1">
+				<div class="text-base font-normal text-gray-200 mb-1">
 					{{ location.title }}
 				</div>
 				<p class="text-sm leading-tight">
@@ -52,11 +52,12 @@ export default {
 	.map {
 
 		.mapboxgl-popup-content {
-			@apply py-3 px-4 border border-gray-300 rounded-none bg-gray-900;
+			@apply py-3 px-4 rounded-none bg-gray-900;
 		}
 
 		.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
-			border-top-color: theme('colors.gray.300');
+			border-top-color: theme('colors.gray.900');
+			margin-top: -1px;
 		}
 	}
 </style>

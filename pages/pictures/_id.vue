@@ -3,7 +3,7 @@
 		<div class="container container--wide mt-16 md:mt-32">
 			<nuxt-link
 				to="/pictures"
-				class="inline-block mb-6 mt-5 text-gray-300 hover:text-white"
+				class="inline-block mb-6 mt-5 text-gray-400 hover:text-white"
 			>
 				<ab-icon
 					name="arrow-left"
@@ -14,7 +14,7 @@
 		</div>
 		<div class="container mt-4">
 			<div class="picture__column picture__general max-w-xl mb-4">
-				<h1 class="picture__title text-2xl leading-tight text-white">
+				<h1 class="picture__title text-2xl leading-tight text-gray-200 mb-1 font-light">
 					{{ picture.title }}
 				</h1>
 
@@ -71,160 +71,34 @@
 				</div>
 
 				<div class="picture__column md:col-span-1">
-					<div
-						v-if="picture.exposures.length"
-						class="picture__column picture__exposures mr-16"
-					>
-						<h3 class="picture__details-title section-title">
-							Exposure Time
-						</h3>
-						<ul class="picture__details-list border-l border-yellow-400 pl-4 my-2 ml-1">
-							<li
-								v-for="exposure in picture.exposures"
-								:key="exposure.exposure_time + exposure.mode"
-							>
-								{{ exposure.amount }} × {{ exposure.exposure_time }}&#8239;<small>s</small>
-								<ab-tag
-									v-if="exposure.gain"
-									:label="exposure.gain"
-									class="sm outline"
-								/>
-								<ab-tag
-									:label="exposure.mode.label"
-									:type="exposure.mode.value"
-									class="sm"
-								/>
-							</li>
-						</ul>
-						<div class="-ml-px">
-							<span class="text-yellow-400 mr-2">∑</span>
-							<span v-html="totalExposureTime" class="font-medium" />
-						</div>
-					</div>
-					<div
-						class="picture__column picture__calibration mr-16"
-					>
-						<h3 class="picture__details-title section-title">
-							Calibration
-						</h3>
+					<ab-exposure-time
+						:exposures="picture.exposures"
+						title="Exposure Time"
+					/>
 
-						<ab-skymap
-							v-if="frame"
-							:ra="frame.ra"
-							:dec="frame.dec"
-							:lat="location.coords.lat"
-							:lon="location.coords.lng"
-							:width="frame.w"
-							:height="frame.h"
-							:time="frame.t"
-							:orientation="frame.o"
-							class="mt-2"
-						/>
-						<table
-							v-if="frame"
-							class="text-xs mt-2"
-						>
-							<tbody>
-								<tr>
-									<td class="pr-4 pb-1 align-top font-medium">
-										Center (RA, DEC)
-									</td>
-									<td class="pb-1 align-top">
-										{{ frame.ra.toFixed(4) }}, {{ frame.dec.toFixed(4) }}
-									</td>
-								</tr>
-								<tr>
-									<td class="pr-4 pb-1 align-top font-medium">
-										Size
-									</td>
-									<td class="pb-1 align-top">
-										{{ frame.w.toFixed(3) }} × {{ frame.h.toFixed(3) }}&#8239;deg
-									</td>
-								</tr>
-								<tr>
-									<td class="pr-4 pb-1 align-top font-medium">
-										Radius
-									</td>
-									<td class="pb-1 align-top">
-										{{ frame.radius.toFixed(3) }}&#8239;deg
-									</td>
-								</tr>
-								<tr v-if="conditions.moonDist">
-									<td class="pr-4 pb-1 align-top font-medium">
-										Avg. Distance to Moon
-									</td>
-									<td class="pb-1 align-top">
-										{{ (conditions.moonDist / Math.PI * 180).toFixed(2) * 1 }}&#8239;deg
-									</td>
-								</tr>
-							</tbody>
-						</table>
-						<div v-if="conditions.moonIllum && conditions.moonPosAngle" class="flex my-4">
-							<ab-icon-moon
-								:illuminated="conditions.moonIllum"
-								:positionAngle="conditions.moonPosAngle"
-								class="w-10 h-10"
-							/>
-							<div class="text-xs ml-4">
-								<div>Avg. Moon phase<br><strong>{{ (conditions.moonIllum * 100).toFixed(2) * 1 }}&#8239;%</strong></div>
-							</div>
-						</div>
-					</div>
+					<ab-calibration
+						:data="data"
+						:frame="frame"
+						:timestamp="timestamp"
+						:location="location"
+						title="Calibration"
+					/>
 
-					<div
-						v-if="picture.objects.length"
-						class="picture__tags max-w-6xl font-light text-sm"
-					>
-						<h3 class="picture__details-title section-title">
-							Objects in picture
-						</h3>
-						<div>
-							<nuxt-link
-								v-for="obj in picture.objects"
-								:key="obj.id"
-								:to="{ path: '/pictures', query: { objects: [obj.id] } }"
-								class="inline-block mr-2 border-b border-yellow-400 text-gray-300 hover:text-white"
-							>
-								{{ obj.name }}
-							</nuxt-link>
-						</div>
-					</div>
+					<ab-object-list
+						:objects="picture.objects"
+						:showAll="true"
+						title="Objects in picture"
+					/>
 
-					<div
-						v-if="picture.equipment.length"
-						class="picture__column picture__equipment mr-16 font-light text-sm"
-					>
-						<h3 class="picture__details-title section-title">
-							Equipment
-						</h3>
-						<div>
-							<nuxt-link
-								v-for="device in picture.equipment"
-								:key="device.id"
-								:to="{ path: '/pictures', query: { devices: [device.id] } }"
-								class="inline-block mr-2 border-b border-yellow-400 text-gray-300 hover:text-white"
-							>
-								{{ device.title }}
-							</nuxt-link>
-						</div>
-					</div>
+					<ab-equipment-list
+						:equipment="picture.equipment"
+						title="Equipment"
+					/>
 
-					<div
-						v-if="picture.software.length"
-						class="picture__column picture__software"
-					>
-						<h3 class="picture__details-title section-title">
-							Software
-						</h3>
-						<ul class="picture__details-list border-l border-yellow-400 pl-4 my-2 ml-1">
-							<li
-								v-for="software in picture.software"
-								:key="software.id"
-							>
-								{{ software.title }}
-							</li>
-						</ul>
-					</div>
+					<ab-software-list
+						:software="picture.software"
+						title="Software"
+					/>
 				</div>
 			</div>
 		</div>
@@ -232,20 +106,21 @@
 </template>
 
 <script>
-import moment from 'moment'
 import Papa from 'papaparse'
 import { getPicture } from '~/api/api.js'
 import meeus from '~/assets/meeusjs/index.js'
 
 import AbPicture from '~/components/AbPicture.vue'
-import AbSkymap from '~/components/AbSkymap.vue'
-import AbTag from '~/components/AbTag.vue'
 import AbIcon from '~/components/AbIcon.vue'
-import AbChartComparison from '~/components/AbChartComparison.vue'
-import AbIconMoon from '~/components/AbIconMoon.vue'
+import AbChartComparison from '~/components/Chart/AbChartComparison.vue'
+import AbObjectList from '~/components/ImageDetail/AbObjectList.vue'
+import AbExposureTime from '~/components/ImageDetail/AbExposureTime.vue'
+import AbCalibration from '~/components/ImageDetail/AbCalibration.vue'
+import AbEquipmentList from '~/components/ImageDetail/AbEquipmentList.vue'
+import AbSoftwareList from '~/components/ImageDetail/AbSoftwareList.vue'
 
 export default {
-	components: { AbPicture, AbSkymap, AbTag, AbIcon, AbChartComparison, AbIconMoon },
+	components: { AbPicture, AbIcon, AbChartComparison, AbObjectList, AbExposureTime, AbCalibration, AbEquipmentList, AbSoftwareList },
 	data () {
 		return {
 			version: 0,
@@ -325,57 +200,12 @@ export default {
 
 			return data
 		},
-		conditions () {
-			const { data, location, picture, frame } = this
-
-			const conditions = {}
-
-			if (data.length > 0) {
-				const sums = {}
-				const keys = [ 'moonIllum', 'moonDist', 'moonPosAngle' ]
-
-				data.forEach(({ values }) => {
-					keys.forEach((k) => {
-						if (values[k] !== 'undefined') {
-							if (typeof sums[k] === 'undefined') {
-								sums[k] = 0
-							}
-
-							sums[k] += values[k]
-						}
-					})
-				})
-				for (const [key, value] of Object.entries(sums)) {
-					conditions[key] = value / data.length
-				}
-			} else if (location) {
-				const date = new Date(picture.timestamp)
-				const jdo = new meeus.JulianDay(date)
-				const obs = meeus.EclCoord.fromWgs84(location.coords.lat, location.coords.lng, location.elevation)
-				const moonPos = meeus.Moon.topocentricPosition(jdo, obs, true)
-				const sunPos = meeus.Solar.apparentTopocentric(jdo, obs)
-				const phaseAngle = meeus.MoonIllum.phaseAngleEq2(moonPos.eq, sunPos)
-				conditions.moonPosAngle = meeus.MoonIllum.positionAngle(moonPos.eq, sunPos)
-				conditions.moonIllum = meeus.MoonIllum.illuminated(phaseAngle)
-
-				if (frame) {
-					const obj = new meeus.EqCoord(frame.ra / 180 * Math.PI, frame.dec / 180 * Math.PI)
-					const sidereal = meeus.Sidereal.apparentInRa(jdo)
-					const objPos = meeus.Coord.eqToHz(obj, obs, sidereal)
-					const a = 	Math.sin(moonPos.hz.alt) * Math.sin(objPos.alt) +
-								Math.cos(moonPos.hz.alt) * Math.cos(objPos.alt) * Math.cos(moonPos.hz.az - objPos.az)
-					conditions.moonDist = Math.acos(a)
-				}
-			}
-			return conditions
-		},
 		image () {
 			const { picture, version } = this
 			return picture.image[version] || null
 		},
 		frame () {
 			const { image, picture } = this
-			const { timestamp } = picture
 			let { calibration, sizes } = image
 
 			if (!calibration) {
@@ -395,30 +225,16 @@ export default {
 				radius: calibration.radius,
 				w: sizes['large-width'] * calibration.pixscale / 3600,
 				h: sizes['large-height'] * calibration.pixscale / 3600,
-				t: timestamp,
 				o: calibration.parity === 1 ? calibration.orientation : calibration.orientation + 180
 			} : null
+		},
+		timestamp () {
+			const { timestamp } = this.picture
+			return timestamp
 		},
 		location () {
 			const { location } = this.picture
 			return location[0] || null
-		},
-		totalExposureTime () {
-			const secs = this.picture.exposures.reduce((p, v) => {
-				return p + v.exposure_time * v.amount
-			}, 0)
-
-			const duration = moment.duration(secs * 1000)
-			const hours = duration.hours()
-			const minutes = duration.minutes()
-			const seconds = duration.seconds()
-
-			let durationString = ''
-			if (hours) { durationString += `${hours}&#8239;<small>h</small> ` }
-			if (minutes) { durationString += `${minutes}&#8239;<small>min</small> ` }
-			if (seconds) { durationString += `${seconds}&#8239;<small>s</small>` }
-
-			return durationString
 		}
 	},
 	async asyncData ({ params, app }) {
@@ -460,9 +276,4 @@ export default {
 </script>
 
 <style lang="scss">
-	.picture__description {
-		p {
-			@apply my-6;
-		}
-	}
 </style>

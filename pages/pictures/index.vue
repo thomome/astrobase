@@ -7,7 +7,7 @@
 					:value="params.orderby"
 					:options="sortOptions"
 					:allowEmpty="false"
-					label="Sort"
+					label="Sort by"
 					params-key="orderby"
 					class="w-full md:max-w-xs mr-4"
 				/>

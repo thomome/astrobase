@@ -29,7 +29,6 @@ export default {
 	},
 	data () {
 		return {
-			stel: null,
 			isFullscreen: false
 		}
 	},
@@ -120,6 +119,7 @@ export default {
 
 						const layer = stel.createLayer({ id: 'slayer', z: 50, visible: true })
 						layer.add(frame)
+
 						const azalt = stel.convertFrame(stel.observer, 'ICRF', 'OBSERVED', center.getInfo('radec'))
 						stel.lookAt(azalt, 0)
 					})
@@ -144,15 +144,6 @@ export default {
 				this.$refs.container.requestFullscreen()
 			} else {
 				document.exitFullscreen()
-			}
-		},
-		onFullscrenChange () {
-			if (document.fullscreenElement) {
-				this.isFullscreen = !this.isFullscreen
-			} else {
-				this.isFullscreen = !this.isFullscreen
-				this.zoom = 1
-				this.offset = [0, 0]
 			}
 		}
 	}

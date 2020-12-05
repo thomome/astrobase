@@ -3,11 +3,11 @@
 		<div class="hero__image w-full h-full">
 			<slot />
 		</div>
-		<div class="hero__content relative md:absolute p-6 bottom-0 md:m-6 lg:mb-16 max-w-xl border-l-2 border-yellow-400 bg-gray-900">
-			<h1 class="text-3xl text-white font-medium mb-4 leading-none">
+		<div v-if="title || description || action" class="hero__content relative md:absolute p-6 pt-8 bottom-0 md:m-6 lg:mb-16 max-w-xl border-l-2 border-yellow-400 bg-gray-900">
+			<h1 class="text-3xl text-gray-200 font-normal mb-4 tracking-wide leading-none">
 				{{ title }}
 			</h1>
-			<p class="text-gray-400 font-light mb-4">
+			<p class="text-gray-400 font-light leading-relaxed mb-4">
 				{{ description }}
 			</p>
 			<nuxt-link
@@ -35,6 +35,10 @@ export default {
 	.hero {
 		@media screen and (min-width: theme('screens.md')) {
 			height: calc(var(--vh, 1vh) * 100);
+
+			&.hero--half {
+				height: calc(var(--vh, 1vh) * 50);
+			}
 		}
 	}
 
