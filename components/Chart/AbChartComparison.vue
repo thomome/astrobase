@@ -1,5 +1,14 @@
 <template>
 	<div class="chart-comparision">
+		<button
+			v-for="preset in presets"
+			:key="preset.title"
+			type="color"
+			@click="usePreset(preset)"
+		>
+			{{ preset.title }}
+		</button>
+
 		<ab-select
 			:on-change="updatePlots"
 			:values="valuePlots"
@@ -54,10 +63,9 @@
 
 <script>
 import moment from 'moment'
-
-import AbSelect from './AbSelect.vue'
-import AbChart from './AbChart.vue'
-import AbChartRange from './AbChartRange.vue'
+import AbChartRange from '~/components/Chart/AbChartRange.vue'
+import AbChart from '~/components/Chart/AbChart.vue'
+import AbSelect from '~/components/AbSelect.vue'
 
 export default {
 	components: { AbSelect, AbChart, AbChartRange },
@@ -71,6 +79,16 @@ export default {
 			disabledSeries: [],
 			range: { min: null, max: null },
 			colors: ['#ddb310', '#00beff', '#b51d14', '#4053d3 ', '#fb49b0', '#00b25d', '#cacaca'],
+			presets: [
+				{
+					title: 'Image Stats',
+					plots: ['fwhmArc', 'median', 'snr', 'ecc']
+				},
+				{
+					title: 'Seeing Stats',
+					plots: ['objAlt', 'moonAlt', 'seeing', 'cloudCover']
+				}
+			],
 			plotTypes: [
 				{
 					id: 'fwhm',
@@ -136,6 +154,54 @@ export default {
 					id: 'exposure',
 					name: 'Exposure Time',
 					unit: 's'
+				}, {
+					id: 'corrRaMedian',
+					name: 'Guide Correction Median (RA)',
+					unit: '″'
+				}, {
+					id: 'corrRaPeak',
+					name: 'Guide Correction Peak (RA)',
+					unit: '″'
+				}, {
+					id: 'corrRaMean',
+					name: 'Guide Correction Mean (RA)',
+					unit: '″'
+				}, {
+					id: 'corrDecMedian',
+					name: 'Guide Correction Median (DEC)',
+					unit: '″'
+				}, {
+					id: 'corrDecPeak',
+					name: 'Guide Correction Peak (DEC)',
+					unit: '″'
+				}, {
+					id: 'corrDecMean',
+					name: 'Guide Correction Mean (DEC)',
+					unit: '″'
+				}, {
+					id: 'errRaMedian',
+					name: 'Guide Error Median (RA)',
+					unit: '″'
+				}, {
+					id: 'errRaPeak',
+					name: 'Guide Error Peak (RA)',
+					unit: '″'
+				}, {
+					id: 'errRaMean',
+					name: 'Guide Error Mean (RA)',
+					unit: '″'
+				}, {
+					id: 'errDecMedian',
+					name: 'Guide Error Median (DEC)',
+					unit: '″'
+				}, {
+					id: 'errDecPeak',
+					name: 'Guide Error Peak (DEC)',
+					unit: '″'
+				}, {
+					id: 'errDecMean',
+					name: 'Guide Error Mean (DEC)',
+					unit: '″'
 				}
 			]
 		}
@@ -199,7 +265,11 @@ export default {
 		},
 		possiblePlots () {
 			const { plotTypes, data } = this
-			return plotTypes.filter(plot => data[0] && data[0].values[plot.id])
+			return plotTypes.filter((plot) => {
+				return data.some((d) => {
+					return typeof d.values[plot.id] !== 'undefined'
+				})
+			})
 		},
 		renderedPlots () {
 			const { possiblePlots, selectedPlots } = this
@@ -219,12 +289,22 @@ export default {
 
 		let selectedPlots = []
 		if (selectedPlotsString) {
-			selectedPlots = JSON.parse(selectedPlotsString)
+			try {
+				selectedPlots = JSON.parse(selectedPlotsString)
+			} catch {
+				selectedPlots = []
+			}
 		}
 
 		this.selectedPlots = selectedPlots
 	},
 	methods: {
+		usePreset (preset) {
+			const plots = preset.plots.map((plot) => {
+				return this.possiblePlots.find(({ id }) => plot === id)
+			}).filter(plot => plot?.id)
+			this.updatePlots('', plots)
+		},
 		updateRange (min, max) {
 			this.range = { min, max }
 		},

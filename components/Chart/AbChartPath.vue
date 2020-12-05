@@ -6,7 +6,7 @@
 			class="ab-chart__plot-path"
 		/>
 		<circle
-			v-for="point in serie"
+			v-for="point in circles"
 			:key="point.x"
 			:cx="point.x * width"
 			:cy="point.y * height"
@@ -35,10 +35,16 @@ export default {
 
 			let pathString = ''
 			serie.forEach((o, i) => {
-				pathString += i === 0 ? 'M ' : 'L '
-				pathString += `${o.x * width} ${o.y * height} `
+				if (!isNaN(o.y)) {
+					pathString += pathString.length === 0 ? 'M ' : 'L '
+					pathString += `${o.x * width} ${o.y * height} `
+				}
 			})
 			return pathString
+		},
+		circles () {
+			const { serie } = this
+			return serie.filter(p => p.y)
 		}
 	}
 }
