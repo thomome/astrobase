@@ -21,7 +21,7 @@ export default {
 		],
 		link: [
 			{ rel: 'icon', type: 'image/png', href: '/favicon.png' },
-			{ rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap' }
+			{ rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Heebo:wght@100..900&display=swap' }
 		]
 	},
 	/*
@@ -58,7 +58,7 @@ export default {
 		'@nuxtjs/sitemap'
 	],
 	sitemap: async () => {
-		const pictures = await getPictures({ limit: 10 })
+		const pictures = await getPictures({ limit: 50 })
 		return {
 			routes: pictures ? pictures.results.map((picture) => `/pictures/${picture.id}`) : []
 		}
