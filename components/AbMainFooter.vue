@@ -1,7 +1,7 @@
 <template>
 	<footer class="main-footer container flex justify-between px-8 pt-32 pb-8 pointer-events-auto">
 		<div>
-			<nuxt-link to="/imprint">
+			<nuxt-link to="/pages/imprint">
 				Imprint
 			</nuxt-link>
 			<br>

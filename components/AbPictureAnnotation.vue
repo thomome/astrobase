@@ -1,9 +1,8 @@
 <template>
-	<nuxt-link
-		:to="link"
+	<g
 		:transform="`translate(${x}, ${y})`"
-		:event="linkDisabled ? '' : 'click'"
-		class="picture-annotation"
+		@click="showObjectTooltip"
+		class="picture-annotation cursor-pointer"
 	>
 		<circle
 			:r="radius"
@@ -23,10 +22,12 @@
 				{{ label }}
 			</text>
 		</g>
-	</nuxt-link>
+	</g>
 </template>
 
 <script>
+import { EventBus } from '~/plugins/EventBus'
+
 export default {
 	props: {
 		linkDisabled: { type: Boolean, default: false },
@@ -48,6 +49,45 @@ export default {
 				path: '/pictures',
 				query: { objects: [this.annotation.object_id] }
 			}
+		}
+	},
+	methods: {
+		showObjectTooltip (event) {
+			const { annotation, link, linkDisabled } = this
+
+			if (linkDisabled) {
+				return false
+			}
+
+			const target = this.$refs.text
+			const trigger = event.currentTarget
+			const links = [
+				{
+					url: link,
+					text: `Search by "${annotation.name}"`
+				},
+				{
+					external: true,
+					url: `https://www.astrobin.com/search/?q=${annotation.name}`,
+					text: 'Astrobin'
+				},
+				{
+					external: true,
+					url: `http://simbad.u-strasbg.fr/simbad/sim-basic?Ident=${annotation.name}`,
+					text: 'Simbad'
+				},
+				{
+					external: true,
+					url: `https://nasasearch.nasa.gov/search/images?affiliate=nasa&cr=true&query=${annotation.name}`,
+					text: 'NASA'
+				}
+			]
+
+			EventBus.$emit('show-tooltip', {
+				target,
+				trigger,
+				links
+			})
 		}
 	}
 }

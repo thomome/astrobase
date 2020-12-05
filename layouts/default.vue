@@ -7,15 +7,17 @@
 		</header>
 		<nuxt />
 		<ab-main-footer />
+		<ab-tooltip />
 	</div>
 </template>
 
 <script>
 import AbMainNavigation from '~/components/AbMainNavigation.vue'
 import AbMainFooter from '~/components/AbMainFooter.vue'
+import AbTooltip from '~/components/AbTooltip.vue'
 
 export default {
-	components: { AbMainNavigation, AbMainFooter },
+	components: { AbMainNavigation, AbMainFooter, AbTooltip },
 	data () {
 		return {
 			isScrolled: false,
@@ -73,7 +75,7 @@ export default {
 	}
 
 	.button {
-		@apply inline-block border border-gray-400 px-4 py-2 text-gray-400 font-light outline-none;
+		@apply inline-block border border-gray-500 px-4 py-2 text-gray-500 text-sm font-normal outline-none;
 	}
 
 	button {
@@ -81,6 +83,14 @@ export default {
 
 		&:focus {
 			@apply outline-none;
+		}
+	}
+
+	.object-link {
+		@apply inline-block leading-tight mr-2 mb-1 border-b border-yellow-400 text-gray-300 cursor-pointer;
+
+		&:hover {
+			@apply text-white;
 		}
 	}
 
@@ -98,6 +108,18 @@ export default {
 	}
 
 	.html-content {
+		h2 {
+			@apply text-xl font-normal mt-6 mb-1 text-gray-300;
+		}
+
+		h3 {
+			@apply text-lg font-normal mt-5 mb-1 text-gray-300;
+		}
+
+		p {
+			@apply mb-4;
+		}
+
 		a {
 			background-image: linear-gradient(120deg, theme('colors.yellow.400') 0%, theme('colors.yellow.400') 100%);
 			background-repeat: no-repeat;
@@ -123,6 +145,6 @@ export default {
 	}
 
 	.section-title {
-		@apply text-xs inline-block text-gray-600 tracking-widest uppercase font-medium mt-6 mb-1;
+		@apply text-xs inline-block text-gray-600 tracking-widest uppercase font-normal mt-6 mb-1;
 	}
 </style>
