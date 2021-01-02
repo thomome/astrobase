@@ -1,5 +1,6 @@
 <template>
 	<div
+		v-if="guiding"
 		class="guiding mr-16"
 	>
 		<h3
@@ -10,7 +11,6 @@
 		</h3>
 
 		<table
-			v-if="guiding"
 			class="text-xs mt-2"
 		>
 			<tbody>
