@@ -76,6 +76,21 @@ export default {
 
 	.button {
 		@apply inline-block border border-gray-500 px-4 py-2 text-gray-500 text-sm font-normal outline-none;
+		transition: all .3s;
+
+		&:hover {
+			@apply border-gray-400 text-gray-300;
+			background: #ffffff19;
+		}
+
+		&:active {
+			transform: scale(0.98);
+		}
+
+		&.sm {
+			@apply px-3 py-1 text-xs;
+		}
+
 	}
 
 	button {
@@ -123,19 +138,19 @@ export default {
 		a {
 			background-image: linear-gradient(120deg, theme('colors.yellow.400') 0%, theme('colors.yellow.400') 100%);
 			background-repeat: no-repeat;
-			background-size: 100% 1px;
+			background-size: 100% 0.5px;
 			background-position: 0 95%;
 			transition: all 0.1s ease-in;
 
 			&:hover {
-				background-size: 100% 88%;
-				@apply text-black;
+				@apply text-white;
+				background-size: 100% 1px;
 			}
 		}
 
 		ul {
 			@apply ml-6;
-			list-style-type: circle;
+			list-style-type: square;
 		}
 
 		ol {
@@ -145,6 +160,6 @@ export default {
 	}
 
 	.section-title {
-		@apply text-xs inline-block text-gray-600 tracking-widest uppercase font-normal mt-6 mb-1;
+		@apply text-xs block text-gray-600 tracking-widest uppercase font-normal mt-6 mb-1;
 	}
 </style>
