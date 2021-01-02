@@ -12,7 +12,7 @@
 			</nuxt-link>
 		</div>
 		<div class="picture__details flex-shrink-0 xl:w-1/4 lg:w-1/3 lg:ml-8">
-			<h2 class="picture__title text-xl leading-tight font-medium text-gray-200 mt-4 lg:mt-0">
+			<h2 class="picture__title text-xl leading-tight font-normal text-gray-200 mt-4 lg:mt-0">
 				<nuxt-link
 					:to="`/pictures/${picture.id}`"
 				>
@@ -20,16 +20,17 @@
 				</nuxt-link>
 			</h2>
 
-			<div class="picture__date-location text-gray-700 text-sm">
+			<div class="picture__date-location text-gray-700 text-sm mt-1">
 				{{ picture.date }} - {{ picture.location[0].title }}
 			</div>
 
 			<nuxt-link
+				v-if="picture.excerpt"
 				:to="`/pictures/${picture.id}`"
 			>
 				<p
 					v-html="picture.excerpt"
-					class="picture__description max-w-md lg:max-w-6xl font-light leading-snug my-4"
+					class="picture__description max-w-md lg:max-w-6xl font-light leading-snug mt-4"
 				/>
 			</nuxt-link>
 

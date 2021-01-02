@@ -76,7 +76,7 @@ export default {
 
 <style lang="scss" scoped>
 	.main-navigation__link {
-		@apply border uppercase tracking-wider font-light leading-tight text-sm text-gray-400 px-4 py-2 mb-4;
+		@apply border uppercase tracking-wider font-light leading-tight text-sm text-gray-400 px-4 py-2;
 
 		@media screen and (min-width: theme('screens.md')) {
 			@apply mr-8;
@@ -90,9 +90,13 @@ export default {
 	.main-navigation__container {
 		opacity: 0;
 		visibility: hidden;
-		height: calc(var(--vh, 1vh) * 100);
+		height: 100vh;
 		transform: translateX(100%);
 		transition: transform .3s, opacity 0s .3s, visibility 0s .3s;
+
+		.main-navigation__link {
+			@apply mb-4;
+		}
 
 		@media screen and (min-width: theme('screens.md')) {
 			opacity: 1;
@@ -100,6 +104,10 @@ export default {
 			height: auto;
 			transform: translateX(0);
 			transition: none;
+
+			.main-navigation__link {
+				@apply mb-0;
+			}
 		}
 	}
 
