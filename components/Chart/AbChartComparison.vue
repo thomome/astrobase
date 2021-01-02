@@ -1,20 +1,27 @@
 <template>
 	<div class="chart-comparision">
-		<button
-			v-for="preset in presets"
-			:key="preset.title"
-			type="color"
-			@click="usePreset(preset)"
-		>
-			{{ preset.title }}
-		</button>
+		<div class="flex justify-between items-end mb-2">
+			<div class="block section-title">
+				Plots
+			</div>
+			<div class="mb-2">
+				<button
+					v-for="preset in presets"
+					:key="preset.title"
+					@click="usePreset(preset)"
+					type="color"
+					class="button sm ml-2"
+				>
+					{{ preset.title }}
+				</button>
+			</div>
+		</div>
 
 		<ab-select
 			:on-change="updatePlots"
 			:values="valuePlots"
 			:options="possiblePlots"
 			:multiple="true"
-			label="Plots"
 			label-key="name"
 			params-key="plots"
 			class="w-full mb-1"
@@ -154,54 +161,6 @@ export default {
 					id: 'exposure',
 					name: 'Exposure Time',
 					unit: 's'
-				}, {
-					id: 'corrRaMedian',
-					name: 'Guide Correction Median (RA)',
-					unit: '″'
-				}, {
-					id: 'corrRaPeak',
-					name: 'Guide Correction Peak (RA)',
-					unit: '″'
-				}, {
-					id: 'corrRaMean',
-					name: 'Guide Correction Mean (RA)',
-					unit: '″'
-				}, {
-					id: 'corrDecMedian',
-					name: 'Guide Correction Median (DEC)',
-					unit: '″'
-				}, {
-					id: 'corrDecPeak',
-					name: 'Guide Correction Peak (DEC)',
-					unit: '″'
-				}, {
-					id: 'corrDecMean',
-					name: 'Guide Correction Mean (DEC)',
-					unit: '″'
-				}, {
-					id: 'errRaMedian',
-					name: 'Guide Error Median (RA)',
-					unit: '″'
-				}, {
-					id: 'errRaPeak',
-					name: 'Guide Error Peak (RA)',
-					unit: '″'
-				}, {
-					id: 'errRaMean',
-					name: 'Guide Error Mean (RA)',
-					unit: '″'
-				}, {
-					id: 'errDecMedian',
-					name: 'Guide Error Median (DEC)',
-					unit: '″'
-				}, {
-					id: 'errDecPeak',
-					name: 'Guide Error Peak (DEC)',
-					unit: '″'
-				}, {
-					id: 'errDecMean',
-					name: 'Guide Error Mean (DEC)',
-					unit: '″'
 				}
 			]
 		}

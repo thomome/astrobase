@@ -1,6 +1,7 @@
 <template>
 	<div class="filter">
 		<label
+			v-if="label"
 			:for="`filter-${paramsKey}`"
 			class="block section-title mb-1"
 		>{{ label }}</label>
@@ -46,7 +47,7 @@ export default {
 		async: { type: Boolean, default: false },
 		value: { type: String, default: '' },
 		values: { type: Array, default: () => [] },
-		label: { type: String, default: 'Filter' },
+		label: { type: String, default: '' },
 		labelKey: { type: String, default: 'name' },
 		paramsKey: { type: String, required: true },
 		getItems: { type: Function, default: () => {} },
