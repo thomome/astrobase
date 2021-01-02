@@ -1,5 +1,5 @@
 <template>
-	<div class="hero relative">
+	<div class="hero relative flex">
 		<div class="hero__image w-full h-full">
 			<slot />
 		</div>
@@ -33,17 +33,16 @@ export default {
 
 <style lang="scss" scoped>
 	.hero {
-		@media screen and (min-width: theme('screens.md')) {
-			height: calc(var(--vh, 1vh) * 100);
+		@apply relative flex-col;
+		height: calc(var(--vh, 1vh) * 100);
 
-			&.hero--half {
-				height: calc(var(--vh, 1vh) * 50);
-			}
+		&.hero--half {
+			height: calc(var(--vh, 1vh) * 50);
 		}
 	}
 
 	.hero__image {
-		height: 90vh;
+		height: 100%;
 
 		@media screen and (min-width: theme('screens.md')) {
 			height: 100%;
