@@ -104,7 +104,7 @@ export default {
 			zoomStart: 1,
 			lastClick: 0,
 
-			minRadius: 30,
+			minRadius: 15,
 			labelPadding: {
 				x: 8,
 				y: 4
