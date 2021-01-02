@@ -84,6 +84,11 @@
 						title="Calibration"
 					/>
 
+					<ab-guiding
+						:guiding="picture.guiding"
+						title="Guiding"
+					/>
+
 					<ab-object-list
 						:objects="picture.objects"
 						:showAll="true"
@@ -118,9 +123,10 @@ import AbExposureTime from '~/components/ImageDetail/AbExposureTime.vue'
 import AbCalibration from '~/components/ImageDetail/AbCalibration.vue'
 import AbEquipmentList from '~/components/ImageDetail/AbEquipmentList.vue'
 import AbSoftwareList from '~/components/ImageDetail/AbSoftwareList.vue'
+import AbGuiding from '~/components/ImageDetail/AbGuiding.vue'
 
 export default {
-	components: { AbPicture, AbIcon, AbChartComparison, AbObjectList, AbExposureTime, AbCalibration, AbEquipmentList, AbSoftwareList },
+	components: { AbPicture, AbIcon, AbChartComparison, AbObjectList, AbExposureTime, AbCalibration, AbEquipmentList, AbSoftwareList, AbGuiding },
 	data () {
 		return {
 			version: 0,

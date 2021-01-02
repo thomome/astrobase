@@ -6,7 +6,7 @@
 		<h3 v-if="title" class="picture__details-title section-title">
 			{{ title }}
 		</h3>
-		<ul class="picture__details-list text-sm border-l border-yellow-400 pl-4 my-2 ml-1">
+		<ul class="picture__details-list text-sm border-l border-yellow-400 pl-4 mb-2 ml-1">
 			<li
 				v-for="prog in software"
 				:key="prog.id"
