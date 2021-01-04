@@ -189,8 +189,16 @@ export default {
 		@apply bg-transparent text-sm pl-0;
 	}
 
+	.filter .multiselect__content {
+		@apply overflow-hidden w-full;
+	}
+
 	.filter .multiselect__content-wrapper {
 		@apply bg-gray-900 text-sm border-gray-700;
+	}
+
+	.filter .multiselect__option {
+		@apply truncate;
 	}
 
 	.filter .multiselect__option--highlight {
