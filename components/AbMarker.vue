@@ -17,11 +17,6 @@
 				<p class="text-sm leading-tight">
 					Elevation: {{ location.elevation }}&#8239;<small>m</small><br>Bortle Class: {{ location.bortle }}
 				</p>
-				<nuxt-link
-					:to="link"
-				>
-					Show Pictures
-				</nuxt-link>
 			</div>
 		</MglPopup>
 	</MglMarker>
