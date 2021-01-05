@@ -85,7 +85,7 @@
 					/>
 
 					<ab-guiding
-						:guiding="picture.guiding"
+						:guiding="picture.guiding || null"
 						title="Guiding"
 					/>
 

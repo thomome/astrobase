@@ -412,7 +412,7 @@ export default {
 				const relNum = (limits.y.max - start) / step
 
 				for (let i = 0; i < relNum; i++) {
-					const y = i * step + start
+					const y = (i * step + start).toPrecision(4) * 1.0
 					tics.push({
 						y: height - (y - limits.y.min) / range * height,
 						label: kAbb ? `${y / 1000.0}k` : y
