@@ -32,7 +32,7 @@
 			<div class="picture__details md:flex my-4">
 				<div class="picture__column max-w-2xl">
 					<div class="picture__image-description text-gray-700 text-sm leading-tight border-l border-yellow-400 pl-3 mb-4">
-						{{ image.description }}
+						{{ image.date }}<span v-if="image.description"> - {{ image.description }}</span>
 					</div>
 				</div>
 				<div class="picture__column ml-auto">
