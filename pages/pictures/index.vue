@@ -1,6 +1,7 @@
 <template>
 	<main class="main-content">
 		<div class="picture-list container mt-24 md:mt-40">
+			<h1 class="hidden">Pictures</h1>
 			<div class="sort flex items-end mb-4">
 				<ab-select
 					:on-change="updateParams"
@@ -101,10 +102,10 @@ export default {
 	data () {
 		return {
 			sortOptions: [
-				{ id: 'latest', name: 'Latest' },
-				{ id: 'oldest', name: 'Oldest' },
-				{ id: 'title', name: 'Title' },
-				{ id: 'stats', name: 'Statistical Rating' }
+				{ id: 'latest', name: 'Last Taken' },
+				{ id: 'processed', name: 'Last Processed' },
+				{ id: 'stats', name: 'Statistical Rating' },
+				{ id: 'oldest', name: 'Oldest' }
 			],
 			isLoading: true,
 			filtersOpen: false
