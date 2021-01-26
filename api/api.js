@@ -16,6 +16,21 @@ const getPage = async (path) => {
 	return q.data
 }
 
+// Posts
+const getPosts = async (params = {}) => {
+	const endpoint = 'posts'
+	const q = await axios.get(`${url}/${endpoint}`, {
+		params
+	})
+	return q.data
+}
+
+const getPost = async (slug) => {
+	const endpoint = 'post'
+	const q = await axios.get(`${url}/${endpoint}/${slug}`)
+	return q.data
+}
+
 // Pictures
 const getPictures = async (params = {}) => {
 	const endpoint = 'pictures'
@@ -85,6 +100,8 @@ const getLocation = async (id) => {
 export {
 	getSite,
 	getPage,
+	getPost,
+	getPosts,
 	getPictures,
 	getPicture,
 	getObjects,
