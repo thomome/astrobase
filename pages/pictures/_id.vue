@@ -19,7 +19,7 @@
 				</h1>
 
 				<div class="picture__date-location text-gray-700 text-sm">
-					{{ picture.date }} - {{ location.title }}
+					{{ picture.date }} - <span v-if="location"> - {{ location.title }}</span>
 				</div>
 			</div>
 			<div class="picture__image">
@@ -77,6 +77,7 @@
 					/>
 
 					<ab-calibration
+						v-if="location && data && frame"
 						:data="data"
 						:frame="frame"
 						:timestamp="timestamp"

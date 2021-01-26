@@ -15,7 +15,9 @@ module.exports = {
 			maxWidth: {
 				'wide': '80rem',
 				'narrow': '70rem',
-				'narrow-plus': '74rem'
+				'narrow-plus': '74rem',
+				'tight': '54rem',
+				'tight-plus': '68rem'
 			},
 			spacing: {
 				n8: '-2rem',

@@ -69,6 +69,10 @@ export default {
 			@apply max-w-narrow-plus;
 		}
 
+		&.container--narrow {
+			@apply max-w-tight;
+		}
+
 		@media screen and (min-width: theme('screens.lg')) {
 			@apply px-8;
 		}

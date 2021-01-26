@@ -5,7 +5,6 @@ export default {
 		port: 8080, // default: 3000
 		host: process.env.HOST ? process.env.HOST : '0.0.0.0' // default: localhost
 	},
-	mode: 'universal',
 	/*
 	** Headers of the page
 	*/
@@ -55,8 +54,16 @@ export default {
 	modules: [
 		// Doc: https://axios.nuxtjs.org/usage
 		'@nuxtjs/axios',
-		'@nuxtjs/sitemap'
+		'@nuxtjs/sitemap',
+		'nuxt-history-state'
 	],
+
+	historyState: {
+        maxHistoryLength: 50, // or any positive integer
+        reloadable: false, // or true
+        overrideDefaultScrollBehavior: true, // or false
+        scrollingElements: '#scroll' // or any selector
+    },
 	sitemap: async () => {
 		const pictures = await getPictures({ limit: 50 })
 		return {

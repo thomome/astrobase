@@ -1,7 +1,9 @@
 <template>
 	<main class="main-content">
 		<div class="picture-list container mt-24 md:mt-40">
-			<h1 class="hidden">Pictures</h1>
+			<h1 class="hidden">
+				Pictures
+			</h1>
 			<div class="sort flex items-end mb-4">
 				<ab-select
 					:on-change="updateParams"

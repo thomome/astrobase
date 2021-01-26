@@ -21,7 +21,7 @@
 			</h2>
 
 			<div class="picture__date-location text-gray-700 text-sm mt-1">
-				{{ picture.date }} - {{ picture.location[0].title }}
+				{{ picture.date }} <span v-if="picture.location[0]"> - {{ picture.location[0].title }}</span>
 			</div>
 
 			<nuxt-link
