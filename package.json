@@ -14,6 +14,7 @@
   "dependencies": {
     "@nuxtjs/axios": "^5.12.4",
     "@nuxtjs/sitemap": "^2.4.0",
+    "file-saver": "^2.0.5",
     "fs": "0.0.1-security",
     "makerjs": "^0.17.0",
     "mapbox-gl": "^1.13.0",
@@ -33,6 +34,7 @@
     "eslint": "^6.1.0",
     "eslint-plugin-nuxt": "^1.0.0",
     "node-sass": "^4.14.1",
-    "sass-loader": "^8.0.2"
+    "sass-loader": "^8.0.2",
+    "worker-loader": "^3.0.7"
   }
 }

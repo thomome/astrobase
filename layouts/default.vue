@@ -78,6 +78,41 @@ export default {
 		}
 	}
 
+	label {
+		@apply block text-sm;
+
+		span {
+			@apply block;
+		}
+	}
+
+	input,
+	select {
+		@apply px-2 py-1 text-sm;
+		background: #ffffff19;
+		outline: none;
+	}
+
+	select {
+		@apply cursor-pointer;
+	}
+
+	input[type="checkbox"] {
+		@apply cursor-pointer;
+	}
+
+	input[type="number"] {
+		text-align: right;
+		width: 75px;
+		-moz-appearance: textfield;
+
+		&::-webkit-outer-spin-button,
+		&::-webkit-inner-spin-button {
+			-webkit-appearance: none;
+			margin: 0;
+		}
+	}
+
 	.button {
 		@apply inline-block border border-gray-500 px-4 py-2 text-gray-500 text-sm font-normal outline-none;
 		transition: all .3s;

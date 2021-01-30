@@ -54,16 +54,8 @@ export default {
 	modules: [
 		// Doc: https://axios.nuxtjs.org/usage
 		'@nuxtjs/axios',
-		'@nuxtjs/sitemap',
-		'nuxt-history-state'
+		'@nuxtjs/sitemap'
 	],
-
-	historyState: {
-        maxHistoryLength: 50, // or any positive integer
-        reloadable: false, // or true
-        overrideDefaultScrollBehavior: true, // or false
-        scrollingElements: '#scroll' // or any selector
-    },
 	sitemap: async () => {
 		const pictures = await getPictures({ limit: 50 })
 		return {
@@ -97,6 +89,10 @@ export default {
 			config.node = {
 				fs: "empty"
 			};
+			config.module.rules.push({
+				test: /\.worker\.js$/,
+				use: { loader: "worker-loader" }
+			});
 		}
 	}
 }
