@@ -63,8 +63,18 @@ export default {
 					title: 'Pictures',
 					route: '/pictures'
 				},
+				// {
+				// 	id: 3,
+				// 	title: 'Blog',
+				// 	route: '/posts'
+				// },
 				{
 					id: 4,
+					title: 'Tools',
+					route: '/tools'
+				},
+				{
+					id: 5,
 					title: 'About',
 					route: '/about'
 				}

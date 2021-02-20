@@ -91,6 +91,8 @@
 							<input
 								v-model.number="maskOptions.centObsDiameter"
 								@change="renderMask"
+								:max="maskOptions.apertureDiameter - maskOptions.innerBorder"
+								min="1"
 								type="number"
 							>
 							{{ maskOptions.units }}
@@ -132,6 +134,9 @@
 					<li>
 						<a target="_blank" href="https://github.com/satakagi">Satoru Takagi</a> (Improved Tri Bahtinov Mask).
 					</li>
+					<li>
+						<a target="_blank" href="http://www.geoastro.co.uk/careymask.htm">George Carey</a> (Carey Mask).
+					</li>
 				</ul>
 			</div>
 		</div>
@@ -149,10 +154,13 @@ export default {
 	data () {
 		const maskTypes = [
 			{ name: 'Bahtinov mask', value: 'BahtinovMask' },
-			{ name: 'Tri-Bahtinov mask', value: 'TriBahtinovMask' }
+			{ name: 'Tri-Bahtinov mask', value: 'TriBahtinovMask' },
+			{ name: 'Perpendicular mask', value: 'PerpendicularMask' },
+			{ name: 'Carey mask', value: 'CareyMask' }
 		]
 		const unitTypes = [
 			{ name: 'mm', value: 'mm' },
+			{ name: 'cm', value: 'cm' },
 			{ name: 'inch', value: 'in' }
 		]
 
@@ -202,7 +210,7 @@ export default {
 		},
 		innerDiameter () {
 			const { centObsDiameter, innerBorder } = this.maskOptions
-			return centObsDiameter - (2 * innerBorder)
+			return centObsDiameter + (2 * innerBorder)
 		}
 	},
 	mounted () {
@@ -259,8 +267,8 @@ export default {
 				slitWidth,
 				stemWidth,
 				bridgeWidth,
-				innerDiameter: hasCentralObstruction ? innerDiameter : 0,
-				centObsDiameter: hasCentralObstruction ? centObsDiameter : 0
+				centObsDiameter: hasCentralObstruction ? innerDiameter : 0,
+				innerDiameter: hasCentralObstruction ? centObsDiameter : 0
 			}
 
 			if (client) {

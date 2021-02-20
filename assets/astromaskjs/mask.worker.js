@@ -1,9 +1,13 @@
 import { BahtinovMask } from '~/assets/astromaskjs/BahtinovMask'
 import { TriBahtinovMask } from '~/assets/astromaskjs/TriBahtinovMask'
+import { PerpendicularMask } from '~/assets/astromaskjs/PerpendicularMask'
+import { CareyMask } from '~/assets/astromaskjs/CareyMask'
 
 const masks = {
 	BahtinovMask,
-	TriBahtinovMask
+	TriBahtinovMask,
+	PerpendicularMask,
+	CareyMask
 }
 
 let mask = null
