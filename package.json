@@ -18,12 +18,10 @@
     "fs": "0.0.1-security",
     "makerjs": "^0.17.0",
     "mapbox-gl": "^1.13.0",
-    "mapbox-gl-vue": "^2.0.4",
     "moment": "^2.29.1",
     "nuxt": "^2.14.12",
     "papaparse": "^5.3.0",
     "vue-fragment": "^1.5.1",
-    "vue-mapbox": "^0.4.1",
     "vue-multiselect": "^2.1.6"
   },
   "devDependencies": {

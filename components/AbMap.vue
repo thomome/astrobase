@@ -1,33 +1,9 @@
 <template>
-	<client-only>
-		<MglMap
-			:access-token="accessToken"
-			:map-style="mapStyle"
-			:minZoom="10"
-			:maxZoom="12"
-			:center="center"
-			:interactive="false"
-			class="map"
-		>
-			<AbMarker
-				v-for="location in preparedLocations"
-				:key="location.id"
-				:location="location"
-			/>
-		</MglMap>
-	</client-only>
+	<div ref="container" class="map" />
 </template>
 
 <script>
-import AbMarker from '~/components/AbMarker.vue'
-
-let mapboxgl
-if (process.client) {
-	mapboxgl = require('mapbox-gl')
-}
-
 export default {
-	components: { AbMarker },
 	props: {
 		locations: { type: Array, default: () => [] }
 	},
@@ -38,29 +14,71 @@ export default {
 		}
 	},
 	computed: {
-		preparedLocations () {
-			if (mapboxgl) {
-				return this.locations.map((l) => {
-					l.coords = [l.coords.lng, l.coords.lat]
-					return l
-				})
-			} else {
-				return this.locations
-			}
-		},
-		center () {
-			if (this.preparedLocations.length === 1) {
-				return this.preparedLocations[0].coords
-			} else if (mapboxgl && this.preparedLocations.length > 1) {
+		prepLocations () {
+			return this.locations.map((l) => {
+				l.coords = [l.coords.lng, l.coords.lat]
+				return l
+			})
+		}
+	},
+	mounted () {
+		this.createMap()
+	},
+	methods: {
+		createMap () {
+			const { accessToken, mapStyle, prepLocations } = this
+
+			const mapboxgl = require('mapbox-gl')
+			mapboxgl.accessToken = accessToken
+
+			let mapCenter = [0, 0]
+			if (prepLocations.length === 1) {
+				mapCenter = prepLocations[0].coords
+			} else if (prepLocations.length > 1) {
 				const bounds = new mapboxgl.LngLatBounds()
-				this.preparedLocations.forEach((l) => {
+				prepLocations.forEach((l) => {
 					const coords = mapboxgl.LngLat.convert(l.coords)
 					bounds.extend(coords)
 				})
-				return bounds.getCenter()
-			} else {
-				return { lng: 0, lat: 0 }
+				mapCenter = bounds.getCenter()
 			}
+
+			const map = new mapboxgl.Map({
+				container: this.$refs.container,
+				style: mapStyle,
+				center: mapCenter,
+				zoom: 6,
+				minZoom: 10,
+				maxZoom: 12,
+				interactive: false
+			})
+
+			prepLocations.forEach((loc) => {
+				const popup = new mapboxgl.Popup({
+					closeButton: false,
+					focusAfterOpen: false,
+					closeOnClick: false,
+					offset: 30
+				}).setHTML(`
+					<div>
+						<div class="text-base font-normal text-gray-200 mb-1">
+						${loc.title}
+						</div>
+						<p class="text-sm leading-tight">
+							Elevation: ${loc.elevation}&#8239;<small>m</small><br>Bortle Class: ${loc.bortle}
+						</p>
+					</div>
+				`)
+
+				const marker = document.createElement('div')
+				marker.classList.add('map-marker')
+
+				new mapboxgl.Marker({ element: marker })
+					.setLngLat(loc.coords)
+					.setPopup(popup)
+					.addTo(map)
+					.togglePopup()
+			})
 		}
 	}
 }
@@ -69,7 +87,21 @@ export default {
 <style src="mapbox-gl/dist/mapbox-gl.css"></style>
 
 <style lang="scss">
+	.map-marker {
+		@apply w-12 h-12 rounded-full border-dashed border border-white;
+		background: rgba(0, 0, 0, 0.2);
+	}
+
 	.map {
 		min-height: 600px;
+
+		.mapboxgl-popup-content {
+			@apply py-3 px-4 rounded-none bg-gray-900;
+		}
+
+		.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
+			border-top-color: theme('colors.gray.900');
+			margin-top: -1px;
+		}
 	}
 </style>

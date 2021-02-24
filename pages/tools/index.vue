@@ -29,7 +29,6 @@
 					</svg>
 				</nuxt-link>
 			</div>
-
 		</div>
 	</main>
 </template>
