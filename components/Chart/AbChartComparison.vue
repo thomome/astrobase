@@ -8,9 +8,9 @@
 				<button
 					v-for="preset in presets"
 					:key="preset.title"
-					@click="usePreset(preset)"
-					type="color"
 					class="button sm ml-2"
+					type="color"
+					@click="usePreset(preset)"
 				>
 					{{ preset.title }}
 				</button>
@@ -22,9 +22,9 @@
 			:values="valuePlots"
 			:options="possiblePlots"
 			:multiple="true"
+			class="w-full mb-1"
 			label-key="name"
 			params-key="plots"
-			class="w-full mb-1"
 		/>
 		<div
 			v-if="possibleSeries.length > 1"
@@ -33,8 +33,8 @@
 			<button
 				v-for="serie in possibleSeries"
 				:key="serie.id"
-				@click="() => { updateSeries(serie.id) }"
 				class="chart-comparision__legend-item flex items-center ml-4 text-xs p-1"
+				@click="() => { updateSeries(serie.id) }"
 			>
 				<div
 					:style="serie.active ? `background: ${serie.color}` : ''"
@@ -48,12 +48,12 @@
 				v-for="plot in renderedPlots"
 				:key="plot.id"
 				:data="data"
-				:dataSeries="dataSeriesFiltered"
+				:data-series="dataSeriesFiltered"
 				:data-key="plot.id"
 				:title="plot.name"
 				:unit="plot.unit"
 				:range="range"
-				:selectedPlots="renderedPlots"
+				:selected-plots="renderedPlots"
 				:colors="usedColors"
 			/>
 		</div>
@@ -61,7 +61,7 @@
 			<ab-chart-range
 				v-if="renderedPlots.length > 0"
 				:series="dataSeriesFiltered"
-				:onChange="updateRange"
+				:on-change="updateRange"
 				:range="range"
 			/>
 		</div>

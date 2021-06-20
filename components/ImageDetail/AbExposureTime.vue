@@ -29,7 +29,7 @@
 		</ul>
 		<div class="-ml-px">
 			<span class="text-yellow-400 mr-2">∑</span>
-			<span v-html="totalExposureTime" class="text-sm" />
+			<span class="text-sm" v-html="totalExposureTime" />
 		</div>
 	</div>
 </template>

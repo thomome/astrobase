@@ -1,7 +1,7 @@
 <template>
 	<div
-		@click="toggleFullscreen"
 		class="skymap__container"
+		@click="toggleFullscreen"
 	>
 		<canvas ref="container" class="skymap pointer-events-none" />
 		<button class="skymap__fullscreen-button absolute w-full h-full bg-gray-900 bg-opacity-75 opacity-0 hover:opacity-100 transition ease-in-out duration-300">

@@ -29,13 +29,13 @@
 				:to="`/pictures/${picture.id}`"
 			>
 				<p
-					v-html="picture.excerpt"
 					class="picture__description max-w-md lg:max-w-6xl font-light leading-snug mt-4"
+					v-html="picture.excerpt"
 				/>
 			</nuxt-link>
 
 			<div class="picture__column-container hidden md:flex flex-wrap lg:block">
-				<ab-object-list :objects="picture.objects" :showAll="false" title="Objects in Picture" />
+				<ab-object-list :objects="picture.objects" :show-all="false" title="Objects in Picture" />
 			</div>
 
 			<div class="picture__column-container hidden md:flex flex-wrap lg:block">

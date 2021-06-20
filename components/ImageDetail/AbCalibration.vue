@@ -63,7 +63,7 @@
 		<div v-if="conditions.moonIllum && conditions.moonPosAngle" class="flex my-4">
 			<ab-icon-moon
 				:illuminated="conditions.moonIllum"
-				:positionAngle="conditions.moonPosAngle"
+				:position-angle="conditions.moonPosAngle"
 				class="w-10 h-10"
 			/>
 			<div class="text-xs ml-4">

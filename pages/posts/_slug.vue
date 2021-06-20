@@ -23,8 +23,8 @@
 				</div>
 
 				<div
-					v-html="post.content"
 					class="post__content html-content font-light"
+					v-html="post.content"
 				/>
 			</div>
 		</div>
@@ -37,15 +37,6 @@ import AbIcon from '~/components/AbIcon.vue'
 
 export default {
 	components: { AbIcon },
-	data () {
-		return {}
-	},
-	computed: {
-		timestamp () {
-			const { timestamp } = this.picture
-			return timestamp
-		}
-	},
 	async asyncData ({ params, app }) {
 		const post = await getPost(params.slug)
 		const { title, excerpt, image } = post.result
@@ -65,6 +56,15 @@ export default {
 		return {
 			meta,
 			post: post.result
+		}
+	},
+	data () {
+		return {}
+	},
+	computed: {
+		timestamp () {
+			const { timestamp } = this.picture
+			return timestamp
 		}
 	},
 	head () {

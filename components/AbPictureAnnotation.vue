@@ -1,8 +1,8 @@
 <template>
 	<g
 		:transform="`translate(${x}, ${y})`"
-		@click="showObjectTooltip"
 		class="picture-annotation cursor-pointer"
+		@click="showObjectTooltip"
 	>
 		<circle
 			v-if="type === 'object'"

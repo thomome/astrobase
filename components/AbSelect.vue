@@ -7,33 +7,33 @@
 		>{{ label }}</label>
 		<multiselect
 			v-if="async"
+			:id="`filter-${paramsKey}`"
 			v-model="preparedValue"
 			:options="preparedOptions"
 			:multiple="multiple"
 			:loading="isLoading"
 			:searchable="true"
 			:internal-search="false"
-			:showLabels="false"
-			:hideSelected="true"
-			:allowEmpty="allowEmpty"
+			:show-labels="false"
+			:hide-selected="true"
+			:allow-empty="allowEmpty"
 			:label="labelKey"
-			:id="`filter-${paramsKey}`"
+			track-by="id"
 			@search-change="fetch"
 			@input="onInput"
-			track-by="id"
 		/>
 
 		<multiselect
 			v-if="!async"
+			:id="`filter-${paramsKey}`"
 			v-model="preparedValue"
 			:options="options"
-			:showLabels="false"
+			:show-labels="false"
 			:label="labelKey"
-			:allowEmpty="allowEmpty"
+			:allow-empty="allowEmpty"
 			:multiple="multiple"
-			:id="`filter-${paramsKey}`"
-			@input="onInput"
 			track-by="id"
+			@input="onInput"
 		/>
 	</div>
 </template>

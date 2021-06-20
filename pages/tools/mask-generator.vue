@@ -31,8 +31,8 @@
 							<span class="text-sm">Focal Length</span>
 							<input
 								v-model.number="maskOptions.focalLength"
-								@change="renderMask"
 								type="number"
+								@change="renderMask"
 							>
 							{{ maskOptions.units }}
 						</label>
@@ -40,8 +40,8 @@
 							<span class="text-sm">Aperture ⌀</span>
 							<input
 								v-model.number="maskOptions.apertureDiameter"
-								@change="renderMask"
 								type="number"
+								@change="renderMask"
 							>
 							{{ maskOptions.units }}
 						</label>
@@ -51,8 +51,8 @@
 							<span class="text-sm">Outer Border</span>
 							<input
 								v-model.number="maskOptions.outerBorder"
-								@change="renderMask"
 								type="number"
+								@change="renderMask"
 							>
 							{{ maskOptions.units }}
 						</label>
@@ -60,8 +60,8 @@
 							<span class="text-sm">Bridge</span>
 							<input
 								v-model.number="maskOptions.bridgeWidth"
-								@change="renderMask"
 								type="number"
+								@change="renderMask"
 							>
 							{{ maskOptions.units }}
 						</label>
@@ -71,8 +71,8 @@
 							<span class="text-sm">Bahtinov Ratio</span>
 							<input
 								v-model.number="maskOptions.bahtinovRatio"
-								@change="renderMask"
 								type="number"
+								@change="renderMask"
 							>
 						</label>
 					</div>
@@ -81,8 +81,8 @@
 						Central Obstruction
 						<input
 							v-model="maskOptions.hasCentralObstruction"
-							@change="renderMask"
 							type="checkbox"
+							@change="renderMask"
 						>
 					</label>
 					<div v-if="maskOptions.hasCentralObstruction" class="flex">
@@ -90,10 +90,10 @@
 							<span class="text-sm">Obstruction ⌀</span>
 							<input
 								v-model.number="maskOptions.centObsDiameter"
-								@change="renderMask"
-								:max="maskOptions.apertureDiameter - maskOptions.innerBorder"
-								min="1"
 								type="number"
+								min="1"
+								:max="maskOptions.apertureDiameter - maskOptions.innerBorder"
+								@change="renderMask"
 							>
 							{{ maskOptions.units }}
 						</label>
@@ -101,25 +101,25 @@
 							<span class="text-sm">Inner Border</span>
 							<input
 								v-model.number="maskOptions.innerBorder"
-								@change="renderMask"
 								type="number"
+								@change="renderMask"
 							>
 							{{ maskOptions.units }}
 						</label>
 					</div>
 					<div class="mt-10">
 						<label class="mb-1">Export as</label>
-						<button @click="exportAs('svg')" class="button">
+						<button class="button" @click="exportAs('svg')">
 							SVG
 						</button>
-						<button @click="exportAs('dxf')" class="button">
+						<button class="button" @click="exportAs('dxf')">
 							DXF
 						</button>
 					</div>
 				</div>
 				<div
-					v-html="svg"
 					:class="['mask w-full pr-10', isRendering ? 'rendering' : '']"
+					v-html="svg"
 				/>
 			</div>
 			<div class="mt-12 html-content w-1/2 text-sm">
@@ -183,17 +183,6 @@ export default {
 			maskTypes,
 			unitTypes
 		}
-	},
-	head () {
-		const meta = {
-			title: `Mask Generator - Astrobase`,
-			meta: [
-				{ property: 'og:type', content: 'website' },
-				{ property: 'og:title', content: 'Mask Generator' },
-				{ property: 'og:description', content: 'A tool to generate your Bahtinov mask, Tri-Bahtinov mask and other types of astrophotography masks.' }
-			]
-		}
-		return meta
 	},
 	computed: {
 		slitWidth () {
@@ -292,6 +281,17 @@ export default {
 				localStorage.setItem('generator.mask.options', JSON.stringify(this.maskOptions))
 			}
 		}
+	},
+	head () {
+		const meta = {
+			title: `Mask Generator - Astrobase`,
+			meta: [
+				{ property: 'og:type', content: 'website' },
+				{ property: 'og:title', content: 'Mask Generator' },
+				{ property: 'og:description', content: 'A tool to generate your Bahtinov mask, Tri-Bahtinov mask and other types of astrophotography masks.' }
+			]
+		}
+		return meta
 	}
 }
 </script>

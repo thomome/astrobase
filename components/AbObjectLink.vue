@@ -1,7 +1,7 @@
 <template>
 	<span
-		@click="showObjectTooltip"
 		class="object-link"
+		@click="showObjectTooltip"
 	>
 		{{ obj.name }}
 	</span>

@@ -15,8 +15,8 @@
 			<nuxt-link
 				:to="home.route"
 				:exact="home.exact"
-				@click.native="isOpen = !isOpen"
 				class="main-navigation__link block border-transparent pointer-events-all md:hidden"
+				@click.native="isOpen = !isOpen"
 			>
 				{{ home.title }}
 			</nuxt-link>
@@ -25,16 +25,16 @@
 				:key="link.id"
 				:to="link.route"
 				:exact="link.exact"
-				@click.native="isOpen = !isOpen"
 				class="main-navigation__link block border-transparent pointer-events-all"
+				@click.native="isOpen = !isOpen"
 			>
 				{{ link.title }}
 			</nuxt-link>
 		</div>
 		<button
-			@click="isOpen = !isOpen"
 			class="ml-auto md:hidden"
 			aria-label="Navigation"
+			@click="isOpen = !isOpen"
 		>
 			<ab-hamburger
 				:active="isOpen"

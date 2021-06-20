@@ -65,11 +65,6 @@ const config = {
 
 export default {
 	components: { AbLoading, AbImage },
-	data () {
-		return {
-			isLoading: true
-		}
-	},
 	async asyncData ({ query, app }) {
 		const params = {
 			limit: config.perPage,
@@ -95,8 +90,10 @@ export default {
 			params
 		}
 	},
-	head () {
-		return this.meta
+	data () {
+		return {
+			isLoading: true
+		}
 	},
 	mounted () {
 		window.addEventListener('scroll', () => {
@@ -120,6 +117,9 @@ export default {
 			const sh = 'scrollHeight'
 			return (h[st] || b[st]) / ((h[sh] || b[sh]) - h.clientHeight)
 		}
+	},
+	head () {
+		return this.meta
 	}
 }
 </script>

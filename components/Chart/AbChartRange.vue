@@ -54,38 +54,38 @@
 					<rect
 						:width="dim.width"
 						:height="dim.height"
-						@mousedown="startSelection"
-						@touchstart="startSelection"
 						class="ab-chart-range__background"
 						x="0"
 						y="0"
+						@mousedown="startSelection"
+						@touchstart="startSelection"
 					/>
 					<rect
 						:width="(max - min) * dim.width"
 						:height="dim.height"
 						:x="min * dim.width"
-						@mousedown="startDrag"
-						@touchstart="startDrag"
 						class="ab-chart-range__bar"
 						y="0"
+						@mousedown="startDrag"
+						@touchstart="startDrag"
 					/>
 					<rect
 						:height="dim.height"
 						:x="min * dim.width"
-						@mousedown="startResizeMin"
-						@touchstart="startResizeMin"
+						class="ab-chart-range__resize-min"
 						y="0"
 						width="30"
-						class="ab-chart-range__resize-min"
+						@mousedown="startResizeMin"
+						@touchstart="startResizeMin"
 					/>
 					<rect
 						:height="dim.height"
 						:x="max * dim.width"
-						@mousedown="startResizeMax"
-						@touchstart="startResizeMax"
+						class="ab-chart-range__resize-max"
 						y="0"
 						width="30"
-						class="ab-chart-range__resize-max"
+						@mousedown="startResizeMax"
+						@touchstart="startResizeMax"
 					/>
 				</g>
 

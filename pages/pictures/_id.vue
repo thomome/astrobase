@@ -43,8 +43,8 @@
 						<button
 							v-for="(img, index) in picture.image"
 							:key="img.id"
-							@click="version = index"
 							:class="'picture__version-item ml-2 w-16 border border-solid ' + (index === version ? 'border-yellow-400' : 'border-transparent')"
+							@click="version = index"
 						>
 							<img
 								:src="img.sizes.thumbnail"
@@ -59,8 +59,8 @@
 					<div class="picture__general">
 						<div
 							v-if="picture.description"
-							v-html="picture.description"
 							class="picture__description html-content max-w-6xl font-light leading-snug mt-6 mb-16"
+							v-html="picture.description"
 						/>
 						<div v-if="picture.stats">
 							<ab-chart-comparison
@@ -92,7 +92,7 @@
 
 					<ab-object-list
 						:objects="picture.objects"
-						:showAll="true"
+						:show-all="true"
 						title="Objects in picture"
 					/>
 
@@ -128,6 +128,27 @@ import AbGuiding from '~/components/ImageDetail/AbGuiding.vue'
 
 export default {
 	components: { AbPicture, AbIcon, AbChartComparison, AbObjectList, AbExposureTime, AbCalibration, AbEquipmentList, AbSoftwareList, AbGuiding },
+	async asyncData ({ params, app }) {
+		const picture = await getPicture(params.id)
+		const { title, excerpt, image } = picture.result
+
+		const meta = {
+			title: `${title} - ${app.head.title}`,
+			meta: [
+				{ property: 'og:type', content: 'website' },
+				{ property: 'og:title', content: `${title}` },
+				{ property: 'og:description', content: `${excerpt}` },
+				{ property: 'og:image', content: `${image[0].sizes.small}` },
+				{ property: 'og:image:width', content: `${image[0].sizes['small-width']}` },
+				{ property: 'og:image:height', content: `${image[0].sizes['small-height']}` }
+			]
+		}
+
+		return {
+			meta,
+			picture: picture.result
+		}
+	},
 	data () {
 		return {
 			version: 0,
@@ -244,30 +265,6 @@ export default {
 			return location[0] || null
 		}
 	},
-	async asyncData ({ params, app }) {
-		const picture = await getPicture(params.id)
-		const { title, excerpt, image } = picture.result
-
-		const meta = {
-			title: `${title} - ${app.head.title}`,
-			meta: [
-				{ property: 'og:type', content: 'website' },
-				{ property: 'og:title', content: `${title}` },
-				{ property: 'og:description', content: `${excerpt}` },
-				{ property: 'og:image', content: `${image[0].sizes.small}` },
-				{ property: 'og:image:width', content: `${image[0].sizes['small-width']}` },
-				{ property: 'og:image:height', content: `${image[0].sizes['small-height']}` }
-			]
-		}
-
-		return {
-			meta,
-			picture: picture.result
-		}
-	},
-	head () {
-		return this.meta
-	},
 	mounted () {
 		if (this.picture.stats) {
 			Papa.parse(this.picture.stats, {
@@ -278,7 +275,11 @@ export default {
 				}
 			})
 		}
+	},
+	head () {
+		return this.meta
 	}
+
 }
 </script>
 

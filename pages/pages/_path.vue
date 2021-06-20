@@ -12,7 +12,7 @@
 			<h1 class="text-3xl mb-4 text-white">
 				{{ title }}
 			</h1>
-			<p v-html="content" class="html-content md:w-3/4" />
+			<p class="html-content md:w-3/4" v-html="content" />
 		</div>
 	</main>
 </template>

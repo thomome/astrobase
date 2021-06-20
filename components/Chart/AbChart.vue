@@ -96,9 +96,9 @@
 				<g
 					ref="plot"
 					:transform="`translate(${plotDim.x} 0)`"
+					class="ab-chart__plot"
 					@mousemove="(e) => { setActive(e.clientX) }"
 					@mouseleave="(e) => { setActive(0, true) }"
-					class="ab-chart__plot"
 				>
 					<rect
 						:width="plotDim.width"

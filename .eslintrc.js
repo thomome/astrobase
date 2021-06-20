@@ -15,6 +15,7 @@ module.exports = {
 	rules: {
 		'indent': ['error', 'tab'],
 		'no-tabs': 0,
-		'vue/html-indent': ['error', 'tab']
+		'vue/html-indent': ['error', 'tab'],
+		'vue/no-v-html': 'off'
 	}
 }

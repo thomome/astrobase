@@ -9,14 +9,14 @@
 					:on-change="updateParams"
 					:value="params.orderby"
 					:options="sortOptions"
-					:allowEmpty="false"
+					:allow-empty="false"
 					label="Sort by"
 					params-key="orderby"
 					class="w-full md:max-w-xs mr-4"
 				/>
 				<button
-					@click="filtersOpen = !filtersOpen"
 					:class="`filter-toggle md:hidden mt-2 ml-auto border rounded-sm ${filtersOpen ? 'border-white text-white' : 'border-gray-700'}`"
+					@click="filtersOpen = !filtersOpen"
 				>
 					<ab-icon name="tune" />
 				</button>
@@ -101,18 +101,6 @@ const config = {
 export default {
 	components: { AbPostPicture, AbSelect, AbLoading, AbIcon },
 	watchQuery: ['objects', 'devices', 'locations', 'orderby'],
-	data () {
-		return {
-			sortOptions: [
-				{ id: 'latest', name: 'Last Taken' },
-				{ id: 'processed', name: 'Last Processed' },
-				{ id: 'stats', name: 'Statistical Rating' },
-				{ id: 'oldest', name: 'Oldest' }
-			],
-			isLoading: true,
-			filtersOpen: false
-		}
-	},
 	async asyncData ({ query, app }) {
 		const params = {
 			objects: [],
@@ -149,8 +137,17 @@ export default {
 			params
 		}
 	},
-	head () {
-		return this.meta
+	data () {
+		return {
+			sortOptions: [
+				{ id: 'latest', name: 'Last Taken' },
+				{ id: 'processed', name: 'Last Processed' },
+				{ id: 'stats', name: 'Statistical Rating' },
+				{ id: 'oldest', name: 'Oldest' }
+			],
+			isLoading: true,
+			filtersOpen: false
+		}
 	},
 	mounted () {
 		window.addEventListener('scroll', () => {
@@ -189,6 +186,9 @@ export default {
 		getDevice,
 		getLocations,
 		getLocation
+	},
+	head () {
+		return this.meta
 	}
 }
 </script>

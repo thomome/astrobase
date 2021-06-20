@@ -15,8 +15,8 @@
 
 			<span
 				v-if="objects.length > shownObjects.length"
-				@click="toggleAll"
 				class="cursor-pointer py-2"
+				@click="toggleAll"
 			>
 				...
 			</span>

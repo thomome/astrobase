@@ -8,7 +8,7 @@
 			<ab-picture
 				:annotations="image.annotations"
 				:image="image"
-				:annotated="true"
+				:annotated="false"
 			/>
 		</ab-hero>
 		<div class="picture-list container mt-24">

@@ -1,6 +1,7 @@
 <template>
 	<div
 		ref="container"
+		:class="'astro-picture relative w-full h-full bg-black overflow-hidden select-none ' + (isFullscreen && zoom !== 1 ? 'can-drag' : '') + ' ' + (isDragging && zoom !== 1 ? 'is-dragging' : '')"
 		@wheel="onWheel"
 		@mousedown="onMouseDown"
 		@touchstart="onTouchStart"
@@ -8,7 +9,6 @@
 		@touchmove="onTouchMove"
 		@fullscreenchange="onFullscrenChange"
 		@click="onClick"
-		:class="'astro-picture relative w-full h-full bg-black overflow-hidden select-none ' + (isFullscreen && zoom !== 1 ? 'can-drag' : '') + ' ' + (isDragging && zoom !== 1 ? 'is-dragging' : '')"
 	>
 		<div
 			v-if="controls"
@@ -16,8 +16,8 @@
 		>
 			<button
 				v-if="preparedAnnotations"
-				@click="toggleAnnotations"
 				class="bg-yellow-400 text-gray-900 p-1 m-2 rounded-lg "
+				@click="toggleAnnotations"
 			>
 				<ab-icon
 					:name="showAnnotations ? 'annotations-on' : 'annotations-off'"
@@ -25,8 +25,8 @@
 				/>
 			</button>
 			<button
-				@click="toggleFullscreen"
 				class="bg-yellow-400 text-gray-900 p-1 m-2 rounded-lg "
+				@click="toggleFullscreen"
 			>
 				<ab-icon
 					:name="isFullscreen ? 'fullscreen-exit' : 'fullscreen'"
