@@ -19,7 +19,7 @@
 				</h1>
 
 				<div class="picture__date-location text-gray-700 text-sm">
-					{{ picture.date }} - <span v-if="location"> - {{ location.title }}</span>
+					{{ picture.date }} <span v-if="location"> - {{ location.title }}</span>
 				</div>
 			</div>
 			<div class="picture__image">
