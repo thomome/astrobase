@@ -94,6 +94,10 @@ export default {
 				{
 					title: 'Seeing Stats',
 					plots: ['objAlt', 'moonAlt', 'seeing', 'cloudCover']
+				},
+				{
+					title: 'Guiding Stats',
+					plots: ['rms_ra', 'rms_dec', 'rms_total', 'fwhmArc']
 				}
 			],
 			plotTypes: [
@@ -116,9 +120,17 @@ export default {
 					id: 'ecc',
 					name: 'Eccentricity'
 				}, {
-					id: 'weight',
-					name: 'Weight',
-					unit: '%'
+					id: 'rms_ra',
+					name: 'RMS RA',
+					unit: '″'
+				}, {
+					id: 'rms_dec',
+					name: 'RMS DEC',
+					unit: '″'
+				}, {
+					id: 'rms_total',
+					name: 'RMS Total',
+					unit: '″'
 				}, {
 					id: 'objAlt',
 					name: 'Object Altitude',
