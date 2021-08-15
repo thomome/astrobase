@@ -59,11 +59,20 @@
 					class="w-full mb-1"
 				/>
 			</div>
-			<ab-post-picture
-				v-for="picture in pictures"
-				:key="picture.id"
-				:picture="picture"
-			/>
+			<ab-masonry-grid v-if="display === 'grid'">
+				<ab-gallery-picture
+					v-for="picture in pictures"
+					:key="picture.id"
+					:picture="picture"
+				/>
+			</ab-masonry-grid>
+			<div v-else>
+				<ab-post-picture
+					v-for="picture in pictures"
+					:key="picture.id"
+					:picture="picture"
+				/>
+			</div>
 			<div
 				v-if="pictures.length === 0 && !isLoading"
 				class="flex flex-col items-center mt-12 mb-24"
@@ -91,16 +100,17 @@ import { getPictures, getObjects, getObject, getDevices, getDevice, getLocations
 
 import AbSelect from '~/components/AbSelect.vue'
 import AbPostPicture from '~/components/AbPostPicture.vue'
+import AbGalleryPicture from '~/components/AbGalleryPicture.vue'
 import AbLoading from '~/components/AbLoading.vue'
 import AbIcon from '~/components/AbIcon.vue'
+import AbMasonryGrid from '~/components/AbMasonryGrid.vue'
 
 const config = {
 	perPage: 6
 }
 
 export default {
-	components: { AbPostPicture, AbSelect, AbLoading, AbIcon },
-	watchQuery: ['objects', 'devices', 'locations', 'orderby'],
+	components: { AbPostPicture, AbGalleryPicture, AbSelect, AbLoading, AbIcon, AbMasonryGrid },
 	async asyncData ({ query, app }) {
 		const params = {
 			objects: [],
@@ -146,10 +156,27 @@ export default {
 				{ id: 'oldest', name: 'Oldest' }
 			],
 			isLoading: true,
-			filtersOpen: false
+			filtersOpen: false,
+			display: 'list'
 		}
 	},
+	head () {
+		return this.meta
+	},
+	watchQuery: ['objects', 'devices', 'locations', 'orderby'],
 	mounted () {
+		const fillPage = () => {
+			if (!this.isLoading && window.innerHeight > document.body.clientHeight && this.params.offset + config.perPage < this.total) {
+				this.params.offset += config.perPage
+				this.fetch()
+
+				setTimeout(() => {
+					fillPage()
+				}, 500)
+			}
+		}
+		fillPage()
+
 		window.addEventListener('scroll', () => {
 			if (!this.isLoading && this.params.offset + config.perPage < this.total && this.getScrollPosition() > 0.6) {
 				this.params.offset += config.perPage
@@ -186,9 +213,6 @@ export default {
 		getDevice,
 		getLocations,
 		getLocation
-	},
-	head () {
-		return this.meta
 	}
 }
 </script>

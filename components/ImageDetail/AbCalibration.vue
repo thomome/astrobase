@@ -1,6 +1,6 @@
 <template>
 	<div
-		class="calibration mr-16"
+		class="calibration mr-16 mt-6"
 	>
 		<h3
 			v-if="title"

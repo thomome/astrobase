@@ -1,7 +1,7 @@
 <template>
 	<div
 		v-if="software.length"
-		class="software-list"
+		class="software-list mt-6"
 	>
 		<h3 v-if="title" class="picture__details-title section-title">
 			{{ title }}

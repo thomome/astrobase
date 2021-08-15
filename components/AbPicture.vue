@@ -1,13 +1,12 @@
 <template>
 	<div
 		ref="container"
-		:class="'astro-picture relative w-full h-full bg-black overflow-hidden select-none ' + (isFullscreen && zoom !== 1 ? 'can-drag' : '') + ' ' + (isDragging && zoom !== 1 ? 'is-dragging' : '')"
+		:class="`astro-picture relative w-full h-full bg-black overflow-hidden select-none ${isFullscreen ? 'fullscreen-mode' : ''} ${(isFullscreen && zoom !== 1 ? 'can-drag' : '')} ${(isDragging && zoom !== 1 ? 'is-dragging' : '')}`"
 		@wheel="onWheel"
 		@mousedown="onMouseDown"
 		@touchstart="onTouchStart"
 		@touchend="onTouchEnd"
 		@touchmove="onTouchMove"
-		@fullscreenchange="onFullscrenChange"
 		@click="onClick"
 	>
 		<div
@@ -42,7 +41,7 @@
 				:image="image"
 				:full="isFullscreen"
 				:style="transform"
-				:class="'astro-picture__img block w-full h-full ' + (isFullscreen ? 'object-contain pointer-events-none' : 'object-cover')"
+				:class="'astro-picture__img block w-full h-full ' + (isFullscreen || maxHeight ? 'object-contain pointer-events-none' : 'object-cover')"
 				min-size="medium_large"
 			/>
 			<svg
@@ -81,7 +80,8 @@ export default {
 	props: {
 		image: { type: Object, required: true },
 		controls: { type: Boolean, default: false },
-		annotated: { type: Boolean, default: false }
+		annotated: { type: Boolean, default: false },
+		maxHeight: { type: String, default: '' }
 	},
 	data () {
 		return {
@@ -119,12 +119,12 @@ export default {
 	},
 	computed: {
 		aspectRatio () {
-			const { isFullscreen, image, container, zoom } = this
+			const { isFullscreen, image, container, zoom, maxHeight } = this
 
 			const width = image.sizes['large-width']
 			const height = image.sizes['large-height']
 
-			if (isFullscreen) { // to switch between cover and contain
+			if (isFullscreen || maxHeight) { // to switch between cover and contain
 				return width / height > container.width / container.height ? container.width / width * zoom : container.height / height * zoom
 			} else {
 				return width / height < container.width / container.height ? container.width / width * zoom : container.height / height * zoom
@@ -177,9 +177,10 @@ export default {
 			return [container.width * zoom, container.height * zoom]
 		},
 		transform () {
-			const { offset, zoom } = this
+			const { offset, zoom, maxHeight, isFullscreen } = this
 			return {
-				transform: `translate(${offset[0]}px, ${offset[1]}px) scale(${zoom}) `
+				transform: `translate(${offset[0]}px, ${offset[1]}px) scale(${zoom}) `,
+				maxHeight: isFullscreen ? '' : maxHeight
 			}
 		},
 		viewBox () {
@@ -214,20 +215,9 @@ export default {
 		},
 		toggleFullscreen () {
 			this.lastClick = 0
-			if (!this.isFullscreen) {
-				this.$refs.container.requestFullscreen()
-			} else {
-				document.exitFullscreen()
-			}
-		},
-		onFullscrenChange () {
-			if (document.fullscreenElement) {
-				this.isFullscreen = !this.isFullscreen
-			} else {
-				this.isFullscreen = !this.isFullscreen
-				this.zoom = 1
-				this.offset = [0, 0]
-			}
+			this.isFullscreen = !this.isFullscreen
+			this.zoom = 1
+			this.offset = [0, 0]
 		},
 		onTouchStart (e) {
 			if (!this.isFullscreen || !this.controls) {
@@ -335,27 +325,31 @@ export default {
 			}
 		},
 		onClick (e) {
-			if (!this.isFullscreen || !this.controls) {
+			if (!this.controls) {
 				return false
 			}
 
-			const { lastClick, zoom, minZoom, maxZoom, offset } = this
+			const { lastClick, zoom, minZoom, maxZoom, offset, isFullscreen } = this
 			const now = Date.now()
 
 			if (lastClick + 500 > now) {
-				const rect = this.$refs.container.getBoundingClientRect()
-				const offsetX = e.clientX - rect.left
-				const offsetY = e.clientY - rect.top
+				if (isFullscreen) {
+					const rect = this.$refs.container.getBoundingClientRect()
+					const offsetX = e.clientX - rect.left
+					const offsetY = e.clientY - rect.top
 
-				const newZoom = zoom >= maxZoom * 0.75 ? minZoom : maxZoom * 0.75
+					const newZoom = zoom >= maxZoom * 0.75 ? minZoom : maxZoom * 0.75
 
-				const newOffset = [
-					((offset[0] - offsetX) / zoom * newZoom) + offsetX,
-					((offset[1] - offsetY) / zoom * newZoom) + offsetY
-				]
+					const newOffset = [
+						((offset[0] - offsetX) / zoom * newZoom) + offsetX,
+						((offset[1] - offsetY) / zoom * newZoom) + offsetY
+					]
 
-				this.zoom = newZoom
-				this.updateOffset(newOffset)
+					this.zoom = newZoom
+					this.updateOffset(newOffset)
+				} else {
+					this.toggleFullscreen()
+				}
 				this.lastClick = 0
 			} else {
 				this.lastClick = now
@@ -423,6 +417,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+	.fullscreen-mode {
+		position: fixed;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		z-index: 1000;
+	}
+
 	.astro-picture__controls {
 		@apply opacity-100;
 

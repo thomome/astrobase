@@ -1,7 +1,7 @@
 <template>
 	<div
 		v-if="objects.length"
-		class="picture__tags max-w-6xl font-light text-sm"
+		class="picture__tags max-w-6xl font-light text-sm mt-6"
 	>
 		<h3 v-if="title" class="picture__details-title section-title">
 			{{ title }}

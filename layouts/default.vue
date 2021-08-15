@@ -62,6 +62,15 @@ export default {
 		background-image: linear-gradient(#000000ff 0%, #00000022 80%, #00000011 90%, #00000006 95%, #00000000 100%);
 	}
 
+	.page-enter-active,
+	.page-leave-active {
+		transition: opacity 0.25s;
+	}
+	.page-enter,
+	.page-leave-to {
+		opacity: 0;
+	}
+
 	.container {
 		@apply max-w-narrow mx-auto px-4;
 
@@ -199,6 +208,6 @@ export default {
 	}
 
 	.section-title {
-		@apply text-xs block text-gray-600 tracking-widest uppercase font-normal mt-6 mb-1;
+		@apply text-xs block text-gray-600 tracking-widest uppercase font-normal mb-1;
 	}
 </style>

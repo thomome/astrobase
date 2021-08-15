@@ -1,7 +1,7 @@
 <template>
 	<div
 		v-if="exposures.length"
-		class="exposure-time"
+		class="exposure-time mt-6"
 	>
 		<h3 v-if="title" class="ab-exposure-time__title section-title">
 			{{ title }}
@@ -9,7 +9,7 @@
 		<ul class="exposure-time__list">
 			<li
 				v-for="exposure in exposures"
-				:key="exposure.exposure_time + exposure.mode"
+				:key="exposure.exposure_time + exposure.mode.value + exposure.gain"
 				class="flex items-center"
 			>
 				<span class="mr-1 text-sm">

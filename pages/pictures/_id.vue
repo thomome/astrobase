@@ -13,64 +13,70 @@
 			</nuxt-link>
 		</div>
 		<div class="container mt-4">
-			<div class="picture__column picture__general max-w-xl mb-4">
-				<h1 class="picture__title text-2xl leading-tight text-gray-200 mb-1 font-light">
-					{{ picture.title }}
-				</h1>
+			<div class="picture-grid">
 
-				<div class="picture__date-location text-gray-700 text-sm">
-					{{ picture.date }} <span v-if="location"> - {{ location.title }}</span>
-				</div>
-			</div>
-			<div class="picture__image">
-				<ab-picture
-					:controls="true"
-					:image="image"
-				/>
-			</div>
+				<!-- Title and other meta informaton -->
+				<div class="picture__column picture__title max-w-xl">
+					<h1 class="picture__title text-2xl leading-tight text-gray-200 mb-1 font-light">
+						{{ picture.title }}
+					</h1>
 
-			<div class="picture__details md:flex my-4">
-				<div class="picture__column max-w-2xl">
-					<div class="picture__image-description text-gray-700 text-sm leading-tight border-l border-yellow-400 pl-3 mb-4">
-						{{ image.date }}<span v-if="image.description"> - {{ image.description }}</span>
+					<div class="picture__date-location text-gray-700 text-sm">
+						{{ picture.date }} <span v-if="location"> - {{ location.title }}</span>
 					</div>
 				</div>
-				<div class="picture__column ml-auto">
-					<div
-						v-if="picture.image.length > 1"
-						class="picture__versions flex"
-					>
-						<button
-							v-for="(img, index) in picture.image"
-							:key="img.id"
-							:class="'picture__version-item ml-2 w-16 border border-solid ' + (index === version ? 'border-yellow-400' : 'border-transparent')"
-							@click="version = index"
-						>
-							<img
-								:src="img.sizes.thumbnail"
-							>
-						</button>
-					</div>
-				</div>
-			</div>
 
-			<div class="picture__details md:grid md:grid-cols-3 md:gap-12">
-				<div class="picture__column md:col-span-2">
-					<div class="picture__general">
-						<div
-							v-if="picture.description"
-							class="picture__description html-content max-w-6xl font-light leading-snug mt-6 mb-16"
-							v-html="picture.description"
+				<!-- Image & description with navigation -->
+				<div class="picture__image">
+					<div class="flex flex-col relative">
+						<ab-picture
+							:controls="true"
+							:image="image"
+							max-height="80vh"
 						/>
-						<div v-if="picture.stats">
-							<ab-chart-comparison
-								:data="data"
-							/>
+						<div class="picture__details md:flex my-4">
+							<div class="picture__column max-w-2xl">
+								<div class="picture__image-description text-gray-700 text-sm leading-tight border-l border-yellow-400 pl-3 mb-4">
+									{{ image.date }}<span v-if="image.description"> - {{ image.description }}</span>
+								</div>
+							</div>
+							<div class="picture__column ml-auto">
+								<div
+									v-if="picture.image.length > 1"
+									class="picture__versions flex"
+								>
+									<button
+										v-for="(img, index) in picture.image"
+										:key="img.id"
+										:class="'picture__version-item ml-2 w-16 border border-solid ' + (index === version ? 'border-yellow-400' : 'border-transparent')"
+										@click="version = index"
+									>
+										<img
+											:src="img.sizes.thumbnail"
+										>
+									</button>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
 
-				<div class="picture__column md:col-span-1">
+				<!-- Subframe graphs -->
+				<div class="picture__graph" v-if="picture.stats">
+					<ab-chart-comparison
+						:data="data"
+					/>
+				</div>
+
+				<!-- Picture text content -->
+				<div
+					v-if="picture.description"
+					class="picture__content html-content max-w-6xl font-light leading-snug mt-6 mb-16"
+					v-html="picture.description"
+				/>
+
+				<!-- Sidebar with meta information -->
+				<div class="picture__sidebar">
 					<ab-exposure-time
 						:exposures="picture.exposures"
 						title="Exposure Time"
@@ -159,7 +165,7 @@ export default {
 		data () {
 			const { statisticalData, location, frame } = this
 
-			let data = [ ...statisticalData ]
+			let data = [...statisticalData]
 
 			data.sort((a, b) => {
 				return a.time === b.time ? 0 : a - b
@@ -247,7 +253,8 @@ export default {
 				})
 			}
 
-			return calibration ? {
+			return calibration ? 
+			{
 				ra: calibration.ra,
 				dec: calibration.dec,
 				radius: calibration.radius,
@@ -283,5 +290,37 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+	.picture-grid {
+		display: grid;
+		grid-template-areas: "image title" "image sidebar" "content sidebar" "graph sidebar";
+		grid-template-columns: auto 350px;
+		grid-template-rows: auto auto auto;
+		gap: 24px;
+	}
+
+	.picture__title {
+		grid-area: title;
+	}
+
+	.picture__image {
+		grid-area: image;
+	}
+
+	.picture__content {
+		grid-area: content;
+	}
+
+	.picture__sidebar {
+		grid-area: sidebar;
+
+		& > div:first-child {
+			margin-top: 0;
+		}
+	}
+
+	.picture__graph {
+		grid-area: graph;
+	}
+
 </style>
