@@ -1,9 +1,6 @@
 <template>
 	<div class="chart-comparision">
-		<div class="flex justify-between items-end mb-2">
-			<div class="block section-title">
-				Plots
-			</div>
+		<div class="flex justify-end items-end mb-2">
 			<div class="mb-2">
 				<button
 					v-for="preset in presets"
