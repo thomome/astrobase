@@ -321,7 +321,7 @@ export default {
 		onKeyUp (e) {
 			const { isFullscreen } = this
 			if (e.key === 'Escape' && isFullscreen) {
-				this.isFullscreen = false
+				this.toggleFullscreen()
 			}
 		},
 		onClick (e) {
