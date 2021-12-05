@@ -1,6 +1,6 @@
 <template>
 	<div
-		class="calibration mr-16 mt-6"
+		class="calibration mt-6"
 	>
 		<h3
 			v-if="title"
@@ -96,7 +96,7 @@ export default {
 
 			if (data.length > 0) {
 				const sums = {}
-				const keys = [ 'moonIllum', 'moonDist', 'moonPosAngle' ]
+				const keys = ['moonIllum', 'moonDist', 'moonPosAngle']
 
 				data.forEach(({ values }) => {
 					keys.forEach((k) => {
@@ -137,6 +137,8 @@ export default {
 }
 </script>
 
-<style>
-
-</style>
+<style lang="scss" scoped>
+	.calibration {
+		max-width: 300px;
+	}
+</style>>
