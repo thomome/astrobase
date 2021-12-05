@@ -1,6 +1,6 @@
 <template>
 	<nav
-		:class="'main-navigation items-center flex max-w-wide mx-auto px-4 lg:px-8 pointer-events-auto' + (isOpen ? ' main-navigation--open' : '')"
+		:class="'main-navigation items-center flex max-w-wide mx-auto px-4 md:px-8 pointer-events-auto' + (isOpen ? ' main-navigation--open' : '')"
 	>
 		<nuxt-link
 			:to="home.route"
@@ -88,7 +88,7 @@ export default {
 	.main-navigation__link {
 		@apply border uppercase tracking-wider font-light leading-tight text-sm text-gray-400 px-4 py-2;
 
-		@media screen and (min-width: theme('screens.md')) {
+		@screen md {
 			@apply mr-8;
 		}
 	}
@@ -108,7 +108,7 @@ export default {
 			@apply mb-4;
 		}
 
-		@media screen and (min-width: theme('screens.md')) {
+		@screen md {
 			opacity: 1;
 			visibility: visible;
 			height: auto;

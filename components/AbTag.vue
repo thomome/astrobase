@@ -42,7 +42,7 @@ export default {
 
 <style lang="scss" scoped>
 	.tag {
-		@apply inline-block leading-none rounded-sm text-black ml-1 text-center;
+		@apply inline-block leading-none rounded-sm text-black mr-1 text-center;
 		padding: 3px 6px 2px;
 		min-width: 16px;
 	}
