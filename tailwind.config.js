@@ -7,15 +7,15 @@
 module.exports = {
 	theme: {
 		fontFamily: {
-			sans: ['Heebo', 'sans-serif'],
-			display: ['Heebo', 'sans-serif'],
-			body: ['Heebo', 'sans-serif'],
+			sans: ['Poppins', 'sans-serif'],
+			display: ['Poppins', 'sans-serif'],
+			body: ['Poppins', 'sans-serif'],
 		},
 		extend: {
 			maxWidth: {
-				'wide': 'min(calc(100% - 10rem), 2200px)',
-				'narrow': 'min(calc(100% - 18rem), 2000px)',
-				'narrow-plus': 'min(calc(100% - 12rem), 2150px)',
+				'wide': 'min(100%, 2200px)',
+				'narrow': 'min(calc(100% - 100px), 2000px)',
+				'narrow-plus': 'min(calc(100% - 50px), 2150px)',
 				'tight': '54rem',
 				'tight-plus': '68rem'
 			},
