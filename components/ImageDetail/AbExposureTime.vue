@@ -6,7 +6,16 @@
 		<h3 v-if="title" class="ab-exposure-time__title section-title">
 			{{ title }}
 		</h3>
-		<ul class="exposure-time__list">
+		<div v-if="compact" class="mb-1">
+			<ab-tag
+				v-for="mode in modes"
+				:key="mode.value"
+				:label="mode.label"
+				:type="mode.value"
+				class="sm"
+			/>
+		</div>
+		<ul v-if="!compact" class="exposure-time__list">
 			<li
 				v-for="exposure in exposures"
 				:key="exposure.exposure_time + exposure.mode.value + exposure.gain"
@@ -42,9 +51,22 @@ export default {
 	components: { AbTag },
 	props: {
 		exposures: { type: Array, default: () => [] },
-		title: { type: String, default: '' }
+		title: { type: String, default: '' },
+		compact: { type: Boolean, default: false }
 	},
 	computed: {
+		modes () {
+			const { exposures } = this
+			const index = {}
+			const modes = []
+			exposures.forEach((exp) => {
+				if (!index[exp.mode.value]) {
+					index[exp.mode.value] = true
+					modes.push(exp.mode)
+				}
+			})
+			return modes
+		},
 		totalExposureTime () {
 			const secs = this.exposures.reduce((p, v) => {
 				return p + v.exposure_time * v.amount
