@@ -4,6 +4,7 @@
 		:srcset="loaded ? srcset : ''"
 		:sizes="loaded ? sizes : ''"
 		:alt="alt"
+		:style="{'aspect-ratio': `${image.width} / ${image.height}`}"
 		class="block w-full"
 	>
 </template>
