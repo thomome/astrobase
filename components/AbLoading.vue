@@ -1,5 +1,7 @@
 <template>
-	<div class="loading w-12" />
+	<div class="loading text-yellow-400">
+		<div class="loading__spinner" />
+	</div>
 </template>
 
 <script>
@@ -10,20 +12,30 @@ export default {
 
 <style lang="scss" scoped>
 	.loading {
+		width: min-content;
+	}
+
+	.loading__spinner {
+		@apply relative;
 		box-sizing: content-box;
+		width: 1.25em;
+		height: 1.25em;
+
+		&::before,
+		&::after {
+			@apply block absolute w-full h-full rounded-full border-transparent top-0;
+			border-width: 2px;
+			content: '';
+			border-top-color: currentColor;
+		}
 
 		&::before {
-			@apply block relative rounded-full w-12 h-12 border-2 border-transparent;
-			content: '';
-			border-top-color: theme('colors.yellow.400');
-			animation: rotate 1.2s .2s cubic-bezier(.63,.3,.39,.8) infinite;
+			@apply relative;
+			animation: rotate 1.2s 0s cubic-bezier(.63,.3,.39,.8) infinite;
 		}
 
 		&::after {
-			@apply block absolute rounded-full w-12 h-12 border-2 border-transparent top-0;
-			content: '';
-			border-top-color: theme('colors.yellow.400');
-			animation: rotate 1.2s .2s cubic-bezier(.63,.3,.39,.8) infinite;
+			animation: rotate 1.2s .15s cubic-bezier(.63,.3,.39,.8) infinite;
 		}
 	}
 
