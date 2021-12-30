@@ -75,6 +75,7 @@
 							v-for="picture in results"
 							:key="picture.id"
 							:picture="picture"
+							:sizes="`(max-width: ${bp['lg']}) 100vw, (max-width: ${bp['2xl']}) 65vw, min(50vw, 1200px)`"
 						/>
 					</div>
 					<div
@@ -92,7 +93,8 @@
 						</nuxt-link>
 					</div>
 					<ab-loading
-						v-if="isLoading"
+						v-if="total > results.length"
+						v-observe-visibility="reachedEndOfList"
 						class="mx-auto text-3xl mt-12 mb-24"
 					/>
 				</div>
@@ -103,6 +105,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import twConfig from '~/tailwind.config'
 import { getObjects, getObject, getDevices, getDevice, getLocations, getLocation } from '~/api/api.js'
 
 import AbSelect from '~/components/AbSelect.vue'
@@ -169,17 +172,19 @@ export default {
 			'filterObjects',
 			'filterLocations',
 			'filterDevices'
-		])
+		]),
+		bp () {
+			return twConfig.theme.screens
+		}
 	},
 	watchQuery: ['objects', 'devices', 'locations', 'orderby'],
-	mounted () {
-		window.addEventListener('scroll', this.fetch)
-	},
-	destroyed () {
-		window.removeEventListener('scroll', this.fetch)
-	},
 	methods: {
-		async fetch () {
+		reachedEndOfList (reached) {
+			if (reached) {
+				this.fetchMore()
+			}
+		},
+		async fetchMore () {
 			if (!this.isLoading && this.offset + this.limit < this.total && this.getScrollPosition() > 0.6) {
 				this.isLoading = true
 				await this.$store.dispatch('pictures/loadMore')

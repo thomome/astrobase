@@ -7,6 +7,7 @@
 			<ab-image
 				:image="picture"
 				class="w-full h-full object-cover"
+				sizes="max(100vw, 100vh)"
 			/>
 		</ab-hero>
 		<div class="equipment container mt-24">
@@ -22,6 +23,7 @@
 					<ab-image
 						v-if="!Array.isArray(device.image)"
 						:image="device.image"
+						sizes="380px"
 						class="w-full h-full object-contain"
 					/>
 				</ab-card>

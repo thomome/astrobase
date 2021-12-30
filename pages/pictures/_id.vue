@@ -31,6 +31,7 @@
 						<ab-picture
 							:controls="true"
 							:image="image"
+							:sizes="`(max-width: ${bp['xl']}) calc(100vw), min(calc(87.5vw - 350px), 1600px)`"
 							max-height="80vh"
 						/>
 						<div class="picture__details md:flex my-4">
@@ -140,7 +141,12 @@
 									:to="`/pictures/${item.id}`"
 									:aria-label="picture.title"
 								>
-									<ab-image v-if="item.image[0]" :image="item.image[0]" :alt="item.title" />
+									<ab-image
+										v-if="item.image[0]"
+										:image="item.image[0]"
+										:alt="item.title"
+										sizes="460px"
+									/>
 									<div class="related__item-info absolute w-full text-gray-200 bottom-0 left-0 px-3 pb-2 pt-5 bg-gradient-to-t from-gray-900 to-transparent">
 										<h4 class="font-medium text-gray-200 leading-tight text-lg">
 											{{ item.title }}
@@ -161,6 +167,7 @@
 
 <script>
 import Papa from 'papaparse'
+import twConfig from '~/tailwind.config'
 import { getPicture } from '~/api/api.js'
 import meeus from '~/assets/meeusjs/index.js'
 
@@ -209,6 +216,9 @@ export default {
 		return this.meta
 	},
 	computed: {
+		bp () {
+			return twConfig.theme.screens
+		},
 		tabs () {
 			const { description, stats } = this.picture
 			const tabs = []

@@ -9,7 +9,14 @@ module.exports = {
 		fontFamily: {
 			sans: ['Poppins', 'sans-serif'],
 			display: ['Poppins', 'sans-serif'],
-			body: ['Poppins', 'sans-serif'],
+			body: ['Poppins', 'sans-serif']
+		},
+		screens: {
+			sm: '640px',
+			md: '768px',
+			lg: '1024px',
+			xl: '1280px',
+			'2xl': '1536px'
 		},
 		extend: {
 			maxWidth: {
@@ -20,10 +27,10 @@ module.exports = {
 				'tight-plus': '68rem'
 			},
 			spacing: {
-				n8: '-2rem',
+				n8: '-2rem'
 			},
 			fontWeight: {
-				'medium': 450,
+				'medium': 450
 			},
 			colors: {
 				yellow: {
@@ -48,17 +55,17 @@ module.exports = {
 					'800': '#424242',
 					'900': '#191919'
 				}
-			  }
+			}
 		}
 	},
 	purge: {
 		enabled: process.env.NODE_ENV === 'production',
 		content: [
-		  'components/**/*.vue',
-		  'layouts/**/*.vue',
-		  'pages/**/*.vue',
-		  'plugins/**/*.js',
-		  'nuxt.config.js'
+			'components/**/*.vue',
+			'layouts/**/*.vue',
+			'pages/**/*.vue',
+			'plugins/**/*.js',
+			'nuxt.config.js'
 		]
 	},
 	variants: {},

@@ -42,7 +42,7 @@
 				:full="isFullscreen"
 				:style="transform"
 				:class="'astro-picture__img block w-full h-full ' + (isFullscreen || maxHeight ? 'object-contain pointer-events-none' : 'object-cover')"
-				min-size="medium_large"
+				:sizes="sizes"
 			/>
 			<svg
 				v-if="preparedAnnotations"
@@ -59,10 +59,10 @@
 						v-for="annotation in preparedAnnotations"
 						:key="annotation.name"
 						:annotation="annotation"
-						:aspectRatio="aspectRatio"
-						:minRadius="minRadius"
+						:aspect-ratio="aspectRatio"
+						:min-radius="minRadius"
 						:padding="labelPadding"
-						:linkDisabled="linksDisabled"
+						:link-disabled="linksDisabled"
 					/>
 				</g>
 			</svg>
@@ -81,7 +81,8 @@ export default {
 		image: { type: Object, required: true },
 		controls: { type: Boolean, default: false },
 		annotated: { type: Boolean, default: false },
-		maxHeight: { type: String, default: '' }
+		maxHeight: { type: String, default: '' },
+		sizes: { type: String, default: '100vw' }
 	},
 	data () {
 		return {

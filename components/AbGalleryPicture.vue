@@ -7,6 +7,7 @@
 			>
 				<ab-image
 					:image="image"
+					:sizes="sizes"
 					class="picture__image w-full h-full object-cover"
 				/>
 			</nuxt-link>
@@ -20,7 +21,8 @@ import AbImage from '~/components/AbImage.vue'
 export default {
 	components: { AbImage },
 	props: {
-		picture: { type: Object, required: true }
+		picture: { type: Object, required: true },
+		sizes: { type: String, default: '100vw' }
 	},
 	computed: {
 		image () {
