@@ -5,8 +5,9 @@ export const state = () => ({
 	results: [],
 	total: 0,
 	offset: 0,
-	limit: 6,
+	limit: 12,
 	orderBy: 'latest',
+	displayMode: 'list',
 	filterObjects: [],
 	filterLocations: [],
 	filterDevices: []
@@ -24,6 +25,9 @@ export const getters = {
 	},
 	limit (state) {
 		return state.limit
+	},
+	displayMode (state) {
+		return state.displayMode
 	},
 	orderBy (state) {
 		return state.orderBy
@@ -57,6 +61,9 @@ export const mutations = {
 	},
 	setFilterLocations (state, locations) {
 		state.filterLocations = locations
+	},
+	setDisplayMode (state, displayMode) {
+		state.displayMode = displayMode
 	},
 	setOrderBy (state, orderBy) {
 		state.orderBy = orderBy

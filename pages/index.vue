@@ -16,14 +16,7 @@
 			<h2 class="text-2xl text-gray-200 tracking-wide font-normal mb-4">
 				Most Recent Pictures
 			</h2>
-			<ab-masonry-grid>
-				<ab-gallery-picture
-					v-for="picture in pictures"
-					:key="picture.id"
-					:picture="picture"
-					sizes="max(700px, 150px)"
-				/>
-			</ab-masonry-grid>
+			<ab-masonry-grid :pictures="pictures" />
 
 			<div class="flex justify-center pt-8 pb-24">
 				<nuxt-link
@@ -49,7 +42,7 @@ export default {
 	async asyncData ({ params }) {
 		const page = await getPage('home')
 		const pictures = await getPictures({
-			limit: 9
+			limit: 12
 		})
 
 		const { title, description, hero_image: image, action } = page.result

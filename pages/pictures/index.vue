@@ -16,8 +16,24 @@
 							params-key="orderby"
 							class="w-full md:mr-0 mr-4 max-w-sm"
 						/>
+						<div class="flex border border-gray-700 mt-2 ml-auto md:ml-3 rounded-sm">
+							<button
+								class="filter-toggle border-r border-gray-700 gray-700"
+								:class="{'text-yellow-400': displayMode === 'list' }"
+								@click="setDisplayMode('list')"
+							>
+								<ab-icon name="list-view" />
+							</button>
+							<button
+								class="filter-toggle"
+								:class="{'text-yellow-400': displayMode === 'grid' }"
+								@click="setDisplayMode('grid')"
+							>
+								<ab-icon name="grid-view" />
+							</button>
+						</div>
 						<button
-							:class="`filter-toggle md:hidden mt-2 ml-auto border rounded-sm ${filtersOpen ? 'border-white text-white' : 'border-gray-700'}`"
+							:class="`filter-toggle md:hidden mt-2 ml-3 border rounded-sm ${filtersOpen ? 'border-white text-white' : 'border-gray-700'}`"
 							@click="filtersOpen = !filtersOpen"
 						>
 							<ab-icon name="tune" />
@@ -63,13 +79,10 @@
 					</div>
 				</div>
 				<div class="picture-list__list">
-					<ab-masonry-grid v-if="display === 'grid'">
-						<ab-gallery-picture
-							v-for="picture in results"
-							:key="picture.id"
-							:picture="picture"
-						/>
-					</ab-masonry-grid>
+					<ab-masonry-grid
+						v-if="displayMode === 'grid'"
+						:pictures="results"
+					/>
 					<div v-else>
 						<ab-post-picture
 							v-for="picture in results"
@@ -104,19 +117,18 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 import twConfig from '~/tailwind.config'
 import { getObjects, getObject, getDevices, getDevice, getLocations, getLocation } from '~/api/api.js'
 
 import AbSelect from '~/components/AbSelect.vue'
 import AbPostPicture from '~/components/AbPostPicture.vue'
-import AbGalleryPicture from '~/components/AbGalleryPicture.vue'
 import AbLoading from '~/components/AbLoading.vue'
 import AbIcon from '~/components/AbIcon.vue'
 import AbMasonryGrid from '~/components/AbMasonryGrid.vue'
 
 export default {
-	components: { AbPostPicture, AbGalleryPicture, AbSelect, AbLoading, AbIcon, AbMasonryGrid },
+	components: { AbPostPicture, AbSelect, AbLoading, AbIcon, AbMasonryGrid },
 	async asyncData ({ query, app, store }) {
 		const params = {
 			objects: [],
@@ -155,8 +167,7 @@ export default {
 				{ id: 'oldest', name: 'Oldest' }
 			],
 			isLoading: false,
-			filtersOpen: false,
-			display: 'list'
+			filtersOpen: false
 		}
 	},
 	head () {
@@ -171,7 +182,8 @@ export default {
 			'orderBy',
 			'filterObjects',
 			'filterLocations',
-			'filterDevices'
+			'filterDevices',
+			'displayMode'
 		]),
 		bp () {
 			return twConfig.theme.screens
@@ -185,18 +197,11 @@ export default {
 			}
 		},
 		async fetchMore () {
-			if (!this.isLoading && this.offset + this.limit < this.total && this.getScrollPosition() > 0.6) {
+			if (!this.isLoading && this.offset + this.limit < this.total) {
 				this.isLoading = true
 				await this.$store.dispatch('pictures/loadMore')
 				this.isLoading = false
 			}
-		},
-		getScrollPosition () {
-			const h = document.documentElement
-			const b = document.body
-			const st = 'scrollTop'
-			const sh = 'scrollHeight'
-			return (h[st] || b[st]) / ((h[sh] || b[sh]) - h.clientHeight)
 		},
 		updateParams (key, value) {
 			const route = this.$router.currentRoute
@@ -212,7 +217,10 @@ export default {
 		getDevices,
 		getDevice,
 		getLocations,
-		getLocation
+		getLocation,
+		...mapMutations({
+			setDisplayMode: 'pictures/setDisplayMode'
+		})
 	}
 }
 </script>
