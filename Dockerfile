@@ -24,15 +24,12 @@ RUN rm -rf node_modules && \
 
 FROM node:lts
 
-ARG API_ENDPOINT
-
 WORKDIR /app
 
 COPY --from=builder /app  .
 
 ENV NODE_ENV production
 ENV HOST 0.0.0.0
-ENV API_ENDPOINT=$API_ENDPOINT
 EXPOSE 8080
 
 CMD [ "yarn", "start" ]
