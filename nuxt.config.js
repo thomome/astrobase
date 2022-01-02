@@ -1,6 +1,9 @@
-import { getPictures } from "./api/api";
+import axios from 'axios'
 
 export default {
+	env: {
+		apiEndpoint: process.env.API_ENDPOINT || 'http://astrobase.site/wp-json/astrobase'
+	},
 	server: {
 		port: 8080, // default: 3000
 		host: process.env.HOST ? process.env.HOST : '0.0.0.0' // default: localhost
@@ -61,7 +64,11 @@ export default {
 		'@nuxtjs/sitemap'
 	],
 	sitemap: async () => {
-		const pictures = await getPictures({ limit: 50 })
+		const url = process.env.API_ENDPOINT || 'http://astrobase.site/wp-json/astrobase'
+		const q = await axios.get(`${url}/pictures`, {
+			params: { limit: 50 }
+		})
+		const pictures = q.data;
 		return {
 			routes: pictures?.results ? pictures.results.map((picture) => `/pictures/${picture.id}`) : []
 		}
