@@ -1,5 +1,8 @@
 FROM node:lts as builder
 
+ARG API_ENDPOINT
+ENV API_ENDPOINT=$API_ENDPOINT
+
 WORKDIR /app
 
 COPY . .
