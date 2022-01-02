@@ -9,19 +9,16 @@
 				:annotations="image.annotations"
 				:image="image"
 				:annotated="false"
+				sizes="max(100vw, 100vh)"
 			/>
 		</ab-hero>
 		<div class="picture-list container mt-24">
 			<h2 class="text-2xl text-gray-200 tracking-wide font-normal mb-4">
 				Most Recent Pictures
 			</h2>
-			<ab-post-picture
-				v-for="picture in pictures"
-				:key="picture.id"
-				:picture="picture"
-			/>
+			<ab-masonry-grid :pictures="pictures" />
 
-			<div class="flex justify-center pt-2 pb-24">
+			<div class="flex justify-center pt-8 pb-24">
 				<nuxt-link
 					to="/pictures"
 					class="button"
@@ -37,15 +34,15 @@
 import { getPage, getPictures } from '~/api/api.js'
 
 import AbHero from '~/components/AbHero.vue'
+import AbMasonryGrid from '~/components/AbMasonryGrid.vue'
 import AbPicture from '~/components/AbPicture.vue'
-import AbPostPicture from '~/components/AbPostPicture.vue'
 
 export default {
-	components: { AbHero, AbPicture, AbPostPicture },
+	components: { AbHero, AbPicture, AbMasonryGrid },
 	async asyncData ({ params }) {
 		const page = await getPage('home')
 		const pictures = await getPictures({
-			limit: 3
+			limit: 12
 		})
 
 		const { title, description, hero_image: image, action } = page.result

@@ -7,23 +7,30 @@
 module.exports = {
 	theme: {
 		fontFamily: {
-			sans: ['Heebo', 'sans-serif'],
-			display: ['Heebo', 'sans-serif'],
-			body: ['Heebo', 'sans-serif'],
+			sans: ['Poppins', 'sans-serif'],
+			display: ['Poppins', 'sans-serif'],
+			body: ['Poppins', 'sans-serif']
+		},
+		screens: {
+			sm: '640px',
+			md: '768px',
+			lg: '1024px',
+			xl: '1280px',
+			'2xl': '1536px'
 		},
 		extend: {
 			maxWidth: {
-				'wide': '80rem',
-				'narrow': '70rem',
-				'narrow-plus': '74rem',
+				'wide': 'min(100%, 2200px)',
+				'narrow': 'min(calc(100% - 100px), 2000px)',
+				'narrow-plus': 'min(calc(100% - 50px), 2150px)',
 				'tight': '54rem',
 				'tight-plus': '68rem'
 			},
 			spacing: {
-				n8: '-2rem',
+				n8: '-2rem'
 			},
 			fontWeight: {
-				'medium': 450,
+				'medium': 450
 			},
 			colors: {
 				yellow: {
@@ -48,17 +55,17 @@ module.exports = {
 					'800': '#424242',
 					'900': '#191919'
 				}
-			  }
+			}
 		}
 	},
 	purge: {
 		enabled: process.env.NODE_ENV === 'production',
 		content: [
-		  'components/**/*.vue',
-		  'layouts/**/*.vue',
-		  'pages/**/*.vue',
-		  'plugins/**/*.js',
-		  'nuxt.config.js'
+			'components/**/*.vue',
+			'layouts/**/*.vue',
+			'pages/**/*.vue',
+			'plugins/**/*.js',
+			'nuxt.config.js'
 		]
 	},
 	variants: {},

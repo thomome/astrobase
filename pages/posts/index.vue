@@ -47,7 +47,7 @@
 
 			<ab-loading
 				v-if="isLoading"
-				class="mx-auto mt-12 mb-24"
+				class="mx-auto text-3xl mt-12 mb-24"
 			/>
 		</div>
 	</main>
@@ -95,6 +95,9 @@ export default {
 			isLoading: true
 		}
 	},
+	head () {
+		return this.meta
+	},
 	mounted () {
 		window.addEventListener('scroll', () => {
 			if (!this.isLoading && this.params.offset + config.perPage < this.total && this.getScrollPosition() > 0.6) {
@@ -117,9 +120,6 @@ export default {
 			const sh = 'scrollHeight'
 			return (h[st] || b[st]) / ((h[sh] || b[sh]) - h.clientHeight)
 		}
-	},
-	head () {
-		return this.meta
 	}
 }
 </script>

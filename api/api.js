@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const url = process.env.API_ENDPOINT ? process.env.API_ENDPOINT : `https://api.astrobase.ch/wp-json/astrobase`
+const url = process.env.API_ENDPOINT ? process.env.API_ENDPOINT : `http://astrobase.site/wp-json/astrobase`
 
 // Site
 const getSite = async () => {
@@ -47,12 +47,10 @@ const getPicture = async (id) => {
 }
 
 // Objects
-const getObjects = async (query) => {
+const getObjects = async (params) => {
 	const endpoint = 'objects'
 	const q = await axios.get(`${url}/${endpoint}`, {
-		params: {
-			query: query || ''
-		}
+		params
 	})
 	return q.data
 }
@@ -64,12 +62,10 @@ const getObject = async (id) => {
 }
 
 // Devices
-const getDevices = async (query) => {
+const getDevices = async (params) => {
 	const endpoint = 'devices'
 	const q = await axios.get(`${url}/${endpoint}`, {
-		params: {
-			query: query || ''
-		}
+		params
 	})
 	return q.data
 }
@@ -81,12 +77,10 @@ const getDevice = async (id) => {
 }
 
 // Devices
-const getLocations = async (query) => {
+const getLocations = async (params) => {
 	const endpoint = 'locations'
 	const q = await axios.get(`${url}/${endpoint}`, {
-		params: {
-			query: query || ''
-		}
+		params
 	})
 	return q.data
 }

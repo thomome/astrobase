@@ -2,12 +2,12 @@
 	<div class="filter">
 		<label
 			v-if="label"
-			:for="`filter-${paramsKey}`"
+			:for="`filters-${paramsKey}`"
 			class="block section-title mb-1"
 		>{{ label }}</label>
 		<multiselect
 			v-if="async"
-			:id="`filter-${paramsKey}`"
+			:id="`filters-${paramsKey}`"
 			v-model="preparedValue"
 			:options="preparedOptions"
 			:multiple="multiple"
@@ -21,7 +21,15 @@
 			track-by="id"
 			@search-change="fetch"
 			@input="onInput"
-		/>
+		>
+			<template #afterList>
+				<ab-loading
+					v-if="total > preparedOptions.length"
+					v-observe-visibility="reachedEndOfList"
+					class="mx-auto pt-2 pb-4 text-xs"
+				/>
+			</template>
+		</multiselect>
 
 		<multiselect
 			v-if="!async"
@@ -61,7 +69,11 @@ export default {
 		return {
 			preparedValue: [],
 			isLoading: false,
-			preparedOptions: []
+			preparedOptions: [],
+			limit: 10,
+			offset: 0,
+			query: '',
+			total: 0
 		}
 	},
 	watch: {
@@ -79,13 +91,33 @@ export default {
 		this.fillMissing()
 	},
 	methods: {
+		reachedEndOfList (reached) {
+			if (reached) {
+				this.fetchMore()
+			}
+		},
 		onInput () {
 			this.onChange(this.paramsKey, this.preparedValue)
 		},
-		async fetch (query = false) {
+		async fetchMore () {
+			this.offset += this.limit
+			const { limit, query, offset } = this
 			this.isLoading = true
-			const q = await this.getItems(query)
+			const q = await this.getItems({ query, limit, offset })
+			this.preparedOptions.push(...q.results)
+			this.total = q.total
+			this.setCache(q.results)
+			this.isLoading = false
+		},
+		async fetch (newQuery = '') {
+			this.query = newQuery
+			this.offset = 0
+			const { limit, query } = this
+
+			this.isLoading = true
+			const q = await this.getItems({ query, limit })
 			this.preparedOptions = q.results
+			this.total = q.total
 			this.setCache(q.results)
 			this.isLoading = false
 		},
@@ -165,7 +197,7 @@ export default {
 	}
 
 	.filter .multiselect__single {
-		@apply bg-transparent;
+		@apply bg-transparent text-sm;
 	}
 
 	.filter .multiselect__placeholder {
