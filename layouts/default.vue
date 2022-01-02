@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<header
-			:class="'fixed main-header top-0 w-full pt-4 lg:pt-12 pb-24 lg:pt-12 z-20 pointer-events-none' + (isScrolled ? ' main-header--scrolled' : '')"
+			:class="'fixed main-header top-0 w-full pt-4 md:pt-12 pb-24 md:pt-12 z-20 pointer-events-none' + (isScrolled ? ' main-header--scrolled' : '')"
 		>
 			<ab-main-navigation />
 		</header>
@@ -62,19 +62,37 @@ export default {
 		background-image: linear-gradient(#000000ff 0%, #00000022 80%, #00000011 90%, #00000006 95%, #00000000 100%);
 	}
 
+	.page-enter-active,
+	.page-leave-active {
+		transition: opacity 0.25s, transform 0.25s;
+	}
+	.page-enter,
+	.page-leave-to {
+		opacity: 0;
+		transform: translateY(-10px);
+	}
+
 	.container {
-		@apply max-w-narrow mx-auto px-4;
+		@apply max-w-none mx-auto px-4;
+
+		@screen md {
+			@apply px-8;
+		}
+
+		@screen lg {
+			@apply max-w-narrow;
+		}
 
 		&.container--wide {
-			@apply max-w-narrow-plus;
+			@screen lg {
+				@apply max-w-narrow-plus;
+			}
 		}
 
 		&.container--narrow {
-			@apply max-w-tight;
-		}
-
-		@media screen and (min-width: theme('screens.lg')) {
-			@apply px-8;
+			@screen lg {
+				@apply max-w-tight;
+			}
 		}
 	}
 
@@ -199,6 +217,7 @@ export default {
 	}
 
 	.section-title {
-		@apply text-xs block text-gray-600 tracking-widest uppercase font-normal mt-6 mb-1;
+		@apply block text-gray-600 tracking-widest uppercase font-normal mb-1;
+		font-size: 0.8rem;
 	}
 </style>

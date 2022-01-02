@@ -1,7 +1,7 @@
 <template>
 	<div
 		v-if="guiding"
-		class="guiding mr-16"
+		class="guiding mr-16 mt-6"
 	>
 		<h3
 			v-if="title"

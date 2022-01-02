@@ -1,7 +1,7 @@
 <template>
 	<main class="main-content">
 		<div class="picture-list container mt-24 md:mt-40">
-			<h1 class="hidden">
+			<h1 class="picture-list__title text-5xl text-gray-200 tracking-wide font-semibold mb-4">
 				Tools
 			</h1>
 
@@ -40,7 +40,7 @@ export default {
 	},
 	head () {
 		const meta = {
-			title: `Tools - Astrobase`,
+			title: 'Tools - Astrobase',
 			meta: [
 				{ property: 'og:type', content: 'website' },
 				{ property: 'og:title', content: 'Tools' },

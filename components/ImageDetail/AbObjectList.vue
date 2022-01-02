@@ -1,7 +1,7 @@
 <template>
 	<div
 		v-if="objects.length"
-		class="picture__tags max-w-6xl font-light text-sm"
+		class="picture__tags max-w-6xl font-light text-sm mt-6"
 	>
 		<h3 v-if="title" class="picture__details-title section-title">
 			{{ title }}
@@ -32,24 +32,24 @@ export default {
 	props: {
 		title: { type: String, default: '' },
 		objects: { type: Array, default: () => [] },
-		showAll: { type: Boolean, default: true }
+		number: { type: Number, default: 0 }
 	},
 	data () {
 		return {
-			shwoAllObjects: this.showAll
+			showAllObjects: false
 		}
 	},
 	computed: {
 		shownObjects () {
-			const { shwoAllObjects, objects } = this
+			const { showAllObjects, number, objects } = this
 
-			const limit = shwoAllObjects ? Infinity : 6
+			const limit = number === 0 || showAllObjects ? Infinity : number
 			return objects.filter((obj, i) => i < limit)
 		}
 	},
 	methods: {
 		toggleAll () {
-			this.shwoAllObjects = true
+			this.showAllObjects = true
 		}
 	}
 }

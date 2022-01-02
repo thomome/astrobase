@@ -1,9 +1,6 @@
 <template>
 	<div class="chart-comparision">
-		<div class="flex justify-between items-end mb-2">
-			<div class="block section-title">
-				Plots
-			</div>
+		<div class="flex justify-end items-end mb-2">
 			<div class="mb-2">
 				<button
 					v-for="preset in presets"
@@ -94,6 +91,10 @@ export default {
 				{
 					title: 'Seeing Stats',
 					plots: ['objAlt', 'moonAlt', 'seeing', 'cloudCover']
+				},
+				{
+					title: 'Guiding Stats',
+					plots: ['rms_ra', 'rms_dec', 'rms_total', 'fwhmArc']
 				}
 			],
 			plotTypes: [
@@ -116,9 +117,17 @@ export default {
 					id: 'ecc',
 					name: 'Eccentricity'
 				}, {
-					id: 'weight',
-					name: 'Weight',
-					unit: '%'
+					id: 'rms_ra',
+					name: 'RMS RA',
+					unit: '″'
+				}, {
+					id: 'rms_dec',
+					name: 'RMS DEC',
+					unit: '″'
+				}, {
+					id: 'rms_total',
+					name: 'RMS Total',
+					unit: '″'
 				}, {
 					id: 'objAlt',
 					name: 'Object Altitude',

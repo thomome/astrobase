@@ -20,7 +20,7 @@ export default {
 		],
 		link: [
 			{ rel: 'icon', type: 'image/png', href: '/favicon.png' },
-			{ rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Heebo:wght@100..900&display=swap' }
+			{ rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap' }
 		]
 	},
 	/*
@@ -36,7 +36,12 @@ export default {
 	** Plugins to load before mounting the App
 	*/
 	plugins: [
+		'~/plugins/ObserveVisibility.js'
 	],
+
+	// Auto import components: https://go.nuxtjs.dev/config-components
+	components: true,
+	
 	/*
 	** Nuxt.js dev-modules
 	*/
@@ -58,7 +63,7 @@ export default {
 	sitemap: async () => {
 		const pictures = await getPictures({ limit: 50 })
 		return {
-			routes: pictures ? pictures.results.map((picture) => `/pictures/${picture.id}`) : []
+			routes: pictures?.results ? pictures.results.map((picture) => `/pictures/${picture.id}`) : []
 		}
 	},
 	purgeCSS: {

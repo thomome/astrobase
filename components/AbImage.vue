@@ -4,6 +4,7 @@
 		:srcset="loaded ? srcset : ''"
 		:sizes="loaded ? sizes : ''"
 		:alt="alt"
+		:style="{'aspect-ratio': `${image.width} / ${image.height}`}"
 		class="block w-full"
 	>
 </template>
@@ -13,7 +14,7 @@ export default {
 	props: {
 		alt: { type: String, default: '' },
 		image: { type: Object, required: true },
-		minSize: { type: String, default: 'small' },
+		sizes: { type: String, default: '100vw' },
 		full: { type: Boolean, default: false }
 	},
 	data () {
@@ -31,11 +32,6 @@ export default {
 			const { image, defaultSizes, full } = this
 			const srcsetArray = defaultSizes.map(size => `${image.sizes[size]} ${image.sizes[`${size}-width`]}w`)
 			return full ? '' : srcsetArray.join(', ')
-		},
-		sizes () {
-			const { image, defaultSizes, minSize, full } = this
-			const size = defaultSizes.includes(minSize) ? minSize : defaultSizes[0]
-			return full ? '' : `(max-width: ${image.sizes[`${size}-width`]}px) ${image.sizes[`${size}-width`]}px`
 		}
 	},
 	mounted () {

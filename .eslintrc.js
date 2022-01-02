@@ -5,7 +5,8 @@ module.exports = {
 		node: true
 	},
 	parserOptions: {
-		parser: 'babel-eslint'
+		parser: '@babel/eslint-parser',
+		requireConfigFile: false
 	},
 	extends: [
 		'@nuxtjs',
@@ -15,6 +16,8 @@ module.exports = {
 	rules: {
 		'indent': ['error', 'tab'],
 		'no-tabs': 0,
+		'quote-props': 'off',
+		'multiline-ternary': 'off',
 		'vue/html-indent': ['error', 'tab'],
 		'vue/no-v-html': 'off'
 	}

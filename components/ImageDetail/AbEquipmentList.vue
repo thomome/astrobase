@@ -1,7 +1,7 @@
 <template>
 	<div
 		v-if="equipment.length"
-		class="equipment mr-16 font-light text-sm"
+		class="equipment mr-16 font-light text-sm mt-6"
 	>
 		<h3 v-if="title" class="picture__details-title section-title">
 			{{ title }}

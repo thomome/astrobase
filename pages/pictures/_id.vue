@@ -13,64 +13,90 @@
 			</nuxt-link>
 		</div>
 		<div class="container mt-4">
-			<div class="picture__column picture__general max-w-xl mb-4">
-				<h1 class="picture__title text-2xl leading-tight text-gray-200 mb-1 font-light">
-					{{ picture.title }}
-				</h1>
+			<div class="picture-grid">
+				<!-- Title and other meta informaton -->
+				<div class="picture__column picture__title max-w-xl">
+					<h1 class="picture__title md:text-3xl text-2xl leading-tight font-light text-gray-200 mt-4 lg:mt-0">
+						{{ picture.title }}
+					</h1>
 
-				<div class="picture__date-location text-gray-700 text-sm">
-					{{ picture.date }} <span v-if="location"> - {{ location.title }}</span>
-				</div>
-			</div>
-			<div class="picture__image">
-				<ab-picture
-					:controls="true"
-					:image="image"
-				/>
-			</div>
-
-			<div class="picture__details md:flex my-4">
-				<div class="picture__column max-w-2xl">
-					<div class="picture__image-description text-gray-700 text-sm leading-tight border-l border-yellow-400 pl-3 mb-4">
-						{{ image.date }}<span v-if="image.description"> - {{ image.description }}</span>
+					<div class="picture__date-location text-gray-700 text-sm leading-relaxed">
+						{{ picture.date }} <span v-if="location"> - {{ location.title }}</span>
 					</div>
 				</div>
-				<div class="picture__column ml-auto">
-					<div
-						v-if="picture.image.length > 1"
-						class="picture__versions flex"
-					>
-						<button
-							v-for="(img, index) in picture.image"
-							:key="img.id"
-							:class="'picture__version-item ml-2 w-16 border border-solid ' + (index === version ? 'border-yellow-400' : 'border-transparent')"
-							@click="version = index"
-						>
-							<img
-								:src="img.sizes.thumbnail"
-							>
-						</button>
-					</div>
-				</div>
-			</div>
 
-			<div class="picture__details md:grid md:grid-cols-3 md:gap-12">
-				<div class="picture__column md:col-span-2">
-					<div class="picture__general">
-						<div
-							v-if="picture.description"
-							class="picture__description html-content max-w-6xl font-light leading-snug mt-6 mb-16"
-							v-html="picture.description"
+				<!-- Image & description with navigation -->
+				<div class="picture__image">
+					<div class="flex flex-col relative">
+						<ab-picture
+							:controls="true"
+							:image="image"
+							:sizes="`(max-width: ${bp['xl']}) calc(100vw), min(calc(87.5vw - 350px), 1600px)`"
+							max-height="80vh"
 						/>
-						<div v-if="picture.stats">
-							<ab-chart-comparison
-								:data="data"
-							/>
+						<div class="picture__details md:flex my-4">
+							<div class="picture__column max-w-2xl">
+								<div class="picture__image-description text-gray-700 text-sm leading-tight border-l border-yellow-400 pl-3 mb-4">
+									Version {{ (version + 1) }} (edited on {{ image.date }}) <span v-if="image.description"> - {{ image.description }}</span>
+								</div>
+							</div>
+							<div class="picture__column ml-auto">
+								<div
+									v-if="picture.image.length > 1"
+									class="picture__versions flex"
+								>
+									<button
+										v-for="(img, index) in picture.image"
+										:key="img.id"
+										:class="'picture__version-item ml-2 w-16 border border-solid ' + (index === version ? 'border-yellow-400' : 'border-transparent')"
+										@click="version = index"
+									>
+										<img
+											:src="img.sizes.thumbnail"
+										>
+									</button>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
 
-				<div class="picture__column md:col-span-1">
+				<div class="picture__tabs">
+					<div v-if="tabs.length > 1" class="picture__tabs-nav flex mb-6">
+						<button
+							v-for="(tab, index) in tabs"
+							:key="tab.id"
+							:class="`section-title border-b py-2 px-4 ${tabIndex === index ? 'border-yellow-400' : 'text-gray-500 border-gray-800'}`"
+							@click="tabIndex = index"
+						>
+							{{ tab.title }}
+						</button>
+					</div>
+
+					<template v-for="(tab, index) in tabs">
+						<!-- Picture text content -->
+						<div
+							v-if="tab.id === 'description' && index === tabIndex"
+							:key="tab.id"
+							class="picture__content html-content max-w-6xl font-light text-sm"
+							v-html="picture.description"
+						/>
+
+						<!-- Subframe graphs -->
+						<div
+							v-if="tab.id === 'stats' && index === tabIndex"
+							:key="tab.id"
+							class="picture__graph"
+						>
+							<ab-chart-comparison
+								:data="data"
+							/>
+						</div>
+					</template>
+				</div>
+
+				<!-- Sidebar with meta information -->
+				<div class="picture__sidebar">
 					<ab-exposure-time
 						:exposures="picture.exposures"
 						title="Exposure Time"
@@ -106,6 +132,34 @@
 						title="Software"
 					/>
 				</div>
+
+				<div v-if="picture.related.length > 0" class="picture__related">
+					<ab-block-slider :items="picture.related" title="Related pictures">
+						<template #item="{ item }">
+							<div class="related__item relative">
+								<nuxt-link
+									:to="`/pictures/${item.id}`"
+									:aria-label="picture.title"
+								>
+									<ab-image
+										v-if="item.image[0]"
+										:image="item.image[0]"
+										:alt="item.title"
+										sizes="460px"
+									/>
+									<div class="related__item-info absolute w-full text-gray-200 bottom-0 left-0 px-3 pb-2 pt-5 bg-gradient-to-t from-gray-900 to-transparent">
+										<h4 class="font-medium text-gray-200 leading-tight text-lg">
+											{{ item.title }}
+										</h4>
+										<div class="text-gray-500 text-sm leading-relaxed">
+											{{ item.date }}
+										</div>
+									</div>
+								</nuxt-link>
+							</div>
+						</template>
+					</ab-block-slider>
+				</div>
 			</div>
 		</div>
 	</main>
@@ -113,6 +167,7 @@
 
 <script>
 import Papa from 'papaparse'
+import twConfig from '~/tailwind.config'
 import { getPicture } from '~/api/api.js'
 import meeus from '~/assets/meeusjs/index.js'
 
@@ -125,9 +180,10 @@ import AbCalibration from '~/components/ImageDetail/AbCalibration.vue'
 import AbEquipmentList from '~/components/ImageDetail/AbEquipmentList.vue'
 import AbSoftwareList from '~/components/ImageDetail/AbSoftwareList.vue'
 import AbGuiding from '~/components/ImageDetail/AbGuiding.vue'
+import AbImage from '~/components/AbImage.vue'
 
 export default {
-	components: { AbPicture, AbIcon, AbChartComparison, AbObjectList, AbExposureTime, AbCalibration, AbEquipmentList, AbSoftwareList, AbGuiding },
+	components: { AbPicture, AbIcon, AbChartComparison, AbObjectList, AbExposureTime, AbCalibration, AbEquipmentList, AbSoftwareList, AbGuiding, AbImage },
 	async asyncData ({ params, app }) {
 		const picture = await getPicture(params.id)
 		const { title, excerpt, image } = picture.result
@@ -152,14 +208,40 @@ export default {
 	data () {
 		return {
 			version: 0,
-			statisticalData: []
+			statisticalData: [],
+			tabIndex: 0
 		}
 	},
+	head () {
+		return this.meta
+	},
 	computed: {
+		bp () {
+			return twConfig.theme.screens
+		},
+		tabs () {
+			const { description, stats } = this.picture
+			const tabs = []
+
+			if (description.length > 0) {
+				tabs.push({
+					id: 'description',
+					title: 'Description'
+				})
+			}
+
+			if (stats) {
+				tabs.push({
+					id: 'stats',
+					title: 'Statistics'
+				})
+			}
+			return tabs
+		},
 		data () {
 			const { statisticalData, location, frame } = this
 
-			let data = [ ...statisticalData ]
+			let data = [...statisticalData]
 
 			data.sort((a, b) => {
 				return a.time === b.time ? 0 : a - b
@@ -247,14 +329,15 @@ export default {
 				})
 			}
 
-			return calibration ? {
-				ra: calibration.ra,
-				dec: calibration.dec,
-				radius: calibration.radius,
-				w: sizes['large-width'] * calibration.pixscale / 3600,
-				h: sizes['large-height'] * calibration.pixscale / 3600,
-				o: calibration.parity === 1 ? calibration.orientation : calibration.orientation + 180
-			} : null
+			return calibration
+				? {
+					ra: calibration.ra,
+					dec: calibration.dec,
+					radius: calibration.radius,
+					w: sizes['large-width'] * calibration.pixscale / 3600,
+					h: sizes['large-height'] * calibration.pixscale / 3600,
+					o: calibration.parity === 1 ? calibration.orientation : calibration.orientation + 180
+				} : null
 		},
 		timestamp () {
 			const { timestamp } = this.picture
@@ -275,13 +358,77 @@ export default {
 				}
 			})
 		}
-	},
-	head () {
-		return this.meta
 	}
-
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+	.picture-grid {
+		display: grid;
+		grid-template-areas: "title title" "image image" "tabs tabs" "sidebar sidebar" "related related";
+		grid-template-columns: auto 300px;
+		grid-template-rows: auto;
+		gap: 24px;
+
+		@screen md {
+			grid-template-areas: "title title" "image image" "tabs sidebar" "related sidebar";
+		}
+
+		@screen xl {
+			grid-template-areas: "image title" "image sidebar" "tabs sidebar" "related sidebar";
+			grid-template-columns: auto 350px;
+		}
+	}
+
+	.picture__title {
+		grid-area: title;
+	}
+
+	.picture__image {
+		grid-area: image;
+	}
+
+	.picture__tabs {
+		grid-area: tabs;
+	}
+
+	.picture__sidebar {
+		grid-area: sidebar;
+
+		& > div:first-child {
+			margin-top: 0;
+		}
+	}
+
+	.picture__related {
+		grid-area: related;
+	}
+
+	.related__item {
+		img {
+			aspect-ratio: 6 / 5 !important;
+			object-fit: cover;
+		}
+
+		.related__item-info {
+			opacity: 0;
+			transition: opacity 0.25s;
+
+			* {
+				transform: translateY(-10px);
+				transition: transform 0.25s;
+			}
+		}
+
+		&:hover {
+			.related__item-info {
+				opacity: 1;
+
+				* {
+					transform: translateY(0);
+				}
+			}
+		}
+	}
+
 </style>
