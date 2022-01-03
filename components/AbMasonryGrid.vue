@@ -1,5 +1,9 @@
 <template>
-	<div ref="grid" class="ab-masonry-grid">
+	<div
+		ref="grid"
+		class="ab-masonry-grid"
+		:style="{ margin: `${gridGap / -2 }px` }"
+	>
 		<ab-gallery-picture
 			v-for="(picture, i) in pictures"
 			:key="picture.id"
@@ -93,8 +97,6 @@ export default {
 	.ab-masonry-grid {
 		display: flex;
 		flex-wrap: wrap;
-		margin-left: -5px;
-		margin-right: -5px;
 
 		&::after {
 			content: '';

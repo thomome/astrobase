@@ -7,7 +7,7 @@ export const state = () => ({
 	offset: 0,
 	limit: 12,
 	orderBy: 'latest',
-	displayMode: 'list',
+	displayMode: 'grid',
 	filterObjects: [],
 	filterLocations: [],
 	filterDevices: []

@@ -2,7 +2,7 @@
 	<main class="main-content">
 		<div class="picture-list container mt-24 md:mt-40">
 			<div class="picture-list-grid">
-				<h1 class="picture-list__title text-5xl text-gray-200 tracking-wide font-semibold mb-4">
+				<h1 class="picture-list__title text-4xl md:text-5xl text-gray-200 tracking-wide font-semibold md:mb-4">
 					Pictures
 				</h1>
 				<div class="picture-list__filters">
@@ -18,18 +18,18 @@
 						/>
 						<div class="flex border border-gray-700 mt-2 ml-auto md:ml-3 rounded-sm">
 							<button
-								class="filter-toggle border-r border-gray-700 gray-700"
-								:class="{'text-yellow-400': displayMode === 'list' }"
-								@click="setDisplayMode('list')"
-							>
-								<ab-icon name="list-view" />
-							</button>
-							<button
-								class="filter-toggle"
+								class="filter-toggle border-r border-gray-700"
 								:class="{'text-yellow-400': displayMode === 'grid' }"
 								@click="setDisplayMode('grid')"
 							>
 								<ab-icon name="grid-view" />
+							</button>
+							<button
+								class="filter-toggle gray-700"
+								:class="{'text-yellow-400': displayMode === 'list' }"
+								@click="setDisplayMode('list')"
+							>
+								<ab-icon name="list-view" />
 							</button>
 						</div>
 						<button
@@ -229,7 +229,7 @@ export default {
 	.picture-list-grid {
 		display: grid;
 		grid-template-areas: "title title" "sidebar sidebar" "list list";
-		grid-template-columns: 350px auto;
+		grid-template-columns: min(350px, 70vw) auto;
 		grid-template-rows: auto auto auto;
 		gap: 24px;
 
