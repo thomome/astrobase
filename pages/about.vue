@@ -25,11 +25,14 @@
 						<ab-image
 							v-if="!Array.isArray(device.image)"
 							:image="device.image"
-							sizes="380px"
+							sizes="290px"
 							class="w-full h-full object-contain"
 						/>
 					</div>
 					<div class="card__content my-auto mx-4 text-center">
+						<div class="section-title mt-2">
+							{{ device.brand }}
+						</div>
 						<h3 class="text-gray-200 tracking-wide font-normal">
 							{{ device.title }}
 						</h3>
