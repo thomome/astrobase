@@ -2,7 +2,7 @@ import axios from 'axios'
 
 export default {
 	env: {
-		apiEndpoint: process.env.API_ENDPOINT || 'http://astrobase.site/wp-json/astrobase'
+		apiEndpoint: process.env.API_ENDPOINT || 'http://localhost:8081/wp-json/astrobase'
 	},
 	server: {
 		port: 8080, // default: 3000
@@ -64,7 +64,7 @@ export default {
 		'@nuxtjs/sitemap'
 	],
 	sitemap: async () => {
-		const url = process.env.API_ENDPOINT || 'http://astrobase.site/wp-json/astrobase'
+		const url = process.env.API_ENDPOINT || 'http://localhost:8081/wp-json/astrobase'
 		const q = await axios.get(`${url}/pictures`, {
 			params: { limit: 50 }
 		})

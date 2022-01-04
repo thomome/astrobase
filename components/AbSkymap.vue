@@ -44,86 +44,88 @@ export default {
 		const BASE_URL = '/data/'
 
 		if (client) {
-			const engine = StelWebEngine({
-				wasmFile: '/stellarium-web-engine.wasm',
-				canvas: this.$refs.container,
-				res: ['http://stelladata.noctua-software.com/surveys/stars/info.json'],
-				onReady: () => {
-					engine.then((stel) => {
-						stel.core.stars.addDataSource({ url: BASE_URL + 'skydata/stars' })
-						stel.core.skycultures.addDataSource({ url: BASE_URL + 'skydata/skycultures/western', key: 'western' })
-						stel.core.dsos.addDataSource({ url: BASE_URL + 'skydata/dso' })
-						stel.core.landscapes.addDataSource({ url: BASE_URL + 'skydata/landscapes/guereins', key: 'guereins' })
-						stel.core.milkyway.addDataSource({ url: BASE_URL + 'skydata/surveys/milkyway' })
-						stel.core.minor_planets.addDataSource({ url: BASE_URL + 'skydata/mpcorb.dat', key: 'mpc_asteroids' })
-						stel.core.planets.addDataSource({ url: BASE_URL + 'skydata/surveys/sso/moon', key: 'moon' })
-						stel.core.planets.addDataSource({ url: BASE_URL + 'skydata/surveys/sso/sun', key: 'sun' })
-						stel.core.planets.addDataSource({ url: BASE_URL + 'skydata/surveys/sso/moon', key: 'default' })
-						stel.core.comets.addDataSource({ url: BASE_URL + 'skydata/CometEls.txt', key: 'mpc_comets' })
-						stel.core.satellites.addDataSource({ url: BASE_URL + 'skydata/tle_satellite.jsonl.gz', key: 'jsonl/sat' })
+			window.requestIdleCallback(() => {
+				const engine = StelWebEngine({
+					wasmFile: '/stellarium-web-engine.wasm',
+					canvas: this.$refs.container,
+					res: ['http://stelladata.noctua-software.com/surveys/stars/info.json'],
+					onReady: () => {
+						engine.then((stel) => {
+							stel.core.stars.addDataSource({ url: BASE_URL + 'skydata/stars' })
+							stel.core.skycultures.addDataSource({ url: BASE_URL + 'skydata/skycultures/western', key: 'western' })
+							stel.core.dsos.addDataSource({ url: BASE_URL + 'skydata/dso' })
+							stel.core.landscapes.addDataSource({ url: BASE_URL + 'skydata/landscapes/guereins', key: 'guereins' })
+							stel.core.milkyway.addDataSource({ url: BASE_URL + 'skydata/surveys/milkyway' })
+							stel.core.minor_planets.addDataSource({ url: BASE_URL + 'skydata/mpcorb.dat', key: 'mpc_asteroids' })
+							stel.core.planets.addDataSource({ url: BASE_URL + 'skydata/surveys/sso/moon', key: 'moon' })
+							stel.core.planets.addDataSource({ url: BASE_URL + 'skydata/surveys/sso/sun', key: 'sun' })
+							stel.core.planets.addDataSource({ url: BASE_URL + 'skydata/surveys/sso/moon', key: 'default' })
+							stel.core.comets.addDataSource({ url: BASE_URL + 'skydata/CometEls.txt', key: 'mpc_comets' })
+							stel.core.satellites.addDataSource({ url: BASE_URL + 'skydata/tle_satellite.jsonl.gz', key: 'jsonl/sat' })
 
-						stel.core.observer.refraction = false
-						stel.core.dss.visible = false
-						stel.core.observer.utc = stel.date2MJD(gDate)
-						stel.core.lines.equatorial.visible = true
-						stel.core.milkyway.visible = true
-						stel.core.landscapes.visible = false
-						stel.core.landscapes.fog_visible = false
-						stel.core.atmosphere.visible = false
-						stel.core.constellations.lines_visible = true
-						stel.core.constellations.lines_animation = false
-						stel.core.constellations.show_only_pointed = false
-						stel.core.observer.latitude = lat * stel.D2R
-						stel.core.observer.longitude = lon * stel.D2R
-						stel.core.observer.elevation = 500
-						stel.core.fov = Math.sqrt(this.width ** 2 + this.height ** 2) * 1.5 * stel.D2R
+							stel.core.observer.refraction = false
+							stel.core.dss.visible = false
+							stel.core.observer.utc = stel.date2MJD(gDate)
+							stel.core.lines.equatorial.visible = true
+							stel.core.milkyway.visible = true
+							stel.core.landscapes.visible = false
+							stel.core.landscapes.fog_visible = false
+							stel.core.atmosphere.visible = false
+							stel.core.constellations.lines_visible = true
+							stel.core.constellations.lines_animation = false
+							stel.core.constellations.show_only_pointed = false
+							stel.core.observer.latitude = lat * stel.D2R
+							stel.core.observer.longitude = lon * stel.D2R
+							stel.core.observer.elevation = 500
+							stel.core.fov = Math.sqrt(this.width ** 2 + this.height ** 2) * 1.5 * stel.D2R
 
-						const center = stel.createObj('star', {
-							id: 'my star',
-							model_data: {
-								ra: this.ra,
-								de: this.dec,
-								vmag: 0
-							}
+							const center = stel.createObj('star', {
+								id: 'my star',
+								model_data: {
+									ra: this.ra,
+									de: this.dec,
+									vmag: 0
+								}
+							})
+
+							const dist = Math.sqrt(this.width ** 2 + this.height ** 2) / 2
+							const angle = Math.atan((this.height / 2) / (this.width / 2))
+							const orientation = (90 + this.orientation) * stel.D2R
+
+							const corners = [
+								this.rotateVector(this.ra, this.dec, dist, orientation + angle),
+								this.rotateVector(this.ra, this.dec, dist, orientation - angle),
+								this.rotateVector(this.ra, this.dec, dist, orientation + angle + Math.PI),
+								this.rotateVector(this.ra, this.dec, dist, orientation - angle + Math.PI),
+								this.rotateVector(this.ra, this.dec, dist, orientation + angle)
+							]
+
+							const frame = stel.createObj('geojson', {
+								data: {
+									type: 'FeatureCollection',
+									features: [{
+										type: 'Feature',
+										properties: {
+											fill: '#FFD500',
+											'fill-opacity': 0.2,
+											'stroke': '#FFD500'
+										},
+										'geometry': {
+											'type': 'Polygon',
+											'coordinates': [corners]
+										}
+									}]
+								}
+							})
+
+							const layer = stel.createLayer({ id: 'slayer', z: 50, visible: true })
+							layer.add(frame)
+
+							const azalt = stel.convertFrame(stel.observer, 'ICRF', 'OBSERVED', center.getInfo('radec'))
+							stel.lookAt(azalt, 0)
 						})
-
-						const dist = Math.sqrt(this.width ** 2 + this.height ** 2) / 2
-						const angle = Math.atan((this.height / 2) / (this.width / 2))
-						const orientation = (90 + this.orientation) * stel.D2R
-
-						const corners = [
-							this.rotateVector(this.ra, this.dec, dist, orientation + angle),
-							this.rotateVector(this.ra, this.dec, dist, orientation - angle),
-							this.rotateVector(this.ra, this.dec, dist, orientation + angle + Math.PI),
-							this.rotateVector(this.ra, this.dec, dist, orientation - angle + Math.PI),
-							this.rotateVector(this.ra, this.dec, dist, orientation + angle)
-						]
-
-						const frame = stel.createObj('geojson', {
-							data: {
-								type: 'FeatureCollection',
-								features: [{
-									type: 'Feature',
-									properties: {
-										fill: '#FFD500',
-										'fill-opacity': 0.2,
-										'stroke': '#FFD500'
-									},
-									'geometry': {
-										'type': 'Polygon',
-										'coordinates': [corners]
-									}
-								}]
-							}
-						})
-
-						const layer = stel.createLayer({ id: 'slayer', z: 50, visible: true })
-						layer.add(frame)
-
-						const azalt = stel.convertFrame(stel.observer, 'ICRF', 'OBSERVED', center.getInfo('radec'))
-						stel.lookAt(azalt, 0)
-					})
-				}
+					}
+				})
 			})
 		}
 	},

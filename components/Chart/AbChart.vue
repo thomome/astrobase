@@ -121,7 +121,7 @@
 						:width="plotDim.width"
 						:height="plotDim.height"
 						:color="colors[index]"
-						:activeIndex="activeIndex"
+						:active-index="activeIndex"
 					/>
 					<text
 						:x="plotDim.width"
@@ -289,7 +289,7 @@ export default {
 			const xRange = limits.x.max - limits.x.min
 			const yRange = limits.y.max - limits.y.min
 
-			const seriesNormalized = [ ...series ].map((serie) => {
+			const seriesNormalized = [...series].map((serie) => {
 				const serieNormalized = []
 				serie.forEach((o) => {
 					const no = { ...o }
