@@ -86,7 +86,7 @@ export default {
 
 <style lang="scss" scoped>
 	.main-navigation__link {
-		@apply border uppercase tracking-wider font-light leading-tight text-sm text-gray-400 px-4 py-2;
+		@apply border uppercase tracking-wider font-medium leading-tight text-sm text-gray-400 px-4 py-2;
 
 		@screen md {
 			@apply mr-8;

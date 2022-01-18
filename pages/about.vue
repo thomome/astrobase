@@ -2,6 +2,7 @@
 	<main class="main-content">
 		<ab-hero
 			:title="title"
+			:tagline="tagline"
 			:description="description"
 		>
 			<ab-image
@@ -34,7 +35,7 @@
 							{{ device.brand }}
 						</div>
 						<h3 class="text-gray-200 tracking-wide font-normal">
-							{{ device.title }}
+							{{ device.name }}
 						</h3>
 					</div>
 				</div>
@@ -60,11 +61,12 @@ export default {
 	async asyncData ({ params, app }) {
 		const page = await getPage('about')
 
-		const { title, description, hero_image: picture, equipments, current_locations: locations } = page.result
+		const { title, tagline, description, hero_image: picture, equipments, current_locations: locations } = page.result
 
 		const meta = {
 			title: `${title} - ${app.head.title}`,
 			meta: [
+				{ hid: 'description', name: 'description', content: description || '' },
 				{ property: 'og:type', content: 'website' },
 				{ property: 'og:title', content: `${title}` },
 				{ property: 'og:image', content: `${picture.sizes.small}` },
@@ -79,7 +81,8 @@ export default {
 			description,
 			picture,
 			equipments,
-			locations
+			locations,
+			tagline
 		}
 	},
 	head () {

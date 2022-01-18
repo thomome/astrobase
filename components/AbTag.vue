@@ -20,6 +20,7 @@ export default {
 				'red': '#ff3515',
 				'green': '#19ff35',
 				'blue': '#0072ff',
+				'dual-band': 'linear-gradient(110deg, #ec5245 40%, #36e4b0 70%)',
 				'h-alpha': '#ec5245',
 				'h-beta': '#51fefe',
 				'o-three': '#36e4b0',
