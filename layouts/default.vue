@@ -1,7 +1,9 @@
 <template>
 	<div>
 		<header
-			:class="'fixed main-header top-0 w-full pt-4 md:pt-12 pb-24 md:pt-12 z-20 pointer-events-none' + (isScrolled ? ' main-header--scrolled' : '')"
+			ref="header"
+			class="fixed main-header top-0 w-full pt-4 md:pt-12 pb-24 md:pt-12 z-20 pointer-events-none"
+			:style="{ transform: `translateY(${navPos}px)` }"
 		>
 			<ab-main-navigation />
 		</header>
@@ -16,25 +18,28 @@ import AbMainNavigation from '~/components/AbMainNavigation.vue'
 import AbMainFooter from '~/components/AbMainFooter.vue'
 import AbTooltip from '~/components/AbTooltip.vue'
 
+let prevScrollY = 0
+let positionRaw = 500
+
 export default {
 	components: { AbMainNavigation, AbMainFooter, AbTooltip },
 	data () {
 		return {
-			isScrolled: false,
+			navPos: 0,
 			lastSize: [0, 0]
 		}
 	},
 	mounted () {
-		this.setVh()
+		this.onResize()
 		window.addEventListener('scroll', this.onScroll)
-		window.addEventListener('resize', this.setVh)
+		window.addEventListener('resize', this.onResize)
 	},
 	destroyed () {
 		window.removeEventListener('scroll', this.onScroll)
-		window.removeEventListener('resize', this.setVh)
+		window.removeEventListener('resize', this.onResize)
 	},
 	methods: {
-		setVh () {
+		onResize () {
 			const { lastSize } = this
 			if (Math.abs(window.innerHeight - lastSize[1]) > 80) {
 				const vh = window.innerHeight * 0.01
@@ -43,11 +48,12 @@ export default {
 			}
 		},
 		onScroll () {
-			if (pageYOffset > 40) {
-				this.isScrolled = true
-			} else {
-				this.isScrolled = false
-			}
+			const diff = prevScrollY - scrollY
+			positionRaw = Math.min(Math.max(-300, positionRaw + diff), 300)
+
+			this.navPos = Math.min(Math.max(positionRaw, -200), 0)
+
+			prevScrollY = scrollY
 		}
 	}
 }
@@ -132,22 +138,26 @@ export default {
 	}
 
 	.button {
-		@apply inline-block border border-gray-500 px-4 py-2 text-gray-500 text-sm font-normal outline-none;
-		transition: all .3s;
+		@apply inline-block relative border border-yellow-400 px-7 py-2 text-yellow-400 text-sm tracking-wider uppercase font-medium outline-none overflow-hidden;
+		transition: background-position .4s .1s, transform .2s, color .2s .1s;
+		background: linear-gradient(70deg, theme('colors.yellow.400') 0%, theme('colors.yellow.400') 50%, transparent 50%, transparent 100%);
+		background-size: 250%;
+		background-position: 100% 0;
 
 		&:hover {
-			@apply border-gray-400 text-gray-300;
-			background: #ffffff19;
+			@apply text-black;
+			background-position: 0 0;
+			transform: scale(1.02);
 		}
 
 		&:active {
+			transition: all .1s;
 			transform: scale(0.98);
 		}
 
 		&.sm {
-			@apply px-3 py-1 text-xs;
+			@apply px-3 py-1 text-xs font-normal;
 		}
-
 	}
 
 	button {

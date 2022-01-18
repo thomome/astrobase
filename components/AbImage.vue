@@ -34,19 +34,29 @@ export default {
 			return full ? '' : srcsetArray.join(', ')
 		}
 	},
+	watch: {
+		image () {
+			this.preload()
+		}
+	},
 	mounted () {
-		const img = document.createElement('img')
-		img.addEventListener('load', () => {
-			this.loaded = true
-		})
-		img.sizes = this.sizes
-		img.alt = this.alt
-		img.src = this.url
-		img.srcset = this.srcset
+		this.preload()
+	},
+	methods: {
+		preload () {
+			this.loaded = false
+			const img = document.createElement('img')
+			img.addEventListener('load', () => {
+				this.loaded = true
+			})
+			img.sizes = this.sizes
+			img.alt = this.alt
+			img.src = this.url
+			img.srcset = this.srcset
+		}
 	}
 }
 </script>
 
-<style>
-
+<style lang="scss" scoped>
 </style>

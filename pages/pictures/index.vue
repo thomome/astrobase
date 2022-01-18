@@ -146,12 +146,33 @@ export default {
 
 		await store.dispatch('pictures/load', params)
 
+		const locationIndex = {}
+		const locations = []
+		const objectIndex = {}
+		const objects = []
+		store.getters['pictures/results'].forEach((pic) => {
+			const loc = pic.location[0] ? pic.location[0] : null
+			if (loc && !locationIndex[loc.id]) {
+				locationIndex[loc.id] = true
+				locations.push(loc)
+			}
+			const obj = pic.objects[0] ? pic.objects[0] : null
+			if (obj && !objectIndex[obj.id]) {
+				objectIndex[obj.id] = true
+				objects.push(obj)
+			}
+		})
+		const objectString = objects.map(obj => obj.long_name).join(', ')
+		const locationString = locations.map(loc => loc.title).join(', ')
+		const description = `Astrophotography images taken in ${locationString} of ${objectString}.`
+
 		const meta = {
 			title: `Pictures - ${app.head.title}`,
 			meta: [
+				{ hid: 'description', name: 'description', content: description },
 				{ property: 'og:type', content: 'website' },
 				{ property: 'og:title', content: 'Pictures' },
-				{ property: 'og:description', content: 'Astrophotography images sorted by latest capturing date.' }
+				{ property: 'og:description', content: description }
 			]
 		}
 

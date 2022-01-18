@@ -2,6 +2,7 @@
 	<main class="main-content">
 		<ab-hero
 			:title="title"
+			:tagline="tagline"
 			:description="description"
 			:action="action"
 		>
@@ -12,18 +13,18 @@
 				sizes="max(100vw, 100vh)"
 			/>
 		</ab-hero>
-		<div class="picture-list container mt-24">
-			<h2 class="text-2xl text-gray-200 tracking-wide font-normal mb-4">
-				Most Recent Pictures
+		<div class="picture-list container md:mt-24 mt-12">
+			<h2 class="md:text-4xl text-2xl text-gray-200 tracking-wide font-semibold md:mb-4 mb-2">
+				Recent Pictures
 			</h2>
 			<ab-masonry-grid :pictures="pictures" />
 
-			<div class="flex justify-center pt-8 pb-24">
+			<div class="flex justify-center pt-8 md:pb-24 pb-8">
 				<nuxt-link
 					to="/pictures"
 					class="button"
 				>
-					Show all Pictures
+					Show all
 				</nuxt-link>
 			</div>
 		</div>
@@ -45,11 +46,12 @@ export default {
 			limit: 12
 		})
 
-		const { title, description, hero_image: image, action } = page.result
+		const { title, tagline, description, hero_image: image, action } = page.result
 
 		const meta = {
-			title,
+			title: `${title}${tagline ? ' | ' + tagline : ''}`,
 			meta: [
+				{ hid: 'description', name: 'description', content: description || '' },
 				{ property: 'og:type', content: 'website' },
 				{ property: 'og:title', content: `${title}` },
 				{ property: 'og:image', content: `${image.sizes.small}` },
@@ -61,6 +63,7 @@ export default {
 		return {
 			meta,
 			title,
+			tagline,
 			description,
 			action,
 			image,

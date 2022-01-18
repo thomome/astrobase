@@ -3,11 +3,14 @@
 		<div class="hero__image w-full h-full">
 			<slot />
 		</div>
-		<div v-if="title || description || action" class="hero__content relative md:absolute p-6 pt-8 bottom-0 md:m-6 lg:mb-16 max-w-xl border-l-2 border-yellow-400 bg-gray-900">
-			<h1 class="text-3xl text-gray-200 font-normal mb-4 tracking-wide leading-none">
+		<div v-if="title || description || action" class="hero__content absolute m-4 md:m-8 mb-8 bottom-0 max-w-xl">
+			<h1 class="md:text-6xl text-4xl text-gray-200 font-semibold leading-none">
 				{{ title }}
 			</h1>
-			<p class="text-gray-400 font-light leading-relaxed mb-4">
+			<div v-if="tagline" class="md:text-3xl text-xl text-gray-200 font-light italic">
+				{{ tagline }}
+			</div>
+			<p class="text-gray-400 font-light md:text-lg md:mt-3 mt-2 md:mb-4 mb-3">
 				{{ description }}
 			</p>
 			<nuxt-link
@@ -25,6 +28,7 @@
 export default {
 	props: {
 		title: { type: String, default: '' },
+		tagline: { type: String, default: '' },
 		description: { type: String, default: '' },
 		action: { type: Object, default: () => {} }
 	}
@@ -44,16 +48,25 @@ export default {
 	.hero__image {
 		height: 100%;
 
-		@media screen and (min-width: theme('screens.md')) {
+		&::after {
+			position: absolute;
+			display: block;
+			left: 0;
+			top: 0;
+			width: 100%;
 			height: 100%;
+			background: linear-gradient(30deg, #00000099 10%, #00000011 60%), linear-gradient(15deg, #00000099 10%, #00000011 60%);
+			content: '';
 		}
 	}
 
 	.hero__content {
-		left: calc( ( 100vw - theme('maxWidth.wide') ) / 2);
+		left: 0;
+		bottom: 0;
 
-		@media screen and (max-width: theme('maxWidth.wide')) {
-			left: 0;
+		@screen md {
+			left: max(0px, calc(20% - 300px));
+			bottom: max(0px, calc(15% - 100px));
 		}
 	}
 </style>

@@ -75,7 +75,7 @@ export default {
 		updatePosition () {
 			const rect = this.target.getBoundingClientRect()
 			this.x = rect.x
-			this.y = rect.y + pageYOffset + rect.height
+			this.y = rect.y + scrollY + rect.height
 		},
 		clear () {
 			this.active = false
@@ -90,7 +90,8 @@ export default {
 </script>
 <style lang="scss" scoped>
 .tooltip {
-	@apply absolute flex left-0 top-0 mt-2 z-50 shadow-md;
+	@apply absolute flex left-0 top-0 mt-2 shadow-md;
+	z-index: 10000;
 
 	&::before {
 		@apply absolute block left-0 top-0 w-3 h-3 bg-yellow-400 -mt-1 ml-2;

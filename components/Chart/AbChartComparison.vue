@@ -1,11 +1,11 @@
 <template>
 	<div class="chart-comparision">
-		<div class="flex justify-end items-end mb-2">
+		<div class="flex justify-end items-end">
 			<div class="mb-2">
 				<button
 					v-for="preset in presets"
 					:key="preset.title"
-					class="button sm ml-2"
+					class="button sm mr-2 mb-2"
 					type="color"
 					@click="usePreset(preset)"
 				>

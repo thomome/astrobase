@@ -109,7 +109,6 @@ export default {
 		height: 400px;
 		flex-grow: 1;
 		opacity: 0;
-		transition: opacity 0.3s;
 
 		&.active {
 			opacity: 1;

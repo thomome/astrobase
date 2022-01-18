@@ -3,24 +3,24 @@
 		<div class="container container--wide mt-16 md:mt-32">
 			<nuxt-link
 				to="/pictures"
-				class="inline-block mb-6 mt-5 text-gray-400 hover:text-white"
+				class="inline-block md:mb-6 mt-6 mb-3 text-gray-400 hover:text-white md:text-base text-sm"
 			>
 				<ab-icon
 					name="arrow-left"
-					class="text-2xl align-top"
+					class="md:text-2xl text-xl align-top"
 				/>
 				<span>Back to Pictures</span>
 			</nuxt-link>
 		</div>
-		<div class="container mt-4">
+		<div class="container md:mt-4">
 			<div class="picture-grid">
 				<!-- Title and other meta informaton -->
 				<div class="picture__column picture__title max-w-xl">
-					<h1 class="picture__title md:text-3xl text-2xl leading-tight font-light text-gray-200 mt-4 lg:mt-0">
+					<h1 class="picture__title md:text-3xl text-2xl leading-tight font-semibold text-gray-200 lg:mt-0">
 						{{ picture.title }}
 					</h1>
 
-					<div class="picture__date-location text-gray-700 text-sm leading-relaxed">
+					<div class="picture__date-location text-gray-500 text-sm leading-relaxed">
 						{{ picture.date }} <span v-if="location"> - {{ location.title }}</span>
 					</div>
 				</div>
@@ -34,16 +34,16 @@
 							:sizes="`(max-width: ${bp['xl']}) calc(100vw), min(calc(87.5vw - 350px), 1600px)`"
 							max-height="80vh"
 						/>
-						<div class="picture__details md:flex my-4">
+						<div class="picture__details md:flex md:my-4 my-3">
 							<div class="picture__column max-w-2xl">
-								<div class="picture__image-description text-gray-700 text-sm leading-tight border-l border-yellow-400 pl-3 mb-4">
+								<div class="picture__image-description text-gray-500 text-sm leading-tight md:mb-4 mb-3">
 									Version {{ (version + 1) }} (edited on {{ image.date }}) <span v-if="image.description"> - {{ image.description }}</span>
 								</div>
 							</div>
 							<div class="picture__column ml-auto">
 								<div
 									v-if="picture.image.length > 1"
-									class="picture__versions flex"
+									class="picture__versions flex overflow-x-auto"
 								>
 									<button
 										v-for="(img, index) in picture.image"
@@ -148,7 +148,7 @@
 										sizes="460px"
 									/>
 									<div class="related__item-info absolute w-full text-gray-200 bottom-0 left-0 px-3 pb-2 pt-5 bg-gradient-to-t from-gray-900 to-transparent">
-										<h4 class="font-medium text-gray-200 leading-tight text-lg">
+										<h4 class="font-medium text-gray-200 leading-tight">
 											{{ item.title }}
 										</h4>
 										<div class="text-gray-500 text-sm leading-relaxed">
@@ -186,14 +186,18 @@ export default {
 	components: { AbPicture, AbIcon, AbChartComparison, AbObjectList, AbExposureTime, AbCalibration, AbEquipmentList, AbSoftwareList, AbGuiding, AbImage },
 	async asyncData ({ params, app }) {
 		const picture = await getPicture(params.id)
-		const { title, excerpt, image } = picture.result
+		const { title, excerpt, image, objects, location, equipment } = picture.result
+
+		const equipmentString = equipment.map(equ => equ.title).join(', ')
+		const description = `A photo of the ${objects[0]?.long_name || title} taken in ${location[0]?.title || 'Switzerland'}.${equipmentString ? ` The photo was taken with ${equipmentString}.` : ''}`
 
 		const meta = {
 			title: `${title} - ${app.head.title}`,
 			meta: [
+				{ hid: 'description', name: 'description', content: description },
 				{ property: 'og:type', content: 'website' },
 				{ property: 'og:title', content: `${title}` },
-				{ property: 'og:description', content: `${excerpt}` },
+				{ property: 'og:description', content: excerpt || description },
 				{ property: 'og:image', content: `${image[0].sizes.small}` },
 				{ property: 'og:image:width', content: `${image[0].sizes['small-width']}` },
 				{ property: 'og:image:height', content: `${image[0].sizes['small-height']}` }
@@ -368,10 +372,11 @@ export default {
 		grid-template-areas: "title title" "image image" "tabs tabs" "sidebar sidebar" "related related";
 		grid-template-columns: auto 300px;
 		grid-template-rows: auto;
-		gap: 24px;
+		gap: 16px;
 
 		@screen md {
 			grid-template-areas: "title title" "image image" "tabs sidebar" "related sidebar";
+			gap: 24px;
 		}
 
 		@screen xl {
