@@ -64,9 +64,9 @@ export default {
 		left: 0;
 		bottom: 0;
 
-		@screen md {
-			left: max(0px, calc(20% - 300px));
-			bottom: max(0px, calc(15% - 100px));
+		@screen 2xl {
+			left: calc(20% - 300px);
+			bottom: calc(15% - 100px);
 		}
 	}
 </style>
