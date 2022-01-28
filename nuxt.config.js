@@ -23,6 +23,17 @@ export default {
 		link: [
 			{ rel: 'icon', type: 'image/png', href: '/favicon.png' },
 			{ rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap' }
+		],
+		script: [
+			{
+				src: 'https://umami.morme.ch/umami.js',
+				async: true,
+				defer: true,
+				body: true,
+				'data-website-id': '18d1223c-2315-4d48-91b8-ec2b29aab0c8',
+				'data-domains': 'astrobase.ch',
+				'data-cache': 'true'
+			}
 		]
 	},
 	/*
