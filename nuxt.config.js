@@ -1,8 +1,18 @@
 import axios from 'axios'
 
+
+
 export default {
 	env: {
 		apiEndpoint: process.env.API_ENDPOINT || 'http://localhost:8081/wp-json/astrobase'
+	},
+	publicRuntimeConfig: {
+		umami: {
+			scriptUrl: process.env.UMAMI_SCRIPT_URL,
+			websiteId: process.env.UMAMI_WEBSITE_ID,
+			domains: 'astrobase.ch',
+			cache: true
+		}
 	},
 	server: {
 		port: 8080, // default: 3000
@@ -23,17 +33,6 @@ export default {
 		link: [
 			{ rel: 'icon', type: 'image/png', href: '/favicon.png' },
 			{ rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap' }
-		],
-		script: [
-			{
-				src: 'https://umami.morme.ch/umami.js',
-				async: true,
-				defer: true,
-				body: true,
-				'data-website-id': '18d1223c-2315-4d48-91b8-ec2b29aab0c8',
-				'data-domains': 'astrobase.ch',
-				'data-cache': 'true'
-			}
 		]
 	},
 	/*
@@ -49,7 +48,8 @@ export default {
 	** Plugins to load before mounting the App
 	*/
 	plugins: [
-		'~/plugins/ObserveVisibility.js'
+		'~/plugins/ObserveVisibility.js',
+		{ src: '~/plugins/Umami.js', ssr: false }
 	],
 
 	// Auto import components: https://go.nuxtjs.dev/config-components
