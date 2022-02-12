@@ -1,10 +1,22 @@
 <template>
 	<main class="main-content">
-		<div class="picture-list container mt-24 md:mt-40">
-			<h1 class="text-2xl leading-tight text-gray-200 mb-3 font-light">
+		<div class="container container--wide mt-16 md:mt-32">
+			<nuxt-link
+				to="/tools"
+				class="inline-block md:mb-6 mt-6 mb-3 text-gray-400 hover:text-white md:text-base text-sm"
+			>
+				<ab-icon
+					name="arrow-left"
+					class="md:text-2xl text-xl align-top"
+				/>
+				<span>Back to Tools</span>
+			</nuxt-link>
+		</div>
+		<div class="container md:mt-4">
+			<h1 class="text-4xl md:text-5xl text-gray-200 tracking-wide font-semibold md:mb-4">
 				Mask Generator
 			</h1>
-			<div class="flex">
+			<div class="flex flex-col-reverse md:flex-row">
 				<div class="w-64 flex-shrink-0">
 					<div class="flex">
 						<label class="mr-3 mb-6">
@@ -118,11 +130,11 @@
 					</div>
 				</div>
 				<div
-					:class="['mask w-full pr-10', isRendering ? 'rendering' : '']"
+					:class="['mask w-full md:p-0 p-6', isRendering ? 'rendering' : '']"
 					v-html="svg"
 				/>
 			</div>
-			<div class="mt-12 html-content w-1/2 text-sm">
+			<div class="mt-12 html-content md:w-1/2 text-sm">
 				<p>Based on the ingenious designs of:</p>
 				<ul>
 					<li>
@@ -183,6 +195,17 @@ export default {
 			maskTypes,
 			unitTypes
 		}
+	},
+	head () {
+		const meta = {
+			title: 'Focus Mask Generator - Astrobase',
+			meta: [
+				{ property: 'og:type', content: 'website' },
+				{ property: 'og:title', content: 'Mask Generator' },
+				{ property: 'og:description', content: 'A tool to generate your Bahtinov mask, Tri-Bahtinov mask and other types of astrophotography masks for focusing and collimation.' }
+			]
+		}
+		return meta
 	},
 	computed: {
 		slitWidth () {
@@ -281,23 +304,14 @@ export default {
 				localStorage.setItem('generator.mask.options', JSON.stringify(this.maskOptions))
 			}
 		}
-	},
-	head () {
-		const meta = {
-			title: `Mask Generator - Astrobase`,
-			meta: [
-				{ property: 'og:type', content: 'website' },
-				{ property: 'og:title', content: 'Mask Generator' },
-				{ property: 'og:description', content: 'A tool to generate your Bahtinov mask, Tri-Bahtinov mask and other types of astrophotography masks.' }
-			]
-		}
-		return meta
 	}
 }
 </script>
 
 <style lang="scss">
 	.mask {
+		max-height: 50vh;
+
 		&.rendering svg path,
 		&.rendering svg circle {
 			animation: rendering 2s infinite alternate both;
