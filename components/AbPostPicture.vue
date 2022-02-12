@@ -13,7 +13,7 @@
 			</nuxt-link>
 		</div>
 		<div class="picture__details flex-shrink-0 xl:w-1/4 lg:w-1/3 lg:ml-8">
-			<h2 class="picture__title md:text-3xl text-2xl leading-tight font-light text-gray-200 mt-4 lg:mt-0">
+			<h2 class="picture__title md:text-3xl text-2xl leading-tight font-semibold text-gray-200 lg:mt-0">
 				<nuxt-link
 					:to="`/pictures/${picture.id}`"
 				>
@@ -26,11 +26,11 @@
 			</div>
 
 			<div class="picture__column-container hidden md:flex flex-wrap lg:block">
-				<ab-object-list :objects="picture.objects" :number="3" title="Objects in Frame" />
+				<ab-object-list :objects="picture.objects" :number="0" title="Objects in Frame" />
 			</div>
 
 			<div class="picture__column-container hidden md:flex flex-wrap lg:block">
-				<ab-exposure-time :exposures="picture.exposures" :compact="true" title="Exposures" />
+				<ab-exposure-time :exposures="picture.exposures" :compact="false" title="Exposures" />
 			</div>
 		</div>
 	</div>
