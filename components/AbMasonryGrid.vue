@@ -17,13 +17,13 @@
 
 <script>
 import AbGalleryPicture from './AbGalleryPicture.vue'
+import { clamp } from '~/helpers/helpers'
 let resizeTimeout = null
 
 export default {
 	components: { AbGalleryPicture },
 	props: {
 		pictures: { type: Array, default: () => [] },
-		rowHeight: { type: Number, default: 340 },
 		gridGap: { type: Number, default: 16 }
 	},
 	data () {
@@ -32,6 +32,16 @@ export default {
 		}
 	},
 	computed: {
+		rowHeight () {
+			const n = this.gridWidth
+			const start1 = 400
+			const stop1 = 1000
+			const start2 = 120
+			const stop2 = 340
+			const v = (n - start1) / (stop1 - start1) * (stop2 - start2) + start2
+
+			return clamp(v, start2, start1)
+		},
 		sizes () {
 			const { rowHeight, gridWidth } = this
 

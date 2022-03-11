@@ -1,5 +1,5 @@
 <template>
-	<div class="picture relative mb-12 block lg:flex">
+	<div class="picture relative mb-5 md:mb-8 lg:mb-12 block lg:flex">
 		<div class="picture__image-container w-full">
 			<nuxt-link
 				:to="`/pictures/${picture.id}`"
@@ -12,7 +12,7 @@
 				/>
 			</nuxt-link>
 		</div>
-		<div class="picture__details flex-shrink-0 xl:w-1/4 lg:w-1/3 lg:ml-8">
+		<div class="picture__details flex-shrink-0 xl:w-1/4 lg:w-1/3 lg:ml-8 mt-1 lg:mt-0">
 			<h2 class="picture__title md:text-3xl text-2xl leading-tight font-semibold text-gray-200 lg:mt-0">
 				<nuxt-link
 					:to="`/pictures/${picture.id}`"
@@ -25,11 +25,11 @@
 				{{ picture.date }} <span v-if="picture.location[0]"> - {{ picture.location[0].title }}</span>
 			</div>
 
-			<div class="picture__column-container hidden md:flex flex-wrap lg:block">
+			<div class="picture__column-container hidden lg:block">
 				<ab-object-list :objects="picture.objects" :number="0" title="Objects in Frame" />
 			</div>
 
-			<div class="picture__column-container hidden md:flex flex-wrap lg:block">
+			<div class="picture__column-container hidden lg:block">
 				<ab-exposure-time :exposures="picture.exposures" :compact="false" title="Exposures" />
 			</div>
 		</div>
