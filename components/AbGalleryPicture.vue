@@ -21,14 +21,14 @@
 								class="sm"
 							/>
 						</div>
-						<div v-if="totalExposureTime" class="picture__text a-top d-4">
+						<div v-if="totalExposureTime" class="picture__text a-top d-4 hidden sm:block">
 							<span class="text-sm text-gray-200" v-html="totalExposureTime" />
 						</div>
 					</div>
-					<h4 class="picture__text a-top d-2 font-medium text-gray-200 leading-tight text-xl mt-auto">
+					<h4 class="picture__text a-top d-2 font-medium text-gray-200 leading-tight text-sm sm:text-xl mt-auto">
 						{{ picture.title }}
 					</h4>
-					<div class="picture__text a-top d-1 text-gray-500 text-sm leading-relaxed">
+					<div class="picture__text a-top d-1 text-gray-500 text-sm leading-relaxed hidden sm:block">
 						{{ picture.date }}<span v-if="picture.location[0]"> - {{ picture.location[0].title }}</span>
 					</div>
 				</div>
@@ -94,10 +94,14 @@ export default {
 			top: 0;
 			width: 100%;
 			height: 100%;
-			padding: 1rem;
+			padding: .75rem;
 			opacity: 0;
 			background: linear-gradient(0deg, #000000cc, #00000066);
 			transition: opacity 0.25s;
+
+			@screen sm {
+				padding: 1rem;
+			}
 		}
 
 		.picture__text {
