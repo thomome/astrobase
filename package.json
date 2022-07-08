@@ -20,7 +20,7 @@
     "lodash": "^4.17.21",
     "makerjs": "^0.17.0",
     "mapbox-gl": "^1.13.0",
-    "moment": "^2.29.1",
+    "moment": "^2.29.4",
     "nuxt": "^2.15.0",
     "nuxt-purgecss": "^1.0.0",
     "papaparse": "^5.3.0",
