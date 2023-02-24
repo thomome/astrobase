@@ -13,13 +13,17 @@
 	</div>
 </template>
 
-<script>
-export default {
-	props: {
-		title: { type: String, default: '' },
-		items: { type: Array, default: () => [] }
-	}
+<script setup lang="ts">
+export interface Props {
+  title?: string
+  items?: any[];
 }
+
+const props = withDefaults(defineProps<Props>(), {
+  title: '',
+  items: () => [] 
+})
+
 </script>
 
 <style lang="scss" scoped>

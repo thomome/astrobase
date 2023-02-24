@@ -25,9 +25,6 @@
 	</div>
 </template>
 <script>
-import AbIcon from './AbIcon.vue'
-import { EventBus } from '~/plugins/EventBus'
-
 export default {
 	components: { AbIcon },
 	data: () => {
@@ -41,13 +38,7 @@ export default {
 		}
 	},
 	mounted () {
-		EventBus.$on('show-tooltip', (data) => {
-			this.active = true
-			this.target = data.target
-			this.trigger = data.trigger
-			this.links = data.links
-			this.updatePosition()
-		})
+		
 
 		window.addEventListener('click', (e) => {
 			if (

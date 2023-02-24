@@ -14,13 +14,14 @@
 	</div>
 </template>
 
-<script>
-export default {
-	props: {
-		title: { type: String, default: '' },
-		description: { type: String, default: '' }
-	}
-}
+<script setup lang="ts">
+const props = withDefaults(defineProps<{
+	title?: string;
+	description?: string;
+}>(), {
+	title: '',
+	description: ''
+})
 </script>
 
 <style lang="scss">

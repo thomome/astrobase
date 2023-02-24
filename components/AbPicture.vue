@@ -71,12 +71,7 @@
 </template>
 
 <script>
-import AbIcon from '~/components/AbIcon.vue'
-import AbImage from '~/components/AbImage.vue'
-import AbPictureAnnotation from '~/components/AbPictureAnnotation.vue'
-
 export default {
-	components: { AbPictureAnnotation, AbImage, AbIcon },
 	props: {
 		image: { type: Object, required: true },
 		controls: { type: Boolean, default: false },

@@ -37,8 +37,6 @@
 </template>
 
 <script>
-import { EventBus } from '~/plugins/EventBus'
-
 export default {
 	props: {
 		linkDisabled: { type: Boolean, default: false },

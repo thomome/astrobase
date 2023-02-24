@@ -8,17 +8,16 @@
 	</svg>
 </template>
 
-<script>
-export default {
-	props: {
-		name: { type: String, required: true }
-	},
-	computed: {
-		link () {
-			return `/symbol-defs.svg#icon-${this.name}`
-		}
-	}
+<script setup lang="ts">
+interface Props {
+	name: string;
 }
+
+const props = defineProps<Props>();
+
+const link = computed(() => {
+	return `/symbol-defs.svg#icon-${props.name}`
+});
 </script>
 
 <style scoped>

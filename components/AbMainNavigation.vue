@@ -43,45 +43,32 @@
 	</nav>
 </template>
 
-<script>
-import AbHamburger from '~/components/AbHamburger.vue'
+<script setup lang="ts">
+const isOpen = ref(false);
 
-export default {
-	components: { AbHamburger },
-	data () {
-		return {
-			isOpen: false,
-			home: {
-				id: 1,
-				title: 'Astrobase',
-				route: '/',
-				exact: true
-			},
-			links: [
-				{
-					id: 2,
-					title: 'Pictures',
-					route: '/pictures'
-				},
-				// {
-				// 	id: 3,
-				// 	title: 'Blog',
-				// 	route: '/posts'
-				// },
-				{
-					id: 4,
-					title: 'Tools',
-					route: '/tools'
-				},
-				{
-					id: 5,
-					title: 'About',
-					route: '/about'
-				}
-			]
-		}
+const home = {
+	id: 1,
+	title: 'Astrobase',
+	route: '/',
+	exact: true
+};
+const links = [
+	{
+		id: 2,
+		title: 'Pictures',
+		route: '/pictures'
+	},
+	{
+		id: 4,
+		title: 'Tools',
+		route: '/tools'
+	},
+	{
+		id: 5,
+		title: 'About',
+		route: '/about'
 	}
-}
+];
 </script>
 
 <style lang="scss" scoped>

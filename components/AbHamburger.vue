@@ -8,12 +8,15 @@
 	</div>
 </template>
 
-<script>
-export default {
-	props: {
-		active: { type: Boolean, default: false }
-	}
+<script setup lang="ts">
+interface Props {
+	active: boolean;
 }
+
+const props = withDefaults(defineProps<Props>(), {
+	active: false
+});
+
 </script>
 
 <style lang="scss" scoped>

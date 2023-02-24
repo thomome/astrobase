@@ -34,27 +34,29 @@
 	</svg>
 </template>
 
-<script>
-export default {
-	props: {
-		positionAngle: { type: Number, default: 0 },
-		illuminated: { type: Number, default: 1 }
-	},
-	computed: {
-		path () {
-			const a = this.illuminated * 2 - 1
-			const r = 200
-			const r2 = a * r
-			const k = 0.5522847498
-			const k2 = Math.abs((k - 0.1) * a) + 0.1
-			return `M 0 ${r}	
-				C ${r2 * k2} ${r}, ${r2} ${r * k}, ${r2} 0
-				S ${r2 * k2} ${-r}, 0 ${-r}
-				C ${-r * k} ${-r}, ${-r} ${-r * k}, ${-r} 0
-				S ${-r * k} ${r}, 0 ${r}`
-		}
-	}
+<script setup lang="ts">
+interface Props {
+	positionAngle: number;
+	illuminated: number;
 }
+
+const props = withDefaults(defineProps<Props>(), {
+	positionAngle: 0,
+	illuminated: 1
+});
+
+const path = computed(() => {
+	const a = props.illuminated * 2 - 1
+	const r = 200
+	const r2 = a * r
+	const k = 0.5522847498
+	const k2 = Math.abs((k - 0.1) * a) + 0.1
+	return `M 0 ${r}	
+		C ${r2 * k2} ${r}, ${r2} ${r * k}, ${r2} 0
+		S ${r2 * k2} ${-r}, 0 ${-r}
+		C ${-r * k} ${-r}, ${-r} ${-r * k}, ${-r} 0
+		S ${-r * k} ${r}, 0 ${r}`
+});
 </script>
 
 <style scoped>

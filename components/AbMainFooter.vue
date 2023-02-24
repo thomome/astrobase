@@ -18,31 +18,26 @@
 	</footer>
 </template>
 
-<script>
-export default {
-	data () {
-		return {
-			links: [
-				{
-					id: 1,
-					title: 'Astrobase',
-					route: '/',
-					exact: true
-				},
-				{
-					id: 2,
-					title: 'Pictures',
-					route: '/pictures'
-				},
-				{
-					id: 4,
-					title: 'About',
-					route: '/about'
-				}
-			]
-		}
+<script setup lang="ts">
+
+const links = [
+	{
+		id: 1,
+		title: 'Astrobase',
+		route: '/',
+		exact: true
+	},
+	{
+		id: 2,
+		title: 'Pictures',
+		route: '/pictures'
+	},
+	{
+		id: 4,
+		title: 'About',
+		route: '/about'
 	}
-}
+];
 </script>
 
 <style lang="scss" scoped>

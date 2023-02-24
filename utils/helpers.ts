@@ -1,4 +1,4 @@
-function clamp (val, min = 0, max = 1) {
+function clamp (val: number, min = 0, max = 1) {
 	if (val < min) {
 		val = min
 	} else if (val > max) {

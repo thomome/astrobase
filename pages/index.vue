@@ -1,14 +1,14 @@
 <template>
 	<main class="main-content">
 		<ab-hero
-			:title="title"
-			:tagline="tagline"
-			:description="description"
-			:action="action"
+			:title="page?.title"
+			:tagline="page?.tagline"
+			:description="page?.description"
+			:action="page?.action"
 		>
 			<ab-picture
-				:annotations="image.annotations"
-				:image="image"
+				:annotations="page?.hero_image.annotations"
+				:image="page?.hero_image"
 				:annotated="false"
 				sizes="max(100vw, 100vh)"
 			/>
@@ -31,49 +31,30 @@
 	</main>
 </template>
 
-<script>
-import { getPage, getPictures } from '~/api/api.js'
+<script setup lang="ts">
 
-import AbHero from '~/components/AbHero.vue'
-import AbMasonryGrid from '~/components/AbMasonryGrid.vue'
-import AbPicture from '~/components/AbPicture.vue'
+const [{ data: page }, { data: pictures }] = await Promise.all([
+	useAsyncData('page:home', () => getPage('home'), { 
+		transform: (data) => data.result 
+	}),
+    useAsyncData('pictures:teasers', () => getPictures({ limit: 12 }), { 
+		transform: (data)  => data.results
+	})
+])
 
-export default {
-	components: { AbHero, AbPicture, AbMasonryGrid },
-	async asyncData ({ params }) {
-		const page = await getPage('home')
-		const pictures = await getPictures({
-			limit: 12
-		})
-
-		const { title, tagline, description, hero_image: image, action } = page.result
-
-		const meta = {
-			title: `${title}${tagline ? ' | ' + tagline : ''}`,
-			meta: [
-				{ hid: 'description', name: 'description', content: description || '' },
-				{ property: 'og:type', content: 'website' },
-				{ property: 'og:title', content: `${title}` },
-				{ property: 'og:image', content: `${image.sizes.small}` },
-				{ property: 'og:image:width', content: `${image.sizes['small-width']}` },
-				{ property: 'og:image:height', content: `${image.sizes['small-height']}` }
-			]
-		}
-
-		return {
-			meta,
-			title,
-			tagline,
-			description,
-			action,
-			image,
-			pictures: pictures.results
-		}
-	},
-	head () {
-		return this.meta
+useHead(() => {
+	return {
+		title: `${page.value?.title}${page.value?.tagline ? ' | ' + page.value.tagline : ''}`,
+		meta: [
+			{ hid: 'description', name: 'description', content: page.value?.description || '' },
+			{ property: 'og:type', content: 'website' },
+			{ property: 'og:title', content: `${page.value?.title}` },
+			{ property: 'og:image', content: `${page.value?.hero_image.sizes.small}` },
+			{ property: 'og:image:width', content: `${page.value?.hero_image.sizes['small-width']}` },
+			{ property: 'og:image:height', content: `${page.value?.hero_image.sizes['small-height']}` }
+		]
 	}
-}
+});
 </script>
 
 <style>

@@ -7,56 +7,47 @@
 		>
 			<ab-main-navigation />
 		</header>
-		<nuxt />
+		<slot />
 		<ab-main-footer />
-		<ab-tooltip />
+		<!-- <ab-tooltip /> -->
 	</div>
 </template>
 
-<script>
-import AbMainNavigation from '~/components/AbMainNavigation.vue'
-import AbMainFooter from '~/components/AbMainFooter.vue'
-import AbTooltip from '~/components/AbTooltip.vue'
+<script setup lang="ts">
+let prevScrollY = 0;
+let positionRaw = 500;
+const lastSize = { x: 0, y: 0 };
 
-let prevScrollY = 0
-let positionRaw = 500
+const navPos = ref(0);
 
-export default {
-	components: { AbMainNavigation, AbMainFooter, AbTooltip },
-	data () {
-		return {
-			navPos: 0,
-			lastSize: [0, 0]
-		}
-	},
-	mounted () {
-		this.onResize()
-		window.addEventListener('scroll', this.onScroll)
-		window.addEventListener('resize', this.onResize)
-	},
-	destroyed () {
-		window.removeEventListener('scroll', this.onScroll)
-		window.removeEventListener('resize', this.onResize)
-	},
-	methods: {
-		onResize () {
-			const { lastSize } = this
-			if (Math.abs(window.innerHeight - lastSize[1]) > 80) {
-				const vh = window.innerHeight * 0.01
-				document.documentElement.style.setProperty('--vh', `${vh}px`)
-				this.lastSize = [window.innerWidth, window.innerHeight]
-			}
-		},
-		onScroll () {
-			const diff = prevScrollY - scrollY
-			positionRaw = Math.min(Math.max(-300, positionRaw + diff), 300)
-
-			this.navPos = Math.min(Math.max(positionRaw, -200), 0)
-
-			prevScrollY = scrollY
-		}
+const handleResize = () => {
+	if (Math.abs(window.innerHeight - lastSize.y) > 80) {
+		const vh = window.innerHeight * 0.01
+		document.documentElement.style.setProperty('--vh', `${vh}px`)
+		lastSize.x = window.innerWidth;
+		lastSize.y = window.innerHeight;
 	}
 }
+
+const handleScroll = () => {
+	const diff = prevScrollY - scrollY
+	positionRaw = Math.min(Math.max(-300, positionRaw + diff), 300)
+
+	navPos.value = Math.min(Math.max(positionRaw, -200), 0)
+
+	prevScrollY = scrollY
+}
+
+onMounted(() => {
+	handleResize();
+	window.addEventListener('scroll', handleScroll);
+	window.addEventListener('resize', handleResize);
+
+	return () => {
+		window.removeEventListener('scroll', handleScroll)
+		window.removeEventListener('resize', handleResize)
+	}
+})
 </script>
 
 <style lang="scss">

@@ -17,7 +17,6 @@
 
 <script>
 import AbGalleryPicture from './AbGalleryPicture.vue'
-import { clamp } from '~/helpers/helpers'
 let resizeTimeout = null
 
 export default {

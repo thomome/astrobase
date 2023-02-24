@@ -36,21 +36,19 @@
 	</div>
 </template>
 
-<script>
-import AbObjectList from './ImageDetail/AbObjectList.vue'
-import AbExposureTime from './ImageDetail/AbExposureTime.vue'
-import AbImage from '~/components/AbImage.vue'
+<script setup lang="ts">
+import { Picture } from '~~/types';
 
-export default {
-	components: { AbImage, AbObjectList, AbExposureTime },
-	props: {
-		picture: { type: Object, required: true },
-		sizes: { type: String, default: '100vw' }
-	},
-	computed: {
-		image () {
-			return this.picture.image[0]
-		}
-	}
+interface Props {
+	picture: Picture;
+	sizes?: string;
 }
+
+const props = withDefaults(defineProps<Props>(), {
+	sizes: '100vw'
+});
+
+const image = computed(() => {
+	return props.picture.image[0];
+});
 </script>

@@ -164,7 +164,6 @@
 <script>
 import moment from 'moment'
 import AbChartPath from '~/components/Chart/AbChartPath.vue'
-import { clamp, ceilMinutes, floorMinutes } from '~/helpers/helpers.js'
 
 export default {
 	components: { AbChartPath },

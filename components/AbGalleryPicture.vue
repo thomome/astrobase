@@ -37,51 +37,48 @@
 	</div>
 </template>
 
-<script>
-import moment from 'moment'
-import AbImage from '~/components/AbImage.vue'
+<script setup lang="ts">
+import moment from 'moment';
+import { Picture, Exposure } from '~~/types'
 
-export default {
-	components: { AbImage },
-	props: {
-		picture: { type: Object, required: true },
-		sizes: { type: String, default: '100vw' }
-	},
-	computed: {
-		image () {
-			return this.picture.image[0]
-		},
-		modes () {
-			const { exposures } = this.picture
-			const index = {}
-			const modes = []
-			exposures.forEach((exp) => {
-				if (!index[exp.mode.value]) {
-					index[exp.mode.value] = true
-					modes.push(exp.mode)
-				}
-			})
-			return modes
-		},
-		totalExposureTime () {
-			const secs = this.picture.exposures.reduce((p, v) => {
-				return p + v.exposure_time * v.amount
-			}, 0)
+const props = withDefaults(defineProps<{
+	picture: Picture;
+	sizes: string;
+}>(), {
+	sizes: '100vw'
+});
 
-			const duration = moment.duration(secs * 1000)
-			const hours = duration.hours()
-			const minutes = duration.minutes()
-			const seconds = duration.seconds()
+const image = computed(() => {
+	return props.picture.image[0]
+})
 
-			let durationString = ''
-			if (hours) { durationString += `${hours}&#8239;<small>h</small> ` }
-			if (minutes) { durationString += `${minutes}&#8239;<small>min</small> ` }
-			if (seconds) { durationString += `${seconds}&#8239;<small>s</small>` }
-
-			return durationString
+const modes = computed(() => {
+	const modes = props.picture.exposures.reduce<Map<string, Exposure['mode']>>((modes, { mode }) => {
+		if (!modes.get(mode.value)) {
+			modes.set(mode.value, mode);
 		}
-	}
-}
+		return modes;
+	}, new Map());
+	return Array.from(modes.values());
+});
+
+const totalExposureTime = computed(() => {
+	const secs = props.picture.exposures.reduce((sum, {exposure_time, amount}) => {
+		return sum + parseInt(exposure_time) * parseInt(amount)
+	}, 0);
+
+	const duration = moment.duration(secs * 1000);
+	const hours = duration.hours();
+	const minutes = duration.minutes();
+	const seconds = duration.seconds();
+
+	let durationString = ''
+	if (hours) { durationString += `${hours}&#8239;<small>h</small> ` }
+	if (minutes) { durationString += `${minutes}&#8239;<small>min</small> ` }
+	if (seconds) { durationString += `${seconds}&#8239;<small>s</small>` }
+
+	return durationString;
+});
 </script>
 
 <style lang="scss" scoped>

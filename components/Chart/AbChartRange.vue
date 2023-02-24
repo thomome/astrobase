@@ -106,7 +106,7 @@
 </template>
 <script>
 import moment from 'moment'
-import { ceilMinutes, floorMinutes, clamp } from '~/helpers/helpers.js'
+
 
 export default {
 	components: {},

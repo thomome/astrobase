@@ -14,7 +14,7 @@
 				{{ description }}
 			</p>
 			<nuxt-link
-				v-if="typeof action === 'object'"
+				v-if="action?.url"
 				:to="action.url"
 				class="button button--outline"
 			>
@@ -24,15 +24,21 @@
 	</div>
 </template>
 
-<script>
-export default {
-	props: {
-		title: { type: String, default: '' },
-		tagline: { type: String, default: '' },
-		description: { type: String, default: '' },
-		action: { type: Object, default: () => {} }
-	}
+<script setup lang="ts">
+import { Action } from '~~/types';
+
+interface Props {
+	title: string;
+	tagline: string;
+	description: string;
+	action?: Action;
 }
+
+const props = withDefaults(defineProps<Props>(), {
+	title: '',
+	tagline: '',
+	description: ''
+});
 </script>
 
 <style lang="scss" scoped>

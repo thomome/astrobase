@@ -9,52 +9,53 @@
 	>
 </template>
 
-<script>
-export default {
-	props: {
-		alt: { type: String, default: '' },
-		image: { type: Object, required: true },
-		sizes: { type: String, default: '100vw' },
-		full: { type: Boolean, default: false }
-	},
-	data () {
-		return {
-			defaultSizes: ['small', 'medium', 'medium_large', 'large', 'extra_large'],
-			loaded: false
-		}
-	},
-	computed: {
-		url () {
-			const { image, full } = this
-			return full ? image.original : image.url
-		},
-		srcset () {
-			const { image, defaultSizes, full } = this
-			const srcsetArray = defaultSizes.map(size => `${image.sizes[size]} ${image.sizes[`${size}-width`]}w`)
-			return full ? '' : srcsetArray.join(', ')
-		}
-	},
-	watch: {
-		image () {
-			this.preload()
-		}
-	},
-	mounted () {
-		this.preload()
-	},
-	methods: {
-		preload () {
-			this.loaded = false
-			const img = document.createElement('img')
-			img.addEventListener('load', () => {
-				this.loaded = true
-			})
-			img.sizes = this.sizes
-			img.alt = this.alt
-			img.src = this.url
-			img.srcset = this.srcset
-		}
-	}
+<script setup lang="ts">
+import { Image } from '~~/types';
+
+interface Props {
+	alt?: string;
+	image: Image;
+	sizes?: string;
+	full?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+	alt: '',
+	sizes: '100vw',
+	full: false
+});
+
+const defaultSizes = ['small', 'medium', 'medium_large', 'large', 'extra_large'];
+const loaded = ref(false);
+
+const url = computed(() => {
+	return props.full ? props.image.original : props.image.url;
+});
+
+const srcset = computed(() => {
+	const srcsetArray = defaultSizes
+		.map(size => `${props.image.sizes[size]} ${props.image.sizes[`${size}-width`]}w`);
+	return props.full ? '' : srcsetArray.join(', ');
+});
+
+watch(props.image, (image) => {
+	preload();
+})
+
+onMounted(() => {
+	preload();
+})
+
+const preload = () => {
+	loaded.value = false;
+	const img = document.createElement('img');
+	img.addEventListener('load', () => {
+		loaded.value = true;
+	})
+	img.sizes = props.sizes;
+	img.alt = props.alt;
+	img.src = url.value;
+	img.srcset = srcset.value;
 }
 </script>
 

@@ -19,13 +19,18 @@
 	</div>
 </template>
 
-<script>
-export default {
-	props: {
-		title: { type: String, default: '' },
-		equipment: { type: Array, default: () => [] }
-	}
+<script setup lang="ts">
+import { Device } from '~~/types';
+
+interface Props {
+	title: string;
+	equipment: Device[];
 }
+
+const props = withDefaults(defineProps<Props>(), {
+	title: '',
+	equipment: () => []
+});
 </script>
 
 <style>
